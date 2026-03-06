@@ -124,97 +124,10 @@ canvas{display:block;position:absolute;top:0;left:0;}
 }
 @keyframes ftup{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-44px);}}
 
-
-/* ── PRESTIGE OVERLAY ── */
-#prestige-overlay{
-  position:absolute;inset:0;
-  background:rgba(0,0,0,0);
-  display:none;align-items:center;justify-content:center;
-  pointer-events:all;z-index:60;
-  transition:background .6s;
-}
-#prestige-overlay.show{display:flex;background:rgba(0,0,0,.92);}
-#prestige-box{
-  text-align:center;padding:40px;
-  background:rgba(10,5,25,.98);
-  border:2px solid #a78bfa;
-  border-radius:12px;max-width:520px;
-  box-shadow:0 0 60px rgba(167,139,250,.4);
-}
-#prestige-box h1{font-size:14px;color:#c4b5fd;margin-bottom:10px;line-height:1.8;}
-#prestige-box p{font-family:'Nunito',sans-serif;font-size:13px;color:rgba(255,255,255,.6);
-  line-height:1.8;margin-bottom:16px;}
-.prestige-bonus{font-size:9px;color:#fbbf24;line-height:2.2;margin-bottom:20px;}
-#prestige-btn{
-  font-family:'Press Start 2P',monospace;font-size:10px;
-  padding:14px 32px;border:2px solid #c4b5fd;color:#c4b5fd;
-  background:rgba(167,139,250,.15);border-radius:4px;
-  cursor:pointer;pointer-events:all;transition:all .2s;margin:6px;
-}
-#prestige-btn:hover{background:rgba(167,139,250,.35);box-shadow:0 0 30px rgba(167,139,250,.5);}
-#no-prestige-btn{
-  font-family:'Press Start 2P',monospace;font-size:7px;
-  padding:8px 20px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.4);
-  background:transparent;border-radius:4px;cursor:pointer;pointer-events:all;margin:6px;display:block;
-}
-.prestige-count{
-  font-size:7px;color:#a78bfa;letter-spacing:2px;margin-bottom:8px;
-}
-
-/* ── ACHIEVEMENT TOAST ── */
-#ach-toast{
-  position:absolute;top:66px;right:14px;
-  background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(251,191,36,.05));
-  border:1.5px solid #fbbf24;border-radius:6px;
-  padding:10px 14px;pointer-events:none;
-  opacity:0;transform:translateX(20px);
-  transition:opacity .3s,transform .3s;max-width:200px;
-}
-#ach-toast.show{opacity:1;transform:translateX(0);}
-.ach-icon{font-size:18px;display:block;margin-bottom:3px;}
-.ach-name{font-size:7px;color:#fbbf24;display:block;}
-.ach-desc{font-size:8px;color:rgba(255,255,255,.5);display:block;font-family:'Nunito',sans-serif;}
-
-/* ── PASSIVE INCOME VISUAL ── */
-#passive-display{
-  position:absolute;bottom:52px;right:14px;
-  font-size:6px;color:rgba(167,139,250,.7);
-  letter-spacing:1px;text-align:right;pointer-events:none;
-}
-
-/* ── CRACK OVERLAY on creatures (drawn on canvas) ── */
-
 /* ── HINT ── */
 #hint{
   position:absolute;bottom:4px;right:14px;
   font-size:5px;color:rgba(255,255,255,.25);
-}
-
-/* ── CHAOS SCREEN FLASH ── */
-#chaos-flash{
-  position:absolute;inset:0;pointer-events:none;
-  opacity:0;transition:opacity .06s;
-  mix-blend-mode:screen;
-  z-index:5;
-}
-/* ── MUSIC BTN POINTER ── */
-#hud .ts[onclick]{cursor:pointer;user-select:none;}
-#hud .ts[onclick]:hover .tv{transform:scale(1.3);display:block;transition:.1s;}
-
-/* ── BEAT PULSE ring ── */
-#beat-ring{
-  position:absolute;inset:0;pointer-events:none;
-  display:flex;align-items:center;justify-content:center;
-}
-#beat-ring::after{
-  content:'';display:block;
-  width:0;height:0;border-radius:50%;
-  border:3px solid rgba(255,255,255,0);
-  animation:beatpulse 0s linear infinite;
-}
-@keyframes beatpulse{
-  0%{transform:scale(1);opacity:.6;}
-  100%{transform:scale(3);opacity:0;}
 }
 
 /* ── BH SIZE LABEL ── */
@@ -239,11 +152,6 @@ canvas{display:block;position:absolute;top:0;left:0;}
     <div class="ts"><div class="tl">COMBO</div><div class="tv" id="h-combo">×1</div></div>
     <div class="sep"></div>
     <div class="ts"><div class="tl">BREAKER</div><div class="tv" id="h-dmg">10</div></div>
-    <div class="sep"></div>
-    <div class="ts" style="pointer-events:all;cursor:pointer;" onclick="toggleMusic()">
-      <div class="tl">MUSIC</div>
-      <div class="tv" id="h-music" style="font-size:16px;">🔇</div>
-    </div>
   </div>
 
   <!-- SESSION TIMER -->
@@ -265,31 +173,6 @@ canvas{display:block;position:absolute;top:0;left:0;}
   <div id="combo-pop"></div>
   <div id="notif"></div>
   <div id="hint">HOVER OVER CREATURES TO DAMAGE THEM</div>
-
-  <!-- PRESTIGE OVERLAY -->
-  <div id="prestige-overlay">
-    <div id="prestige-box">
-      <div class="prestige-count" id="prestige-count">✨ PRESTIGE × 0</div>
-      <h1>🌌 REBIRTH THE BLACK HOLE?</h1>
-      <p>Reset everything — but your power transcends death.<br>Each prestige makes you permanently stronger.</p>
-      <div class="prestige-bonus" id="prestige-bonuses"></div>
-      <button id="prestige-btn" onclick="doPrestige()">⚡ TRANSCEND ⚡</button>
-      <button id="no-prestige-btn" onclick="closePrestige()">Not yet...</button>
-    </div>
-  </div>
-
-  <!-- ACHIEVEMENT TOAST -->
-  <div id="ach-toast">
-    <span class="ach-icon" id="ach-icon">🏆</span>
-    <span class="ach-name" id="ach-name">Achievement!</span>
-    <span class="ach-desc" id="ach-desc">You did something cool</span>
-  </div>
-
-  <!-- PASSIVE INCOME DISPLAY -->
-  <div id="passive-display">BH PASSIVE: +0/sec</div>
-
-  <div id="chaos-flash"></div>
-  <div id="beat-ring"></div>
 
   <!-- UPGRADE OVERLAY -->
   <div id="upgrade-overlay">
@@ -552,24 +435,19 @@ function spawnCreature(){
   else{x=-70;y=Math.random()*H;}
   const pixSz=Math.round(cfg.sz*3);
   const sz=16*pixSz;
-  const hp0=cfg.hp*(1+G.session*.25);
   creatures.push({
     type,sprite:cfg.sprite,pts:cfg.pts,
     col1:cfg.col[0],col2:cfg.col[1],
     pixSz,sz,
     spd:cfg.spd*(1+G.session*.04),
-    behavior:cfg.behavior||null,
     x,y,vx:0,vy:0,
     wobble:Math.random()*Math.PI*2,
-    hp:hp0, maxHP:hp0,
+    hp:cfg.hp*(1+G.session*.25),
+    maxHP:cfg.hp*(1+G.session*.25),
     alpha:1,dying:false,dieScale:1,
     hue:Math.random()*360,
-    dmgFlash:0, sucking:false,
-    // behavior state
-    chargeTimer:null, charging:false, chargeFx:false,
-    inked:false, hasSplit:false,
-    pulseMod:1, pulsePhase:Math.random()*Math.PI*2,
-    camoPhase:Math.random()*Math.PI*2,
+    dmgFlash:0,
+    sucking:false, // being pulled by BH
   });
 }
 
@@ -737,34 +615,22 @@ function tickCreatures(dt){
   const dmgTick=G.breakerDmg*G.breakerSpeed*dt;
 
   creatures.forEach(c=>{
-    if(c.dying){
-      // Big POP effect - scale up then vanish
-      if(c.dieScale>0.5&&c.alpha>0.8){
-        c.dieScale*=1.18; // scale UP first
-      } else {
-        c.dieScale*=.72;
-      }
-      c.alpha-=.08;
-      return;
-    }
+    if(c.dying){c.dieScale*=.78;c.alpha-=.1;return;}
 
     const dx=bx-c.x, dy=by-c.y;
     const distBH=Math.sqrt(dx*dx+dy*dy)||1;
 
-    // ── Behavior update
+    // ── Hover damage
     const mdx=mouse.x-c.x, mdy=mouse.y-c.y;
     const distM=Math.sqrt(mdx*mdx+mdy*mdy);
-    updateCreatureBehavior(c, dt, distBH, distM);
-
-    // ── Hover damage (blocked by ink, gated by jellyfish pulse)
-    const inkedOut=mouseInInk();
-    const jellyOpen=c.behavior!=='pulse'||(c.pulseMod||1)>0.85;
-    if(!inkedOut && jellyOpen && distM<aoe+c.sz*.5){
+    if(distM<aoe+c.sz*.5){
+      // Damage — more in center of AoE
       const dmgMult=Math.max(.3,1-distM/(aoe+c.sz*.5));
       let dmg=dmgTick*dmgMult*3;
+      // Crit
       if(Math.random()*100<G.critChance){
         dmg*=G.critMult;
-        if(Math.random()<.3) floatText(c.x,c.y-c.sz*.4,'CRIT!','#fbbf24');
+        floatText(c.x,c.y-c.sz*.4,'CRIT!','#fbbf24');
       }
       c.hp-=dmg;
       c.dmgFlash=Math.min(1,c.dmgFlash+dmg/(c.maxHP*.2));
@@ -797,24 +663,16 @@ function tickCreatures(dt){
       const critBonus=c.hp<=0?1:1;
       let pts=Math.ceil(c.pts*G.matterMult*G.combo);
       G.matter+=pts; G.totalMatter+=pts; G.eaten++;
-      G.eaten_types[c.type]=(G.eaten_types[c.type]||0)+1;
-      checkAchievements();
       // BH growth
       const growth=c.pts*G.matterMult;
       feedBlackHole(growth);
       addCombo();
-      // SFX + chaos on eat (raw pts determines sound tier)
-      playSfxEat(c.pts * G.matterMult);
-      const hkill=Math.floor(Math.random()*360);
-      const col=`hsl(${hkill},${80+chaosLevel*2}%,${55+Math.min(chaosLevel,10)}%)`;
-      burst(c.x,c.y,col,Math.floor(8+c.sz*.05+chaosLevel*3));
-      spawnLightning(c.x,c.y,2+Math.floor(chaosLevel*.8));
-      spawnShockwave(c.x,c.y,col);
-      addShake(c.sz*.06+chaosLevel*.5);
-      if(chaosLevel>3) spawnLightning(BH.x+(c.x-BH.x)*.5,BH.y+(c.y-BH.y)*.5,Math.floor(chaosLevel));
-      if(chaosLevel>1) pulseRings.push({x:c.x,y:c.y,r:5,maxR:60+chaosLevel*15,life:1,hue:hkill,thick:1.5});
+      const col=sk('ch2')?`hsl(${Math.random()*360},90%,60%)`:c.col1;
+      burst(c.x,c.y,col,8+c.sz*.05|0);
+      if(sk('ch1'))spawnLightning(c.x,c.y,2);
+      if(sk('ch3'))spawnShockwave(c.x,c.y,col);
+      if(sk('ch3'))addShake(c.sz*.06);
       floatText(c.x,c.y-c.sz*.5,'+'+fmt(pts),col);
-      chaosFlash(`hsla(${hkill},80%,60%,0.05)`);
     }
   });
 
@@ -823,9 +681,9 @@ function tickCreatures(dt){
     if(c.alpha<.05)return;
     cx.save();cx.globalAlpha=c.alpha;
 
-    const csz=c.dying?c.sz*c.dieScale:c.sz;
-    const wx=c.x+(c.dying?0:Math.sin(c.wobble)*2.5);
-    const wy=c.y+(c.dying?0:Math.cos(c.wobble*.8)*1.8);
+    const csz=c.sz*c.dieScale;
+    const wx=c.x+Math.sin(c.wobble)*2.5;
+    const wy=c.y+Math.cos(c.wobble*.8)*1.8;
 
     // Shadow
     cx.save();cx.globalAlpha=c.alpha*.18;cx.filter='blur(4px)';
@@ -840,12 +698,7 @@ function tickCreatures(dt){
 
     cx.translate(wx,wy);
     if(bx<c.x){cx.scale(-1,1);}
-    // Pulse size for jellyfish
-    const pscale=c.pulseMod||1;
-    cx.scale(pscale,pscale);
     cx.drawImage(sp,-csz/2,-csz/2,csz,csz);
-    // Draw cracks on top
-    drawCracks(c,csz);
 
     // HP bar
     if(c.hp<c.maxHP&&!c.dying){
@@ -903,7 +756,7 @@ function updateBHBar(){
 //  EFFECTS
 // ══════════════════════════════════════════════════════════════
 function spawnLightning(x,y,n=2){
-  if(!sk('ch1')&&chaosLevel<2)return;
+  if(!sk('ch1'))return;
   for(let i=0;i<n;i++){
     const a=Math.random()*Math.PI*2, len=60+Math.random()*140;
     const segs=[];let cx2=x,cy2=y;
@@ -946,15 +799,13 @@ function tickShockwaves(){
 }
 
 function burst(x,y,col,n=8){
-  const cnt=Math.floor((sk('ch4')?n*4:sk('ch3')?n*2:n)*(1+chaosLevel*.15));
+  const cnt=sk('ch4')?n*4:sk('ch3')?n*2:n;
   for(let i=0;i<cnt;i++){
-    const a=Math.random()*Math.PI*2, sp=1.5+Math.random()*(5+chaosLevel*.5);
-    // Always use rainbow at chaos>3
-    const h=(chaosLevel>3||sk('ch2'))?(BH.angle*30+Math.random()*360)%360:null;
-    const r2=2+Math.random()*(3+chaosLevel*.3);
+    const a=Math.random()*Math.PI*2, sp=1.5+Math.random()*5;
+    const h=sk('ch2')?(BH.angle*30+Math.random()*120)%360:null;
     particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
-      r:r2,alpha:1,
-      color:h?`hsl(${h},100%,62%)`:col,grav:.04-(Math.random()*.02)});
+      r:2+Math.random()*4,alpha:1,
+      color:h?`hsl(${h},100%,62%)`:col,grav:.04});
   }
 }
 function tickParticles(){
@@ -971,7 +822,7 @@ function tickParticles(){
   particles=particles.filter(p=>p.alpha>.03);
 }
 
-function addShake(pw){shake.power=Math.min(shake.power+pw*(sk('ch3')?2:1)*(1+chaosLevel*.1),25);}
+function addShake(pw){if(!sk('ch3'))return;shake.power=Math.min(shake.power+pw,18);}
 function applyShake(){
   if(shake.power<.2){shake.x=shake.y=0;return;}
   shake.x=(Math.random()-.5)*shake.power*2;
@@ -1029,20 +880,14 @@ window.startSession=function(){
   G.timeLeft=G.sessionTime;
   G.active=true;
   creatures=[];
-  // Apply prestige dmg bonus on top of bought upgrades
-  G.breakerDmg=Math.max(G.breakerDmg, 10*PRESTIGE.dmgMult);
-  G.matterMult=Math.max(G.matterMult, PRESTIGE.matterMult);
   document.getElementById('h-session').textContent=G.session;
   document.getElementById('timer-wrap').style.display='block';
-  checkAchievements();
 };
 
 function endSession(){
   G.active=false;
   document.getElementById('timer-wrap').style.display='none';
-  checkAchievements();
-  // Dramatic flash on session end
-  chaosFlash('rgba(0,220,255,0.12)');
+  // Show upgrade screen
   showUpgrades();
 }
 
@@ -1051,19 +896,6 @@ function showUpgrades(){
   overlay.classList.add('show');
   document.getElementById('upg-currency').textContent=`💎 Matter: ${fmt(G.matter)}`;
   buildUpgradeGrid();
-  // Prestige button
-  const pbtn=addPrestigeBtn();
-  if(pbtn||document.getElementById('prestige-trigger')){
-    const btn=document.getElementById('prestige-trigger');
-    if(canPrestige()){
-      btn.style.opacity='1';
-      btn.textContent=`🌌 PRESTIGE ×${PRESTIGE.count+1} — TRANSCEND`;
-      btn.style.borderColor='#c4b5fd';btn.style.color='#c4b5fd';
-    } else {
-      btn.style.opacity='.35';
-      btn.textContent=`🌌 PRESTIGE (need BH tier ${PRESTIGE.minTier}+ — you: ${BH.tier})`;
-    }
-  }
 }
 
 function buildUpgradeGrid(){
@@ -1155,1106 +987,32 @@ let lastT=0;
 function loop(ts){
   const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;
 
-  updateChaosLevel();
   applyShake();
   cx.save();cx.translate(shake.x,shake.y);
   cx.clearRect(-20,-20,W+40,H+40);
 
   drawOcean();
 
-  // Spawn — faster as session progresses
+  // Spawn
   spawnTimer+=dt*1000;
-  const spawnInterval=Math.max(150, 900-G.session*30-chaosLevel*20);
+  const spawnInterval=Math.max(300,1000-G.session*40);
   if(spawnTimer>spawnInterval&&G.active){spawnCreature();spawnTimer=0;}
 
-  tickChaosParticles();
-  tickInkClouds();
   tickShockwaves();
   tickParticles();
   if(G.active||creatures.length>0)tickCreatures(dt);
   tickLightnings();
-  if(G.active) tickBHPassive(dt);
   drawBlackHole();
   if(G.active)drawBreaker();
-  drawVignette();
-  drawChromAberr();
   tickCombo();
-  triggerBeatPulse();
   cx.restore();
   updateHUD(ts,dt);
   requestAnimationFrame(loop);
 }
 
-
-// ══════════════════════════════════════════════════════════════
-//  🌌 PRESTIGE / REBIRTH SYSTEM
-// ══════════════════════════════════════════════════════════════
-const PRESTIGE={
-  count:0,
-  // Permanent multipliers that survive reset
-  matterMult:1,    // ×1.5 per prestige
-  dmgMult:1,       // ×1.3 per prestige
-  passiveMult:1,   // ×1.4 per prestige
-  timeBonus:0,     // +8s per prestige
-  startSize:1,     // BH starts bigger each time
-
-  // Unlock thresholds — must reach BH tier X to prestige
-  minTier:3,       // need at least tier 3 to prestige
-
-  tokens:0,        // "void tokens" — prestige currency
-};
-
-// Prestige upgrades that cost void tokens
-const PRESTIGE_UPGRADES=[
-  {id:'pm1',name:'VOID HUNGER',   desc:'Matter ×2 permanent',   cost:1,owned:0,max:5, fn:()=>{PRESTIGE.matterMult*=2;}},
-  {id:'pm2',name:'DARK BREAKER',  desc:'Damage ×2 permanent',   cost:1,owned:0,max:5, fn:()=>{PRESTIGE.dmgMult*=2;}},
-  {id:'pm3',name:'ETERNAL PULL',  desc:'BH passive ×3 permanent',cost:2,owned:0,max:4, fn:()=>{PRESTIGE.passiveMult*=3;}},
-  {id:'pm4',name:'TIME RIFT',     desc:'+15s session permanent', cost:2,owned:0,max:6, fn:()=>{PRESTIGE.timeBonus+=15;}},
-  {id:'pm5',name:'BORN BIG',      desc:'Start with bigger BH',  cost:3,owned:0,max:3, fn:()=>{PRESTIGE.startSize*=1.5;}},
-  {id:'pm6',name:'VOID ECHO',     desc:'Combo never resets',    cost:4,owned:0,max:1, fn:()=>{}},
-  {id:'pm7',name:'CHAOS SEED',    desc:'Start at chaos level 3',cost:5,owned:0,max:1, fn:()=>{}},
-];
-const PU={};PRESTIGE_UPGRADES.forEach(u=>PU[u.id]=u);
-
-function canPrestige(){return BH.tier>=PRESTIGE.minTier;}
-
-function openPrestige(){
-  if(!canPrestige())return;
-  const overlay=document.getElementById('prestige-overlay');
-  overlay.classList.add('show');
-  document.getElementById('prestige-count').textContent=`✨ PRESTIGE × ${PRESTIGE.count}`;
-
-  // Calculate what you get
-  const newTokens=1+Math.floor(BH.tier/2);
-  let bonusHTML=`<div>🔮 +${newTokens} Void Tokens</div>`;
-  bonusHTML+=`<div>💎 Matter ×${(1.5).toFixed(1)} forever</div>`;
-  bonusHTML+=`<div>⚔️ Damage ×${(1.3).toFixed(1)} forever</div>`;
-  bonusHTML+=`<div>⏱️ +8s per session forever</div>`;
-  if(PRESTIGE.count>0) bonusHTML+=`<div style="color:#f472b6">🌈 Previous bonuses STACK!</div>`;
-  document.getElementById('prestige-bonuses').innerHTML=bonusHTML;
-
-  // Build prestige upgrade shop if tokens available
-  buildPrestigeShop(newTokens);
-}
-
-function buildPrestigeShop(pendingTokens){
-  // Add prestige shop section inside prestige box if not exists
-  let shopEl=document.getElementById('prestige-shop');
-  if(!shopEl){
-    shopEl=document.createElement('div');
-    shopEl.id='prestige-shop';
-    shopEl.style.cssText='width:100%;margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px;';
-    document.getElementById('prestige-box').insertBefore(shopEl,document.getElementById('prestige-btn'));
-  }
-  shopEl.innerHTML='';
-  if(PRESTIGE.tokens+pendingTokens>0){
-    const header=document.createElement('div');
-    header.style.cssText='grid-column:1/-1;font-size:7px;color:#a78bfa;padding:6px 0;border-top:1px solid rgba(167,139,250,.2);margin-top:4px;';
-    header.textContent=`🔮 VOID TOKENS: ${PRESTIGE.tokens} (will get +${pendingTokens})`;
-    shopEl.appendChild(header);
-
-    PRESTIGE_UPGRADES.forEach(u=>{
-      const can=PRESTIGE.tokens>=u.cost&&u.owned<u.max;
-      const btn=document.createElement('button');
-      btn.style.cssText=`font-family:'Press Start 2P',monospace;font-size:5px;padding:7px;border-radius:4px;cursor:${can&&u.owned<u.max?'pointer':'not-allowed'};text-align:left;background:rgba(167,139,250,${can?'.1':'.03'});border:1px solid rgba(167,139,250,${can?'.4':'.1'});color:${can?'#c4b5fd':'rgba(167,139,250,.3)'};transition:all .15s;`;
-      btn.innerHTML=`<span style="display:block;margin-bottom:2px">${u.name} (${u.owned}/${u.max})</span><span style="font-size:9px;font-family:'Nunito',sans-serif;opacity:.6">${u.desc}</span><span style="display:block;color:#fbbf24;margin-top:2px">🔮 ${u.cost} tokens</span>`;
-      if(can&&u.owned<u.max){
-        btn.addEventListener('click',()=>{
-          if(PRESTIGE.tokens<u.cost)return;
-          PRESTIGE.tokens-=u.cost;
-          u.owned++;
-          u.fn();
-          buildPrestigeShop(pendingTokens);
-        });
-      }
-      shopEl.appendChild(btn);
-    });
-  }
-}
-
-window.closePrestige=function(){
-  document.getElementById('prestige-overlay').classList.remove('show');
-};
-
-window.doPrestige=function(){
-  const newTokens=1+Math.floor(BH.tier/2);
-  PRESTIGE.count++;
-  PRESTIGE.tokens+=newTokens;
-  PRESTIGE.matterMult*=1.5;
-  PRESTIGE.dmgMult*=1.3;
-  PRESTIGE.timeBonus+=8;
-
-  // Reset game state
-  G.matter=0;G.totalMatter=0;G.session=1;G.eaten=0;
-  G.combo=1;G.comboCount=0;
-  G.breakerDmg=10*PRESTIGE.dmgMult;
-  G.breakerAoE=60;G.breakerSpeed=1;
-  G.critChance=0;G.critMult=2;G.spawnCount=1;
-  G.sessionTimeBonus=PRESTIGE.timeBonus;
-  G.gravityMult=1;G.matterMult=PRESTIGE.matterMult;
-  G.autoDPS=0;G.active=false;
-
-  // Reset upgrades
-  UPGRADES.forEach(u=>{u.level=0;});
-  Object.values(CTYPES).forEach(c=>{if(c!==CTYPES.fish&&c!==CTYPES.crab)c.enabled=false;});
-
-  // Reset BH but slightly bigger based on prestige
-  BH.r=38*PRESTIGE.startSize;
-  BH.pullR=180;BH.tier=0;BH.growth=0;BH.angle=0;
-  // Chaos seed perk
-  if(PU.pm7.owned>0) chaosLevel=3;
-
-  // Reset clickers
-  Object.keys(G.clickers).forEach(k=>delete G.clickers[k]);
-
-  // Prestige transition flash
-  const overlay=document.getElementById('prestige-overlay');
-  overlay.style.background='rgba(167,139,250,0.95)';
-  setTimeout(()=>{
-    overlay.classList.remove('show');
-    overlay.style.background='';
-    creatures=[];particles=[];lightnings=[];shockwaves=[];chaosParticles=[];pulseRings=[];
-    updateBHBar();
-    buildShop();
-    showUpgrades();
-    notify('✨ PRESTIGE '+PRESTIGE.count+' — You are reborn stronger!');
-    playSfxTierUp();
-    // Big bang burst from center
-    for(let i=0;i<8;i++) setTimeout(()=>burst(W/2,H/2,`hsl(${i*45},100%,65%)`,30),i*80);
-  },800);
-};
-
-// Add prestige button to upgrade screen
-function addPrestigeBtn(){
-  const ov=document.getElementById('upgrade-overlay');
-  if(document.getElementById('prestige-trigger'))return;
-  const btn=document.createElement('button');
-  btn.id='prestige-trigger';
-  btn.style.cssText="font-family:'Press Start 2P',monospace;font-size:8px;padding:10px 24px;border:2px solid #a78bfa;color:#a78bfa;background:rgba(167,139,250,.08);border-radius:4px;cursor:pointer;opacity:.4;transition:all .2s;margin-top:4px;";
-  btn.textContent='🌌 PRESTIGE (need BH tier 3+)';
-  btn.onclick=openPrestige;
-  ov.appendChild(btn);
-  return btn;
-}
-
-// ══════════════════════════════════════════════════════════════
-//  🕳️ BH PASSIVE INCOME  (auto-sucks matter proportional to BH size)
-// ══════════════════════════════════════════════════════════════
-function getBHPassive(){
-  // Passive per second = tier * multiplier * prestige bonus
-  const base=BH.tier*BH.tier*2; // 0, 2, 8, 18, 32...
-  return base*PRESTIGE.passiveMult*(1+G.session*.05);
-}
-
-function tickBHPassive(dt){
-  const passive=getBHPassive();
-  if(passive<=0)return;
-  const earned=passive*dt;
-  G.matter+=earned;
-  G.totalMatter+=earned;
-  feedBlackHole(earned*.1);
-  document.getElementById('passive-display').textContent=
-    `🕳️ PASSIVE: +${fmt(passive)}/sec`;
-}
-
-// ══════════════════════════════════════════════════════════════
-//  🦀 UNIQUE CREATURE BEHAVIORS
-// ══════════════════════════════════════════════════════════════
-
-// Override CTYPES to add behavior flags
-CTYPES.fish.behavior='school';       // fish clump together
-CTYPES.crab.behavior='sideways';     // crab moves sideways, hard to catch
-CTYPES.squid.behavior='inkburst';    // squid inks on low HP, blinding nearby
-CTYPES.octopus.behavior='camouflage';// octopus fades in/out making it hard to hover
-CTYPES.shark.behavior='charge';      // shark charges at BH periodically
-CTYPES.whale.behavior='slowpull';    // whale resists pull, needs more damage
-CTYPES.jellyfish.behavior='pulse';   // jellyfish pulses, damage only on contact
-CTYPES.kraken.behavior='splitspawn'; // kraken splits into mini-krakens when at 30% HP
-
-let inkClouds=[]; // squid ink clouds
-
-function updateCreatureBehavior(c, dt, distBH, distM){
-  if(!c.behavior) return;
-
-  switch(c.behavior){
-
-    case 'school':
-      // Fish: drift toward nearest other fish for schooling
-      const nearFish=creatures.filter(o=>o.type==='fish'&&o!==c&&!o.dying);
-      if(nearFish.length>0){
-        const nf=nearFish.reduce((a,b)=>{
-          const da=Math.hypot(a.x-c.x,a.y-c.y);
-          const db=Math.hypot(b.x-c.x,b.y-c.y);
-          return da<db?a:b;
-        });
-        const fd=Math.hypot(nf.x-c.x,nf.y-c.y)||1;
-        if(fd>40&&fd<200){
-          c.vx+=(nf.x-c.x)/fd*.06;
-          c.vy+=(nf.y-c.y)/fd*.06;
-        }
-      }
-      break;
-
-    case 'sideways':
-      // Crab: strafes perpendicular to BH direction
-      c.wobble+=.04;
-      c.vx+=Math.cos(c.wobble+Math.PI*.5)*.12;
-      c.vy+=Math.sin(c.wobble+Math.PI*.5)*.12;
-      break;
-
-    case 'inkburst':
-      // Squid: shoot ink cloud when HP < 40%
-      if(c.hp/c.maxHP<0.4&&!c.inked&&Math.random()<.008){
-        c.inked=true;
-        setTimeout(()=>{c.inked=false;},3000);
-        inkClouds.push({x:c.x,y:c.y,r:0,maxR:60+G.breakerAoE*.3,life:1,alpha:.5});
-        floatText(c.x,c.y-30,'💨 INK!','#818cf8');
-        playSfxHit(200,0.1);
-      }
-      // In ink: reduce breaker effectiveness nearby
-      break;
-
-    case 'camouflage':
-      // Octopus: pulse visibility
-      c.camoPhase=(c.camoPhase||0)+dt*1.5;
-      c.alpha=0.3+Math.abs(Math.sin(c.camoPhase))*.7;
-      break;
-
-    case 'charge':
-      // Shark: charge toward BH every 4s dealing "push" on BH  
-      if(!c.chargeTimer) c.chargeTimer=2+Math.random()*3;
-      c.chargeTimer-=dt;
-      if(c.chargeTimer<=0&&distBH>BH.r*2){
-        c.chargeTimer=3+Math.random()*3;
-        c.charging=true;
-        setTimeout(()=>{c.charging=false;},600);
-      }
-      if(c.charging){
-        const dx=BH.x-c.x,dy=BH.y-c.y,d=Math.hypot(dx,dy)||1;
-        c.vx+=dx/d*4;c.vy+=dy/d*4;
-        if(!c.chargeFx){c.chargeFx=true;
-          spawnLightning(c.x,c.y,1);
-          setTimeout(()=>{c.chargeFx=false;},200);
-        }
-      }
-      break;
-
-    case 'slowpull':
-      // Whale: actively resists gravity pull
-      if(distBH<BH.pullR){
-        const dx=BH.x-c.x,dy=BH.y-c.y,d=Math.hypot(dx,dy)||1;
-        c.vx-=dx/d*.6;c.vy-=dy/d*.6;
-      }
-      break;
-
-    case 'pulse':
-      // Jellyfish: pulses size, only takes damage during "open" phase
-      c.pulsePhase=(c.pulsePhase||0)+dt*2;
-      c.pulseMod=0.6+Math.abs(Math.sin(c.pulsePhase))*.5;
-      // Only damageable when pulseMod > 0.9 (open phase)
-      if(c.pulseMod<0.9&&distM<G.breakerAoE+c.sz*.5){
-        c.dmgFlash=0; // no flash during closed phase
-      }
-      break;
-
-    case 'splitspawn':
-      // Kraken: split into 3 mini-krakens at 30% HP
-      if(!c.hasSplit&&c.hp/c.maxHP<0.3&&c.hp>0){
-        c.hasSplit=true;
-        for(let i=0;i<3;i++){
-          const angle=(i/3)*Math.PI*2+Math.random();
-          creatures.push({
-            type:'squid',sprite:'squid',pts:Math.floor(CTYPES.squid.pts*2),
-            col1:'#f472b6',col2:'#831843',
-            pixSz:2,sz:16*2,behavior:'inkburst',
-            spd:1.8,x:c.x+Math.cos(angle)*40,y:c.y+Math.sin(angle)*40,
-            vx:Math.cos(angle)*2,vy:Math.sin(angle)*2,
-            wobble:Math.random()*Math.PI*2,
-            hp:300,maxHP:300,alpha:1,dying:false,dieScale:1,
-            hue:300,dmgFlash:0,sucking:false,
-          });
-        }
-        floatText(c.x,c.y-40,'💥 SPLIT!','#f472b6');
-        burst(c.x,c.y,'#f472b6',20);
-        playSfxEat(50);
-      }
-      break;
-  }
-}
-
-// Tick ink clouds
-function tickInkClouds(){
-  cx.save();
-  inkClouds.forEach(ink=>{
-    ink.r=Math.min(ink.r+80*0.016,ink.maxR);
-    ink.life-=0.008;
-    cx.globalAlpha=ink.alpha*ink.life*.6;
-    cx.beginPath();cx.arc(ink.x,ink.y,ink.r,0,Math.PI*2);
-    cx.fillStyle='rgba(50,20,100,0.5)';cx.fill();
-    // Ink border
-    cx.globalAlpha=ink.alpha*ink.life*.4;
-    cx.strokeStyle='#818cf8';cx.lineWidth=2;cx.stroke();
-  });
-  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
-  inkClouds=inkClouds.filter(i=>i.life>0);
-}
-
-// Check if mouse is in ink cloud (blocks hover damage)
-function mouseInInk(){
-  return inkClouds.some(ink=>{
-    const d=Math.hypot(mouse.x-ink.x,mouse.y-ink.y);
-    return d<ink.r&&ink.life>0.3;
-  });
-}
-
-// ══════════════════════════════════════════════════════════════
-//  💥 CRACK SYSTEM — visual damage cracks on creatures
-// ══════════════════════════════════════════════════════════════
-// Draw pixel-art style cracks on top of creature based on HP %
-function drawCracks(c, csz){
-  const pct=c.hp/c.maxHP;
-  if(pct>0.85||c.dying)return;
-
-  const crackLevels=Math.floor((1-pct)*5); // 0-5 levels of cracks
-  cx.save();
-  cx.strokeStyle=`rgba(0,0,0,${0.5+crackLevels*.1})`;
-  cx.lineWidth=1.5;
-
-  // Generate deterministic cracks from creature position seed
-  const seed=(c.x*1000+c.y)|0;
-  const r=csz*.4;
-
-  for(let i=0;i<crackLevels*2;i++){
-    // Pseudo-random seeded angles
-    const ang=(seed*i*2654435761)%1000/1000*Math.PI*2;
-    const len=r*(.3+((seed*i*1234567)%100)/100*.5);
-    const sx=Math.cos(ang)*r*.2;
-    const sy=Math.sin(ang)*r*.2;
-
-    cx.beginPath();cx.moveTo(sx,sy);
-    // Jagged crack line
-    let lx=sx,ly=sy;
-    for(let s=0;s<3+crackLevels;s++){
-      const segAng=ang+((seed*s*9876543)%1000/1000-.5)*1.2;
-      const segLen=len/(3+crackLevels);
-      lx+=Math.cos(segAng)*segLen;ly+=Math.sin(segAng)*segLen;
-      cx.lineTo(lx,ly);
-    }
-    cx.stroke();
-
-    // White highlight on crack edge
-    cx.strokeStyle=`rgba(255,255,255,${0.2+crackLevels*.05})`;
-    cx.lineWidth=.5;
-    cx.stroke();
-    cx.strokeStyle=`rgba(0,0,0,${0.5+crackLevels*.1})`;
-    cx.lineWidth=1.5;
-  }
-
-  // Red glow at very low HP
-  if(pct<0.25){
-    cx.beginPath();cx.arc(0,0,csz*.4,0,Math.PI*2);
-    cx.strokeStyle=`rgba(255,50,50,${(0.25-pct)*2})`;
-    cx.lineWidth=2;
-    cx.shadowColor='rgba(255,0,0,0.8)';cx.shadowBlur=10;
-    cx.stroke();cx.shadowBlur=0;
-  }
-  cx.restore();
-}
-
-// ══════════════════════════════════════════════════════════════
-//  🏆 ACHIEVEMENT SYSTEM
-// ══════════════════════════════════════════════════════════════
-const ACHIEVEMENTS=[
-  {id:'first_eat',   name:'FIRST BITE',     icon:'🐟', desc:'Eat your first creature',   check:()=>G.totalEaten>=1},
-  {id:'combo5',      name:'ON FIRE',         icon:'🔥', desc:'Reach ×5 combo',            check:()=>G.combo>=5},
-  {id:'combo10',     name:'UNSTOPPABLE',     icon:'💥', desc:'Reach ×10 combo',           check:()=>G.combo>=10},
-  {id:'eat100',      name:'CENTURION',       icon:'💯', desc:'Eat 100 creatures',         check:()=>G.totalEaten>=100},
-  {id:'eat1000',     name:'GLUTTON',         icon:'🌊', desc:'Eat 1000 creatures',        check:()=>G.totalEaten>=1000},
-  {id:'bh_tier3',    name:'GROWING DARK',    icon:'🕳️', desc:'Reach BH tier 3',          check:()=>BH.tier>=3},
-  {id:'bh_max',      name:'GOD OF THE DEEP', icon:'👑', desc:'Reach max BH tier',        check:()=>BH.tier>=7},
-  {id:'prestige1',   name:'REBORN',          icon:'✨', desc:'Prestige for the first time',check:()=>PRESTIGE.count>=1},
-  {id:'prestige5',   name:'VOID WALKER',     icon:'🌌', desc:'Prestige 5 times',          check:()=>PRESTIGE.count>=5},
-  {id:'matter1m',    name:'MILLIONAIRE',     icon:'💎', desc:'Collect 1M total matter',   check:()=>G.totalMatter>=1e6},
-  {id:'shark_kill',  name:'APEX PREDATOR',   icon:'🦈', desc:'Eat a shark',               check:()=>(G.eaten_types?.shark||0)>=1},
-  {id:'kraken_kill', name:'KRAKEN SLAYER',   icon:'🐉', desc:'Eat the Kraken',            check:()=>(G.eaten_types?.kraken||0)>=1},
-];
-G.eaten_types={};
-const unlockedAchs=new Set();
-
-function checkAchievements(){
-  ACHIEVEMENTS.forEach(a=>{
-    if(unlockedAchs.has(a.id))return;
-    if(a.check()){
-      unlockedAchs.add(a.id);
-      showAchievement(a);
-    }
-  });
-}
-
-function showAchievement(a){
-  document.getElementById('ach-icon').textContent=a.icon;
-  document.getElementById('ach-name').textContent=a.name;
-  document.getElementById('ach-desc').textContent=a.desc;
-  const el=document.getElementById('ach-toast');
-  el.classList.add('show');
-  playSfxTierUp(); // achievement sound
-  clearTimeout(el._t);
-  el._t=setTimeout(()=>el.classList.remove('show'),3500);
-}
-
-
-// ══════════════════════════════════════════════════════════════
-//  🎵 BALATRO-STYLE AUDIO ENGINE
-//  Every combo note = satisfying card-click energy
-//  Layered juicy SFX — earworm build-up as combo rises
-// ══════════════════════════════════════════════════════════════
-
-let audioCtx = null, musicOn = false;
-let masterGain, limiter, reverbNode, dryBus, wetBus;
-
-// ── One-time init
-function initAudio() {
-  if (audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  // Limiter keeps everything clean
-  limiter = audioCtx.createDynamicsCompressor();
-  limiter.threshold.value = -3;
-  limiter.knee.value = 0;
-  limiter.ratio.value = 20;
-  limiter.attack.value = 0.001;
-  limiter.release.value = 0.1;
-
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = 0.72;
-
-  // Short plate reverb (Balatro has a warm short reverb)
-  reverbNode = audioCtx.createConvolver();
-  const sr = audioCtx.sampleRate;
-  const rl = sr * 1.2;
-  const rb = audioCtx.createBuffer(2, rl, sr);
-  for (let c = 0; c < 2; c++) {
-    const d = rb.getChannelData(c);
-    for (let i = 0; i < rl; i++)
-      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / rl, 3.5);
-  }
-  reverbNode.buffer = rb;
-
-  dryBus = audioCtx.createGain(); dryBus.gain.value = 0.78;
-  wetBus = audioCtx.createGain(); wetBus.gain.value = 0.22;
-
-  dryBus.connect(masterGain);
-  reverbNode.connect(wetBus);
-  wetBus.connect(masterGain);
-  masterGain.connect(limiter);
-  limiter.connect(audioCtx.destination);
-}
-
-// ── Core sound primitive: crisp sine with fast click transient (Balatro DNA)
-function chirp(freq, vol, dur, pan = 0, type = 'sine', attack = 0.006, pitchBend = 0) {
-  if (!audioCtx || !musicOn) return;
-  const now = audioCtx.currentTime;
-
-  const osc = audioCtx.createOscillator();
-  const env = audioCtx.createGain();
-  const pan2 = audioCtx.createStereoPanner();
-
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, now);
-  if (pitchBend) osc.frequency.exponentialRampToValueAtTime(freq * pitchBend, now + dur);
-
-  env.gain.setValueAtTime(0, now);
-  env.gain.linearRampToValueAtTime(vol, now + attack);           // sharp click attack
-  env.gain.exponentialRampToValueAtTime(vol * 0.55, now + dur * 0.3);
-  env.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-  pan2.pan.value = Math.max(-1, Math.min(1, pan));
-
-  osc.connect(env); env.connect(pan2);
-  pan2.connect(dryBus); pan2.connect(reverbNode);
-  osc.start(now); osc.stop(now + dur + 0.02);
-}
-
-// ── Click transient (the satisfying "tick" in Balatro)
-function tick(vol = 0.18, pitchMult = 1) {
-  if (!audioCtx || !musicOn) return;
-  const now = audioCtx.currentTime;
-  // Noise burst — very short, filtered
-  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.04, audioCtx.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2);
-  const src = audioCtx.createBufferSource(); src.buffer = buf;
-  const filt = audioCtx.createBiquadFilter(); filt.type = 'bandpass';
-  filt.frequency.value = 2800 * pitchMult; filt.Q.value = 1.5;
-  const env = audioCtx.createGain();
-  env.gain.setValueAtTime(vol, now);
-  env.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
-  src.connect(filt); filt.connect(env); env.connect(dryBus);
-  src.start(now);
-}
-
-// ── Scales (Balatro uses major/pentatonic for satisfying, minor for tension)
-// All in A for warm brightness
-const NOTE = {
-  A3:220, B3:246.94, C4:261.63, D4:293.66, E4:329.63, F4:349.23,
-  G4:392, A4:440, B4:493.88, C5:523.25, D5:587.33, E5:659.25,
-  F5:698.46, G5:783.99, A5:880, B5:987.77, C6:1046.5, D6:1174.66,
-  E6:1318.51, F6:1396.91, G6:1567.98, A6:1760,
-};
-
-// Pentatonic scale — always sounds good, very Balatro
-const PENTA  = [NOTE.A3, NOTE.C4, NOTE.D4, NOTE.E4, NOTE.G4, NOTE.A4, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.G5, NOTE.A5, NOTE.C6, NOTE.E6];
-const MAJOR  = [NOTE.A3, NOTE.B3, NOTE.C4, NOTE.D4, NOTE.E4, NOTE.F4, NOTE.G4, NOTE.A4, NOTE.B4, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.F5, NOTE.G5, NOTE.A5];
-const MINOR  = [NOTE.A3, NOTE.C4, NOTE.D4, NOTE.E4, NOTE.G4, NOTE.A4, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.G5, NOTE.A5];
-// Chaos: whole tone scale (dreamy/unstable, like Balatro Joker chaos)
-const WHOLE  = [NOTE.A3, NOTE.B3, NOTE.D4, NOTE.E4, NOTE.F4+10, NOTE.G4+10, NOTE.A4, NOTE.B4, NOTE.D5, NOTE.E5];
-
-function getScale() {
-  if (BH.tier >= 6) return WHOLE;
-  if (BH.tier >= 4 || G.combo >= 10) return MINOR;
-  if (G.combo >= 5) return MAJOR;
-  return PENTA;
-}
-
-// ═══════════════════════════════════════════════════
-//  COMBO SOUND SYSTEM — the heart of earworm design
-//  Each combo level plays a rising note from the scale
-//  Like Balatro's chip-counting "dink dink dink dink DUNK"
-// ═══════════════════════════════════════════════════
-
-// Track which note in the combo sequence we're on
-// Combo 1 = note 0, combo 2 = note 1... wraps after 16
-let comboNoteIdx = 0;
-let lastComboTime = 0;
-
-function sfxComboNote(comboLevel) {
-  if (!audioCtx || !musicOn) return;
-  const scale = getScale();
-  const now = audioCtx.currentTime;
-
-  // Reset note index if combo was broken
-  const timeSinceLast = Date.now() - lastComboTime;
-  if (timeSinceLast > 2400) comboNoteIdx = 0;
-  lastComboTime = Date.now();
-
-  // Rising note index — goes up as combo grows
-  const noteIdx = comboNoteIdx % scale.length;
-  const freq = scale[noteIdx];
-  comboNoteIdx++;
-
-  // Base click + note (Balatro card-click DNA)
-  tick(0.12 + comboLevel * 0.008, 0.8 + comboLevel * 0.06);
-  chirp(freq, 0.14 + Math.min(comboLevel * 0.012, 0.18), 0.18, (Math.random() - 0.5) * 0.5, 'sine', 0.005);
-
-  // Harmonic shimmer on top (Balatro has a faint overtone layer)
-  chirp(freq * 2, 0.04, 0.12, (Math.random() - 0.5) * 0.4, 'sine', 0.006);
-
-  // Every 3 combos: an extra "bling" — feels like a Balatro flush
-  if (comboNoteIdx % 3 === 0) {
-    const blingFreq = scale[(noteIdx + 4) % scale.length];
-    setTimeout(() => {
-      if (!audioCtx || !musicOn) return;
-      chirp(blingFreq, 0.09, 0.22, (Math.random()-0.5)*.6, 'sine', 0.004);
-      chirp(blingFreq * 1.5, 0.04, 0.15, -(Math.random()*.5), 'sine', 0.004);
-    }, 55);
-  }
-
-  // Milestone flare — combos 5, 10, 15 feel BIG like a Balatro hand score
-  if (comboLevel === 5 || comboLevel === 10 || comboLevel === 15) {
-    sfxComboMilestone(comboLevel, freq);
-  }
-}
-
-// Balatro "big hand scored" — rising chord arpeggio, then a fat bass thud
-function sfxComboMilestone(comboLevel, rootFreq) {
-  if (!audioCtx || !musicOn) return;
-  const scale = getScale();
-  const now = audioCtx.currentTime;
-
-  // Rising 4-note arp fast (like scoring a Royal Flush)
-  const chord = [0, 2, 4, 7].map(i => scale[(scale.indexOf(rootFreq) + i) % scale.length] || rootFreq * (1 + i * 0.15));
-  chord.forEach((f, i) => {
-    const t = i * 0.055;
-    setTimeout(() => {
-      chirp(f, 0.18, 0.28, (i - 1.5) * 0.35, 'sine', 0.004);
-      chirp(f * 2, 0.06, 0.18, -(i - 1.5) * 0.35, 'sine', 0.003);
-      tick(0.08, 1.2 + i * 0.1);
-    }, t * 1000);
-  });
-
-  // Fat bass thud at the end (Balatro's chip total "THUNK")
-  setTimeout(() => {
-    chirp(rootFreq * 0.5, 0.35, 0.5, 0, 'sine', 0.02, 0.5);     // sub
-    chirp(rootFreq * 0.5, 0.18, 0.3, 0, 'sawtooth', 0.01, 0.6);  // mid
-    tick(0.22, 0.4);
-  }, chord.length * 55 + 20);
-}
-
-// ═══════════════════════════════════════════════
-//  EAT SFX — juicy pop scaled by creature worth
-//  Small fish = tiny click, whale = deep THOOM
-// ═══════════════════════════════════════════════
-function playSfxEat(pts = 1) {
-  if (!audioCtx || !musicOn) return;
-  const scale = getScale();
-  const now = audioCtx.currentTime;
-
-  if (pts <= 5) {
-    // Fish: tiny bright click
-    tick(0.1, 1.4);
-    chirp(NOTE.E5 + Math.random() * 80, 0.07, 0.1, (Math.random()-0.5)*.6, 'sine', 0.004);
-  } else if (pts <= 25) {
-    // Crab/jellyfish: satisfying "plop"
-    tick(0.13, 1.1);
-    chirp(NOTE.C5, 0.1, 0.14, (Math.random()-0.5)*.5, 'sine', 0.006, 0.85);
-  } else if (pts <= 100) {
-    // Squid/octopus: Balatro chip sound — "dink"
-    tick(0.15, 0.9);
-    chirp(NOTE.A4, 0.12, 0.18, (Math.random()-0.5)*.4, 'sine', 0.005);
-    chirp(NOTE.E5, 0.06, 0.12, -(Math.random()*.4), 'sine', 0.004);
-  } else if (pts <= 400) {
-    // Shark: punchy "CRACK"
-    tick(0.2, 0.7);
-    chirp(NOTE.E4, 0.18, 0.25, (Math.random()-0.5)*.3, 'triangle', 0.006, 0.7);
-    chirp(NOTE.A4, 0.1, 0.2, (Math.random()-0.5)*.5, 'sine', 0.005);
-    setTimeout(() => chirp(NOTE.C5, 0.08, 0.15, 0, 'sine', 0.004), 40);
-  } else if (pts <= 2000) {
-    // Whale: deep satisfying BOOM + shimmer
-    chirp(NOTE.A3 * 0.5, 0.3, 0.5, 0, 'sine', 0.008, 0.55);   // sub boom
-    chirp(NOTE.A3, 0.18, 0.35, 0, 'sine', 0.006);
-    tick(0.25, 0.35);
-    setTimeout(() => {
-      [NOTE.A4, NOTE.C5, NOTE.E5].forEach((f, i) =>
-        setTimeout(() => chirp(f, 0.1, 0.22, (i-1)*.4, 'sine', 0.004), i * 50)
-      );
-    }, 80);
-  } else {
-    // Kraken: LEGENDARY sound — huge orchestral hit
-    sfxLegendaryKill();
-  }
-}
-
-function sfxLegendaryKill() {
-  if (!audioCtx || !musicOn) return;
-  // Sub rumble
-  chirp(NOTE.A3 * 0.25, 0.4, 0.8, 0, 'sine', 0.01, 0.4);
-  chirp(NOTE.A3 * 0.5, 0.25, 0.6, 0, 'sine', 0.008);
-  tick(0.3, 0.25);
-  // Rising arp 0ms, 60ms, 120ms, 180ms, 240ms — fast and epic
-  [NOTE.A4, NOTE.C5, NOTE.E5, NOTE.G5, NOTE.A5, NOTE.C6].forEach((f, i) => {
-    setTimeout(() => {
-      chirp(f, 0.16 - i * 0.015, 0.3, (i % 2 === 0 ? 1 : -1) * 0.4, 'sine', 0.003);
-      chirp(f * 2, 0.05, 0.2, -(i % 2 === 0 ? 1 : -1) * 0.3, 'sine', 0.003);
-      tick(0.06, 0.8 + i * 0.08);
-    }, i * 60);
-  });
-  // Final THUNK
-  setTimeout(() => {
-    chirp(NOTE.A3 * 0.5, 0.45, 0.7, 0, 'sine', 0.002, 0.5);
-    chirp(NOTE.A3, 0.2, 0.4, 0, 'sawtooth', 0.005);
-    tick(0.3, 0.3);
-  }, 420);
-}
-
-// ═══════════════════════════════════
-//  HIT SFX — hover damage ticking
-//  Rapid tiny clicks (like card dealing)
-// ═══════════════════════════════════
-function playSfxHit(freq = 440, vol = 0.06) {
-  if (!audioCtx || !musicOn) return;
-  tick(vol * 0.7, freq / 440);
-  chirp(freq, vol * 0.5, 0.06, (Math.random()-0.5)*.5, 'sine', 0.003, 0.9);
-}
-
-// ═══════════════════════════════
-//  TIER-UP FANFARE
-//  Balatro "new hand unlocked" energy
-// ═══════════════════════════════
-function playSfxTierUp() {
-  if (!audioCtx || !musicOn) return;
-  // Sweeping arp + reverb tail
-  const notes = [NOTE.A4, NOTE.C5, NOTE.E5, NOTE.A5, NOTE.C6, NOTE.E6];
-  notes.forEach((f, i) => {
-    setTimeout(() => {
-      chirp(f, 0.2 - i * 0.02, 0.45, (i - 2.5) * 0.3, 'sine', 0.004);
-      chirp(f * 0.5, 0.08, 0.3, -(i - 2.5) * 0.25, 'sine', 0.008);
-      if (i === notes.length - 1) {
-        // Final sparkle
-        [1, 1.5, 2, 3].forEach((m, j) =>
-          setTimeout(() => chirp(NOTE.A5 * m, 0.08, 0.3, (Math.random()-0.5)*.8, 'sine', 0.003), j * 35)
-        );
-      }
-    }, i * 70);
-  });
-}
-
-// ═══════════════════════════════
-//  PRESTIGE FANFARE
-// ═══════════════════════════════
-function playSfxPrestige() {
-  if (!audioCtx || !musicOn) return;
-  // Descend + massive bass + shimmer cloud
-  const notes = [NOTE.C6, NOTE.A5, NOTE.G5, NOTE.E5, NOTE.C5, NOTE.A4, NOTE.G4, NOTE.E4];
-  notes.forEach((f, i) => {
-    setTimeout(() => {
-      chirp(f, 0.15, 0.5, (i % 2 === 0 ? 1 : -1) * 0.45, 'sine', 0.004);
-      tick(0.08, f / NOTE.A4);
-    }, i * 80);
-  });
-  setTimeout(() => {
-    chirp(NOTE.A3 * 0.5, 0.5, 1.2, 0, 'sine', 0.015, 0.35);
-    chirp(NOTE.A3, 0.22, 0.8, 0, 'triangle', 0.01);
-    // Sparkle cloud
-    for (let i = 0; i < 8; i++) {
-      setTimeout(() => {
-        const sf = PENTA[Math.floor(Math.random() * PENTA.length)] * 2;
-        chirp(sf, 0.06, 0.25, (Math.random()-0.5)*.8, 'sine', 0.003);
-      }, i * 55 + 100);
-    }
-  }, notes.length * 80);
-}
-
-// ═══════════════════════════════════════
-//  AMBIENT MUSIC — minimal, not distracting
-//  Balatro's music is subtle — the SFX are the star
-//  Just a gentle breathing chord pad + soft pulse
-// ═══════════════════════════════════════
-let ambientNodes = [];
-let ambientOn = false;
-
-function startAmbient() {
-  if (!audioCtx || ambientOn) return;
-  ambientOn = true;
-
-  // Create a slow, breathing chord pad
-  // Two detuned oscillators per note for warmth
-  const chordNotes = [NOTE.A3, NOTE.E4, NOTE.A4];
-  chordNotes.forEach((freq, i) => {
-    [0, 7].forEach(detuneCents => {
-      const osc = audioCtx.createOscillator();
-      const env = audioCtx.createGain();
-      const pan2 = audioCtx.createStereoPanner();
-
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      osc.detune.value = detuneCents + (i - 1) * 4;
-
-      // Slow breathe: 8 second cycle
-      env.gain.value = 0;
-      const lfo = audioCtx.createOscillator();
-      const lfoGain = audioCtx.createGain();
-      lfo.frequency.value = 0.12 + i * 0.01; // slightly different per voice
-      lfoGain.gain.value = 0.022;
-      lfo.connect(lfoGain); lfoGain.connect(env.gain);
-      env.gain.setValueAtTime(0.018, audioCtx.currentTime);
-
-      pan2.pan.value = (i - 1) * 0.55;
-      osc.connect(env); env.connect(pan2); pan2.connect(reverbNode);
-
-      lfo.start(); osc.start();
-      ambientNodes.push(osc, lfo);
-    });
-  });
-
-  // Subtle low sub pulse — heartbeat of the black hole
-  const subOsc = audioCtx.createOscillator();
-  const subEnv = audioCtx.createGain();
-  subOsc.type = 'sine';
-  subOsc.frequency.value = NOTE.A3 * 0.25; // very low
-  subEnv.gain.value = 0.04;
-  subOsc.connect(subEnv); subEnv.connect(dryBus);
-  subOsc.start();
-  ambientNodes.push(subOsc);
-}
-
-function stopAmbient() {
-  ambientOn = false;
-  ambientNodes.forEach(n => { try { n.stop(); } catch(e){} });
-  ambientNodes = [];
-}
-
-// ═══════════════════════════════
-//  MUSIC TOGGLE
-// ═══════════════════════════════
-function startMusic() {
-  if (!audioCtx) initAudio();
-  musicOn = true;
-  document.getElementById('h-music').textContent = '🔊';
-  startAmbient();
-}
-
-function stopMusic() {
-  musicOn = false;
-  stopAmbient();
-  document.getElementById('h-music').textContent = '🔇';
-}
-
-window.toggleMusic = function () {
-  if (!audioCtx) initAudio();
-  if (musicOn) stopMusic();
-  else startMusic();
-};
-
-// Legacy stubs so nothing breaks
-function getBeatDur() { return 0.5; }
-function launchMusicLoops() {}
-function triggerBeatPulse() {}
-
-
-// ══════════════════════════════════════════════════════════════
-//  🌈 CHAOS SYSTEM — visual mayhem that reacts to gameplay
-// ══════════════════════════════════════════════════════════════
-let chaosLevel=0; // 0–10, rises with BH tier + combo
-let chromAberr=0; // chromatic aberration
-let scanlines=false;
-let vignette=0;
-let bgDistort=0;
-let chaosParticles=[]; // extra ambient chaos particles
-let pulseRings=[]; // expanding rings from BH
-
-function updateChaosLevel(){
-  const target=BH.tier*1.5+Math.min(G.combo,10)*.3;
-  chaosLevel+=(target-chaosLevel)*.02;
-  chromAberr=chaosLevel*.8;
-  vignette=chaosLevel*.04;
-  bgDistort=chaosLevel*2;
-}
-
-function chaosFlash(col='rgba(255,255,255,.06)'){
-  const el=document.getElementById('chaos-flash');
-  el.style.background=col;el.style.opacity='1';
-  setTimeout(()=>el.style.opacity='0',60);
-}
-
-function spawnChaosParticle(){
-  if(chaosLevel<2)return;
-  const angle=Math.random()*Math.PI*2;
-  const dist=BH.r*1.5+Math.random()*BH.pullR*.8;
-  chaosParticles.push({
-    x:BH.x+Math.cos(angle)*dist,
-    y:BH.y+Math.sin(angle)*dist,
-    vx:(Math.random()-.5)*chaosLevel*.5,
-    vy:(Math.random()-.5)*chaosLevel*.5,
-    r:1+Math.random()*chaosLevel*.5,
-    alpha:0.6+Math.random()*.4,
-    hue:Math.random()*360,
-    life:1,
-    orbit:angle,
-    orbitDist:dist,
-    orbitSpeed:.01+Math.random()*.03,
-  });
-}
-
-function spawnPulseRing(){
-  if(chaosLevel<1)return;
-  pulseRings.push({
-    x:BH.x,y:BH.y,
-    r:BH.r,
-    maxR:BH.r+80+chaosLevel*30,
-    life:1,
-    hue:(BH.angle*30)%360,
-    thick:1.5+chaosLevel*.5,
-  });
-}
-
-function tickChaosParticles(){
-  // Spawn
-  const spawnRate=chaosLevel*.12+BH.tier*.04;
-  if(Math.random()<spawnRate)spawnChaosParticle();
-  if(Math.random()<spawnRate*.5)spawnPulseRing();
-  // Extra burst spawns at high chaos
-  if(chaosLevel>5&&Math.random()<.02) burst(BH.x+(Math.random()-.5)*BH.pullR,BH.y+(Math.random()-.5)*BH.pullR,`hsl(${Math.random()*360},100%,60%)`,Math.floor(chaosLevel*2));
-
-  // Pulse rings
-  cx.save();
-  pulseRings.forEach(r=>{
-    r.r+=3+chaosLevel*.8;r.life-=.04;
-    cx.globalAlpha=r.life*.4;
-    cx.beginPath();cx.arc(r.x,r.y,r.r,0,Math.PI*2);
-    cx.strokeStyle=`hsl(${r.hue},90%,65%)`;
-    cx.lineWidth=r.thick*(1+r.life);
-    cx.shadowColor=cx.strokeStyle;cx.shadowBlur=chaosLevel*3;
-    cx.stroke();
-  });
-  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
-  pulseRings=pulseRings.filter(r=>r.life>0);
-
-  // Chaos ambient particles
-  cx.save();
-  chaosParticles.forEach(p=>{
-    // Orbit BH + drift
-    p.orbit+=p.orbitSpeed;
-    p.x=BH.x+Math.cos(p.orbit)*p.orbitDist+p.vx;
-    p.y=BH.y+Math.sin(p.orbit)*p.orbitDist+p.vy;
-    p.orbitDist=Math.max(BH.r,p.orbitDist-.3); // spiral in
-    p.life-=.005;
-    p.hue=(p.hue+chaosLevel*.5)%360;
-
-    cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    cx.fillStyle=`hsl(${p.hue},100%,65%)`;
-    cx.globalAlpha=p.alpha*p.life;
-    cx.shadowColor=cx.fillStyle;cx.shadowBlur=6;
-    cx.fill();
-  });
-  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
-  chaosParticles=chaosParticles.filter(p=>p.life>0&&p.orbitDist>BH.r+2);
-}
-
-// Chromatic aberration post-process (RGB split)
-function drawChromAberr(){
-  if(chromAberr<0.5)return;
-  const amt=chromAberr*.8;
-  cx.save();
-  // Red channel shift
-  cx.globalCompositeOperation='screen';
-  cx.globalAlpha=0.06;
-  cx.drawImage(cv,-amt,0,W,H);
-  // Blue channel shift
-  cx.drawImage(cv,amt,0,W,H);
-  cx.globalCompositeOperation='source-over';
-  cx.globalAlpha=1;
-  cx.restore();
-}
-
-// Vignette overlay
-function drawVignette(){
-  if(vignette<0.01)return;
-  const g=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.min(W,H)*.8);
-  g.addColorStop(0,'rgba(0,0,0,0)');
-  const col=chaosLevel>5
-    ?`hsla(${(BH.angle*30)%360},80%,15%,${vignette*1.5})`
-    :`rgba(0,0,0,${vignette})`;
-  g.addColorStop(1,col);
-  cx.fillStyle=g;cx.fillRect(0,0,W,H);
-}
-
-// Beat-reactive BH pulse
-let lastBeatTime=0;
-function triggerBeatPulse(){
-  const now=Date.now();
-  if(now-lastBeatTime<getBeatDur()*900)return;
-  lastBeatTime=now;
-  // Quick glow on BH
-  burst(BH.x,BH.y,`hsl(${(BH.angle*30)%360},90%,60%)`,
-    Math.floor(chaosLevel*2));
-}
-
-// ══════════════════════════════════════════════════════════════
-//  PATCH existing functions to add sound + more chaos
-// ══════════════════════════════════════════════════════════════
-
-// Patch feedBlackHole to add tier fanfare + chaos flash
-const _feedBH=feedBlackHole;
-const _prevTier={v:0};
-feedBlackHole=function(pts){
-  _feedBH(pts);
-  if(BH.tier>_prevTier.v){
-    _prevTier.v=BH.tier;
-    playSfxPrestige();
-    chaosFlash('rgba(200,150,255,0.18)');
-    for(let i=0;i<6;i++) setTimeout(()=>spawnPulseRing(),i*80);
-    // Restart music loops at new BPM
-    if(musicOn) launchMusicLoops();
-  }
-};
-
-// Override burst to respect chaos level
-const _burst=burst;
-
-// Patch tickCreatures damage to play hit sounds
-// (inject sfx into damage loop via override)
-const _origTickCreatures=tickCreatures;
-let dmgSfxTimer=0;
-tickCreatures=function(dt){
-  _origTickCreatures(dt);
-  // Play hit sfx at interval
-  dmgSfxTimer+=dt;
-  if(dmgSfxTimer>.12){
-    dmgSfxTimer=0;
-    const inRange=creatures.filter(c=>{
-      const mdx=mouse.x-c.x,mdy=mouse.y-c.y;
-      return Math.sqrt(mdx*mdx+mdy*mdy)<G.breakerAoE+c.sz*.5;
-    });
-    if (inRange.length > 0) {
-      // Rapid tick-tick-tick as you hover (Balatro card-dealing energy)
-      const pitchMult = 0.7 + Math.random() * 0.6;
-      playSfxHit(440 * pitchMult, 0.04 + chaosLevel * 0.005);
-    }
-  }
-};
-
-// Patch addCombo — Balatro-style rising note per combo hit
-const _addCombo = addCombo;
-addCombo = function () {
-  _addCombo();
-  sfxComboNote(G.combo);  // THE main earworm — rising scale note every hit
-};
-
 // ══════════════════════════════════════════════════════════════
 //  INIT — start with upgrade screen (session 0 → pick upgrades)
 // ══════════════════════════════════════════════════════════════
-// Auto-start music on first interaction
-let _musicStarted=false;
-function tryStartMusic(){
-  if(_musicStarted)return;
-  _musicStarted=true;
-  startMusic();
-}
-window.addEventListener('mousemove',tryStartMusic,{once:true});
-window.addEventListener('touchstart',tryStartMusic,{once:true});
-window.addEventListener('click',tryStartMusic,{once:true});
-
-// Draw scanlines at high chaos
-function drawScanlines(){
-  if(chaosLevel<4)return;
-  cx.save();
-  cx.globalAlpha=Math.min(.08,chaosLevel*.012);
-  for(let y=0;y<H;y+=3){
-    cx.fillStyle='rgba(0,0,0,1)';
-    cx.fillRect(0,y,W,1);
-  }
-  cx.restore();
-}
-
-// RGB border flash at tier 5+
-function drawRGBBorder(){
-  if(BH.tier<4)return;
-  const t=Date.now()*.003;
-  const hue=(t*60)%360;
-  cx.save();
-  cx.strokeStyle=`hsl(${hue},100%,60%)`;
-  cx.lineWidth=3+Math.sin(t)*2;
-  cx.globalAlpha=0.4+Math.sin(t*1.7)*.3;
-  cx.shadowColor=cx.strokeStyle;
-  cx.shadowBlur=20;
-  cx.strokeRect(2,2,W-4,H-4);
-  cx.restore();
-}
-
-// Warp/distortion noise at extreme chaos
-function drawWarp(){
-  if(chaosLevel<6)return;
-  cx.save();
-  cx.globalAlpha=Math.min(.04,(chaosLevel-6)*.015);
-  const warpSlices=Math.floor(chaosLevel*2);
-  for(let i=0;i<warpSlices;i++){
-    const sy=Math.random()*H;
-    const sh=2+Math.random()*4;
-    const sx=(Math.random()-.5)*chaosLevel*3;
-    cx.drawImage(cv,0,sy,W,sh,sx,sy,W,sh);
-  }
-  cx.restore();
-}
-
-// Patch drawVignette to also draw scanlines + border
-const _drawVignette=drawVignette;
-drawVignette=function(){
-  _drawVignette();
-  drawScanlines();
-  drawWarp();
-  drawRGBBorder();
-};
-
 // Session 1 starts directly
 G.session=0;
 G.active=false;
