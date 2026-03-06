@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🌊 OCEAN VORTEX — Feed the Black Hole</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a2a42;}
+canvas{display:block;position:absolute;top:0;left:0;}
+
+/* ══ UI LAYER ══ */
+#ui{position:fixed;inset:0;pointer-events:none;z-index:20;font-family:'Press Start 2P',monospace;}
+
+/* ── TOP HUD ── */
+#hud{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:12px;
+  background:rgba(0,0,0,.72);
+  border:2px solid rgba(0,220,255,.3);
+  border-radius:6px;padding:8px 18px;
+  white-space:nowrap;
+}
+.ts{text-align:center;min-width:54px;}
+.tl{font-size:6px;color:#0ff;opacity:.55;letter-spacing:1px;text-transform:uppercase;}
+.tv{font-size:12px;color:#fff;margin-top:3px;}
+.sep{width:1px;height:26px;background:rgba(0,220,255,.18);}
+
+/* ── SESSION TIMER BAR ── */
+#timer-wrap{
+  position:absolute;top:70px;left:50%;transform:translateX(-50%);
+  width:min(420px,80vw);text-align:center;
+}
+.tbar-label{font-size:7px;color:rgba(255,255,255,.6);margin-bottom:4px;letter-spacing:1px;}
+.tbar-bg{background:rgba(0,0,0,.4);border:2px solid rgba(0,220,255,.25);border-radius:4px;height:14px;overflow:hidden;}
+.tbar-fill{height:100%;border-radius:2px;transition:width .1s linear;position:relative;overflow:hidden;}
+.tbar-fill::after{content:'';position:absolute;inset:0 -80% 0 -30%;
+  background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.4) 50%,transparent 80%);
+  animation:shimmer 1.4s infinite;}
+@keyframes shimmer{to{transform:translateX(200%);}}
+
+/* ── BLACK HOLE PROGRESS BAR ── */
+#bh-wrap{
+  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+  width:min(460px,86vw);text-align:center;
+}
+.bh-label{font-size:7px;color:#a78bfa;margin-bottom:4px;letter-spacing:1px;}
+.bh-bg{background:rgba(0,0,0,.4);border:2px solid rgba(167,139,250,.3);border-radius:4px;height:16px;overflow:hidden;}
+.bh-fill{height:100%;border-radius:2px;transition:width .3s ease;
+  background:linear-gradient(90deg,#7c3aed,#a78bfa,#c4b5fd);}
+.bh-fill::after{content:'';position:absolute;inset:0 -80% 0 -30%;
+  background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.35) 50%,transparent 80%);
+  animation:shimmer 1.8s infinite;}
+
+/* ── UPGRADE OVERLAY ── */
+#upgrade-overlay{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.88);
+  display:none;flex-direction:column;align-items:center;
+  padding:20px 16px;overflow-y:auto;
+  pointer-events:all;
+  gap:14px;
+}
+#upgrade-overlay.show{display:flex;}
+#upg-title{font-size:16px;color:#0ff;text-align:center;margin-bottom:4px;}
+#upg-subtitle{font-size:7px;color:rgba(255,255,255,.45);text-align:center;letter-spacing:1px;}
+#upg-currency{font-size:10px;color:#fbbf24;text-align:center;}
+#upg-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:10px;width:100%;max-width:1000px;
+}
+.upg-card{
+  background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.12);
+  border-radius:8px;padding:12px 14px;
+  cursor:pointer;pointer-events:all;
+  transition:border-color .15s,background .15s,transform .1s;
+  text-align:left;
+}
+.upg-card:hover:not(.maxed):not(.locked){
+  border-color:#0ff;background:rgba(0,220,255,.08);transform:scale(1.02);
+}
+.upg-card.locked{opacity:.3;cursor:not-allowed;}
+.upg-card.maxed{border-color:#4ade80;background:rgba(74,222,128,.06);cursor:default;opacity:.7;}
+.uc-icon{font-size:22px;display:block;margin-bottom:6px;}
+.uc-name{font-size:7px;color:#0ff;display:block;margin-bottom:3px;}
+.uc-desc{font-size:8px;opacity:.5;display:block;margin-bottom:5px;line-height:1.6;font-family:'Nunito',sans-serif;font-weight:700;}
+.uc-cost{font-size:7px;color:#fbbf24;}
+.uc-level{font-size:6px;color:#4ade80;float:right;}
+#upg-continue{
+  font-family:'Press Start 2P',monospace;font-size:10px;
+  padding:14px 36px;border:2px solid #0ff;color:#0ff;
+  background:rgba(0,220,255,.1);border-radius:4px;
+  cursor:pointer;pointer-events:all;transition:background .2s;
+  margin-top:4px;
+}
+#upg-continue:hover{background:rgba(0,220,255,.25);}
+
+/* ── COMBO POPUP ── */
+#combo-pop{
+  position:absolute;top:44%;left:50%;
+  transform:translate(-50%,-50%) scale(.85);
+  font-size:15px;pointer-events:none;opacity:0;
+  transition:opacity .12s,transform .12s;text-align:center;
+}
+#combo-pop.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+
+/* ── NOTIF ── */
+#notif{
+  position:absolute;top:60px;left:50%;
+  transform:translateX(-50%) translateY(-5px);
+  background:linear-gradient(90deg,#22c55e,#06b6d4);color:#fff;
+  font-size:7px;padding:8px 18px;border-radius:4px;
+  opacity:0;transition:opacity .2s,transform .2s;
+  white-space:nowrap;pointer-events:none;
+}
+#notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── FLOAT TEXT ── */
+.ft{
+  position:absolute;pointer-events:none;
+  font-size:11px;animation:ftup .8s ease-out forwards;
+}
+@keyframes ftup{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-44px);}}
+
+/* ── HINT ── */
+#hint{
+  position:absolute;bottom:4px;right:14px;
+  font-size:5px;color:rgba(255,255,255,.25);
+}
+
+/* ── BH SIZE LABEL ── */
+#bh-tier{
+  position:absolute;bottom:48px;left:50%;transform:translateX(-50%);
+  font-size:8px;color:#c4b5fd;letter-spacing:2px;white-space:nowrap;
+}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="ui">
+  <!-- TOP HUD -->
+  <div id="hud">
+    <div class="ts"><div class="tl">MATTER</div><div class="tv" id="h-matter">0</div></div>
+    <div class="sep"></div>
+    <div class="ts"><div class="tl">SESSION</div><div class="tv" id="h-session">1</div></div>
+    <div class="sep"></div>
+    <div class="ts"><div class="tl">EATEN</div><div class="tv" id="h-eaten">0</div></div>
+    <div class="sep"></div>
+    <div class="ts"><div class="tl">COMBO</div><div class="tv" id="h-combo">×1</div></div>
+    <div class="sep"></div>
+    <div class="ts"><div class="tl">BREAKER</div><div class="tv" id="h-dmg">10</div></div>
+  </div>
+
+  <!-- SESSION TIMER -->
+  <div id="timer-wrap">
+    <div class="tbar-label" id="timer-label">SESSION 1 — 45s remaining</div>
+    <div class="tbar-bg"><div class="tbar-fill" id="tbar" style="width:100%;background:linear-gradient(90deg,#0891b2,#0ff);"></div></div>
+  </div>
+
+  <!-- BLACK HOLE TIER -->
+  <div id="bh-tier">🕳️ BABY BLACK HOLE</div>
+
+  <!-- BH PROGRESS -->
+  <div id="bh-wrap">
+    <div class="bh-label" id="bh-label">BLACK HOLE GROWTH — 0 / 500</div>
+    <div class="bh-bg"><div class="bh-fill" id="bh-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- COMBO + NOTIF -->
+  <div id="combo-pop"></div>
+  <div id="notif"></div>
+  <div id="hint">HOVER OVER CREATURES TO DAMAGE THEM</div>
+
+  <!-- UPGRADE OVERLAY -->
+  <div id="upgrade-overlay">
+    <div id="upg-title">⬆ UPGRADE PHASE</div>
+    <div id="upg-subtitle">SESSION COMPLETE — SPEND YOUR MATTER</div>
+    <div id="upg-currency">💎 Matter: 0</div>
+    <div id="upg-grid"></div>
+    <button id="upg-continue" onclick="startSession()">START SESSION ▶</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  CANVAS
+// ══════════════════════════════════════════════════════════════
+const cv=document.getElementById('c');
+const cx=cv.getContext('2d');
+cx.imageSmoothingEnabled=false;
+let W=cv.width=innerWidth, H=cv.height=innerHeight;
+window.addEventListener('resize',()=>{
+  W=cv.width=innerWidth; H=cv.height=innerHeight;
+  BH.x=W/2; BH.y=H/2;
+});
+
+const mouse={x:-999,y:-999};
+window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+window.addEventListener('mouseleave',()=>{mouse.x=-999;mouse.y=-999;});
+window.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  mouse.x=e.touches[0].clientX;mouse.y=e.touches[0].clientY;
+},{passive:false});
+window.addEventListener('touchend',()=>{mouse.x=-999;mouse.y=-999;});
+
+// ══════════════════════════════════════════════════════════════
+//  PIXEL ART SPRITES  16×16
+// ══════════════════════════════════════════════════════════════
+const SPR={
+  fish:[
+    '0000000000000000','0000011000000000','0000111100000000','0001111111000000',
+    '0011111111110000','0111111111111000','1111111111111100','1111111111111110',
+    '1111111111111110','1111111111111100','0111111111111000','0011111111110000',
+    '0001111111000000','0000111100000000','0000011000000000','0000000000000000',
+  ],
+  crab:[
+    '1000000000000001','0110000000000110','0011000000001100','0001111111111000',
+    '0011111111111100','0111111111111110','1111111111111111','1111111111111111',
+    '1111111111111111','0111111111111110','0011111111111100','0001100000110000',
+    '0011000000001100','0110000000000110','1100000000000011','0000000000000000',
+  ],
+  squid:[
+    '0000011111100000','0001111111111000','0011111111111100','0111111111111110',
+    '1111111111111111','1111111111111111','0111111111111110','0011111111111100',
+    '0001111111111000','0001010101010000','0010101010101000','0100010001000100',
+    '1000100010001000','0001000100010000','0000000000000000','0000000000000000',
+  ],
+  octopus:[
+    '0000111111110000','0011111111111100','0111111111111110','1111111111111111',
+    '1111111111111111','1111111111111111','0111111111111110','0011111111111100',
+    '0001110000111000','0011000000001100','0110011001100110','1100110110011001',
+    '1001001001001001','0110000000000110','0000000000000000','0000000000000000',
+  ],
+  shark:[
+    '0000000100000000','0000001110000000','0000011111000000','0000111111100000',
+    '0001111111110000','0011111111111000','0111111111111100','1111111111111110',
+    '1111111111111111','1111111111111111','0111111111111100','0011111111110000',
+    '0001111111000000','0000111100000000','0000010000000000','0000000000000000',
+  ],
+  jellyfish:[
+    '0000011111100000','0001111111111000','0011111111111100','0111111111111110',
+    '1111111111111111','1111111111111111','1111111111111111','0111111111111110',
+    '0001111111111000','0000011111100000','0000010010100000','0000100001000000',
+    '0001000010000100','0000000100001000','0000001000010000','0000000000000000',
+  ],
+  whale:[
+    '0000001110000000','0000011111000000','0000111111100000','0001111111110000',
+    '0011111111111000','0111111111111100','1111111111111110','1111111111111111',
+    '1111111111111111','1111111111111111','0111111111111110','0011111111111000',
+    '0100111111110010','1000111111110001','0000000000000000','0000000000000000',
+  ],
+  turtle:[
+    '0000111111110000','0001111111111000','0011111111111100','0110110110110110',
+    '1101101101101101','1111111111111111','1111111111111111','1111111111111111',
+    '1111111111111111','1101101101101101','0110110110110110','0011111111111100',
+    '0001111111111000','0000111111110000','0000000000000000','0000000000000000',
+  ],
+  kraken:[
+    '0100010001000100','1010101010101010','0011111111111100','0111111111111110',
+    '1111111111111111','1111111111111111','1111111111111111','1111111111111111',
+    '0111111111111110','0011111111111100','0101011001101010','1010100110010101',
+    '0100010001000100','1000001000100001','0000000000000000','0000000000000000',
+  ],
+};
+
+const sprCache={};
+function getSprite(name,c1,c2,pixelSize=3){
+  const k=`${name}_${c1}_${c2}_${pixelSize}`;
+  if(sprCache[k])return sprCache[k];
+  const rows=SPR[name]||SPR.fish;
+  const sz=16*pixelSize;
+  const sc=document.createElement('canvas');
+  sc.width=sz;sc.height=sz;
+  const scx=sc.getContext('2d');
+  scx.imageSmoothingEnabled=false;
+  rows.forEach((row,ry)=>{
+    [...row].forEach((px,rx)=>{
+      if(px==='0')return;
+      const t=ry>0?rows[ry-1][rx]:'0';
+      const b=ry<15?rows[ry+1][rx]:'0';
+      const l=rx>0?row[rx-1]:'0';
+      const r=rx<15?row[rx+1]:'0';
+      const edge=t==='0'||b==='0'||l==='0'||r==='0';
+      scx.fillStyle=edge?c2:c1;
+      scx.fillRect(rx*pixelSize,ry*pixelSize,pixelSize,pixelSize);
+    });
+  });
+  sprCache[k]=sc;
+  return sc;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BLACK HOLE
+// ══════════════════════════════════════════════════════════════
+const BH={
+  x:W/2, y:H/2,
+  r:38,           // visual radius
+  pullR:180,      // gravitational pull radius
+  angle:0,
+  // Growth / tier system
+  growth:0,
+  growthNeeded:500,
+  tier:0,
+  tiers:[
+    {name:'BABY BLACK HOLE',     threshold:500,   bonus:5},
+    {name:'SMALL BLACK HOLE',    threshold:1500,  bonus:10},
+    {name:'HALFLING',            threshold:4000,  bonus:20},
+    {name:'DWARF',               threshold:10000, bonus:30},
+    {name:'AVERAGE JOE',         threshold:30000, bonus:50},
+    {name:'GROWING MONSTER',     threshold:100000,bonus:80},
+    {name:'COLOSSUS',            threshold:350000,bonus:120},
+    {name:'GOD OF THE DEEP',     threshold:Infinity,bonus:0},
+  ],
+};
+
+// ══════════════════════════════════════════════════════════════
+//  GAME STATE
+// ══════════════════════════════════════════════════════════════
+const G={
+  matter:0,        // currency
+  totalMatter:0,   // all-time
+  session:1,
+  eaten:0,
+  combo:1, comboCount:0, comboExpiry:0,
+  sessionTime:45,
+  timeLeft:45,
+  active:false,    // session running?
+
+  // Upgrades — real values
+  breakerDmg:10,
+  breakerAoE:60,
+  breakerSpeed:1,
+  critChance:0,
+  critMult:2,
+  spawnCount:1,
+  sessionTimeBonus:0,
+  gravityMult:1,
+  matterMult:1,
+};
+
+// ══════════════════════════════════════════════════════════════
+//  UPGRADE SYSTEM  (200+ upgrade tree)
+// ══════════════════════════════════════════════════════════════
+const UPGRADES=[
+  // ── BREAKER track
+  {id:'dmg1',cat:'breaker',icon:'⚔️',name:'SHARPER EDGE',   desc:'Breaker damage +25',    base:25, max:20,level:0,costFn:l=>Math.floor(30*Math.pow(1.4,l)),  fn:()=>{G.breakerDmg+=25;}},
+  {id:'dmg2',cat:'breaker',icon:'🗡️',name:'POWER SURGE',    desc:'Breaker damage ×1.5',   base:1,  max:10,level:0,costFn:l=>Math.floor(200*Math.pow(2,l)),    fn:()=>{G.breakerDmg*=1.5;},req:'dmg1'},
+  {id:'dmg3',cat:'breaker',icon:'💥',name:'NUKE BEAM',       desc:'Breaker damage ×3',     base:1,  max:5, level:0,costFn:l=>Math.floor(2000*Math.pow(3,l)),   fn:()=>{G.breakerDmg*=3;},req:'dmg2'},
+  {id:'aoe1',cat:'breaker',icon:'🌊',name:'WIDER WAVE',      desc:'AoE radius +20',        base:20, max:15,level:0,costFn:l=>Math.floor(50*Math.pow(1.45,l)),  fn:()=>{G.breakerAoE+=20;}},
+  {id:'aoe2',cat:'breaker',icon:'🌀',name:'VORTEX FIELD',    desc:'AoE radius ×1.8',       base:1,  max:8, level:0,costFn:l=>Math.floor(400*Math.pow(2.2,l)),  fn:()=>{G.breakerAoE*=1.8;},req:'aoe1'},
+  {id:'spd1',cat:'breaker',icon:'⚡',name:'QUICK BITE',      desc:'Damage tick speed +50%',base:1,  max:8, level:0,costFn:l=>Math.floor(80*Math.pow(1.6,l)),   fn:()=>{G.breakerSpeed*=1.5;}},
+  {id:'spd2',cat:'breaker',icon:'🔥',name:'RAPID FIRE',      desc:'Speed ×2',              base:1,  max:6, level:0,costFn:l=>Math.floor(600*Math.pow(2.5,l)),  fn:()=>{G.breakerSpeed*=2;},req:'spd1'},
+  // ── CRIT track
+  {id:'crit1',cat:'crit',icon:'🎯',name:'LUCKY STRIKE',     desc:'Crit chance +5%',       base:5,  max:20,level:0,costFn:l=>Math.floor(60*Math.pow(1.5,l)),   fn:()=>{G.critChance=Math.min(G.critChance+5,95);}},
+  {id:'crit2',cat:'crit',icon:'💫',name:'DOUBLE CRIT',      desc:'Crit damage ×1.5',      base:1,  max:10,level:0,costFn:l=>Math.floor(150*Math.pow(1.8,l)),  fn:()=>{G.critMult*=1.5;},req:'crit1'},
+  {id:'crit3',cat:'crit',icon:'⭐',name:'MEGA CRIT',         desc:'Crit chance +15%',      base:15, max:5, level:0,costFn:l=>Math.floor(1500*Math.pow(3,l)),   fn:()=>{G.critChance=Math.min(G.critChance+15,95);},req:'crit2'},
+  // ── SPAWN / ENVIRONMENT track
+  {id:'sp1', cat:'spawn', icon:'🐟',name:'MORE FISH',        desc:'+1 max creatures',      base:1,  max:15,level:0,costFn:l=>Math.floor(40*Math.pow(1.35,l)),  fn:()=>{G.spawnCount+=1;}},
+  {id:'sp2', cat:'spawn', icon:'🦑',name:'UNLOCK SQUID',     desc:'Squid start spawning',  base:1,  max:1, level:0,costFn:l=>120,                             fn:()=>{CTYPES.squid.enabled=true;},req:'sp1'},
+  {id:'sp3', cat:'spawn', icon:'🐙',name:'OCTOPUS DEPTHS',   desc:'Octopus start spawning',base:1,  max:1, level:0,costFn:l=>300,                             fn:()=>{CTYPES.octopus.enabled=true;},req:'sp2'},
+  {id:'sp4', cat:'spawn', icon:'🦈',name:'SHARK TERRITORY',  desc:'Sharks start spawning', base:1,  max:1, level:0,costFn:l=>800,                             fn:()=>{CTYPES.shark.enabled=true;},req:'sp3'},
+  {id:'sp5', cat:'spawn', icon:'🐋',name:'WHALE ZONE',       desc:'Whales start spawning', base:1,  max:1, level:0,costFn:l=>2500,                            fn:()=>{CTYPES.whale.enabled=true;},req:'sp4'},
+  {id:'sp6', cat:'spawn', icon:'🐢',name:'TURTLE PATROL',    desc:'Turtles start spawning',base:1,  max:1, level:0,costFn:l=>1200,                            fn:()=>{CTYPES.turtle.enabled=true;},req:'sp3'},
+  {id:'sp7', cat:'spawn', icon:'🐉',name:'KRAKEN DEPTHS',    desc:'Kraken start spawning', base:1,  max:1, level:0,costFn:l=>15000,                           fn:()=>{CTYPES.kraken.enabled=true;},req:'sp5'},
+  {id:'sp8', cat:'spawn', icon:'🪼',name:'JELLY BLOOM',      desc:'Jellyfish start spawning',base:1,max:1, level:0,costFn:l=>180,                             fn:()=>{CTYPES.jellyfish.enabled=true;},req:'sp1'},
+  {id:'spm', cat:'spawn', icon:'🌊',name:'TIDAL SURGE',      desc:'+3 max creatures',      base:3,  max:10,level:0,costFn:l=>Math.floor(250*Math.pow(1.6,l)), fn:()=>{G.spawnCount+=3;},req:'sp1'},
+  // ── TIME track
+  {id:'t1',  cat:'time',  icon:'⏱️',name:'MORE TIME',       desc:'+5s per session',       base:5,  max:12,level:0,costFn:l=>Math.floor(80*Math.pow(1.5,l)),  fn:()=>{G.sessionTimeBonus+=5;}},
+  {id:'t2',  cat:'time',  icon:'⌛',name:'DEEP DIVE',        desc:'+15s per session',      base:15, max:6, level:0,costFn:l=>Math.floor(600*Math.pow(2,l)),   fn:()=>{G.sessionTimeBonus+=15;},req:'t1'},
+  {id:'t3',  cat:'time',  icon:'🕰️',name:'EXTENDED RUN',    desc:'+30s per session',      base:30, max:4, level:0,costFn:l=>Math.floor(3000*Math.pow(3,l)),  fn:()=>{G.sessionTimeBonus+=30;},req:'t2'},
+  // ── GRAVITY track
+  {id:'g1',  cat:'grav',  icon:'🌀',name:'STRONGER PULL',   desc:'Gravity ×1.5',          base:1,  max:10,level:0,costFn:l=>Math.floor(100*Math.pow(1.7,l)), fn:()=>{G.gravityMult*=1.5;}},
+  {id:'g2',  cat:'grav',  icon:'🕳️',name:'DEEP GRAVITY',   desc:'Pull radius +40',       base:40, max:8, level:0,costFn:l=>Math.floor(200*Math.pow(2,l)),   fn:()=>{BH.pullR+=40;},req:'g1'},
+  {id:'g3',  cat:'grav',  icon:'💫',name:'SINGULARITY',     desc:'Gravity ×3',            base:1,  max:5, level:0,costFn:l=>Math.floor(2000*Math.pow(3.5,l)),fn:()=>{G.gravityMult*=3;},req:'g2'},
+  // ── MATTER track
+  {id:'m1',  cat:'matter',icon:'💎',name:'DENSE MATTER',    desc:'Matter value ×1.3',     base:1,  max:15,level:0,costFn:l=>Math.floor(70*Math.pow(1.5,l)),  fn:()=>{G.matterMult*=1.3;}},
+  {id:'m2',  cat:'matter',icon:'🪙',name:'GOLD RUSH',       desc:'Matter value ×2',       base:1,  max:8, level:0,costFn:l=>Math.floor(500*Math.pow(2.2,l)), fn:()=>{G.matterMult*=2;},req:'m1'},
+  {id:'m3',  cat:'matter',icon:'🏆',name:'ULTRA VALUE',     desc:'Matter value ×5',       base:1,  max:4, level:0,costFn:l=>Math.floor(5000*Math.pow(4,l)),  fn:()=>{G.matterMult*=5;},req:'m2'},
+  // ── CHAOS visuals
+  {id:'ch1', cat:'chaos', icon:'⚡',name:'LIGHTNING',        desc:'Lightning on destroy',  base:1,  max:1, level:0,costFn:l=>150,fn:()=>{}},
+  {id:'ch2', cat:'chaos', icon:'🌈',name:'RGB VORTEX',       desc:'Full color cycling',    base:1,  max:1, level:0,costFn:l=>600,fn:()=>{},req:'ch1'},
+  {id:'ch3', cat:'chaos', icon:'💥',name:'SHOCKWAVE',        desc:'Big shockwaves',        base:1,  max:1, level:0,costFn:l=>1500,fn:()=>{},req:'ch2'},
+  {id:'ch4', cat:'chaos', icon:'🌪️',name:'PARTICLE STORM',  desc:'Mega particle bursts',  base:1,  max:1, level:0,costFn:l=>4000,fn:()=>{},req:'ch3'},
+];
+
+const UP={}; // id → upgrade obj
+UPGRADES.forEach(u=>UP[u.id]=u);
+
+function sk(id){return (UP[id]?.level||0)>0;} // skill owned?
+
+// ══════════════════════════════════════════════════════════════
+//  CREATURE TYPES
+// ══════════════════════════════════════════════════════════════
+const CTYPES={
+  fish:     {sprite:'fish',     pts:1,   hp:25,  spd:.9,  col:['#4ade80','#166534'],enabled:true, weight:5,  sz:1.0},
+  crab:     {sprite:'crab',     pts:3,   hp:60,  spd:.5,  col:['#fb923c','#9a3412'],enabled:true, weight:3,  sz:1.0},
+  jellyfish:{sprite:'jellyfish',pts:5,   hp:40,  spd:.6,  col:['#f0abfc','#86198f'],enabled:false,weight:2,  sz:1.0},
+  squid:    {sprite:'squid',    pts:8,   hp:100, spd:1.4, col:['#818cf8','#3730a3'],enabled:false,weight:3,  sz:1.05},
+  turtle:   {sprite:'turtle',   pts:12,  hp:200, spd:.4,  col:['#86efac','#14532d'],enabled:false,weight:2,  sz:1.1},
+  octopus:  {sprite:'octopus',  pts:22,  hp:320, spd:.75, col:['#f87171','#7f1d1d'],enabled:false,weight:2,  sz:1.2},
+  shark:    {sprite:'shark',    pts:65,  hp:700, spd:1.8, col:['#93c5fd','#1e3a8a'],enabled:false,weight:1,  sz:1.4},
+  whale:    {sprite:'whale',    pts:280, hp:2500,spd:.38, col:['#a5f3fc','#164e63'],enabled:false,weight:1,  sz:1.9},
+  kraken:   {sprite:'kraken',   pts:1500,hp:8000,spd:.95, col:['#f472b6','#831843'],enabled:false,weight:1,  sz:2.6},
+};
+
+// ══════════════════════════════════════════════════════════════
+//  ENTITY POOLS
+// ══════════════════════════════════════════════════════════════
+let creatures=[],particles=[],lightnings=[],shockwaves=[];
+let shake={x:0,y:0,power:0};
+let spawnTimer=0;
+
+// Max creatures on screen
+function maxCreatures(){return Math.min(8+G.spawnCount*2,120);}
+
+function pickType(){
+  const enabled=Object.entries(CTYPES).filter(([,v])=>v.enabled);
+  const total=enabled.reduce((s,[,v])=>s+v.weight,0);
+  let r=Math.random()*total;
+  for(const[type,cfg]of enabled){r-=cfg.weight;if(r<=0)return[type,cfg];}
+  return enabled[enabled.length-1];
+}
+
+function spawnCreature(){
+  if(!G.active||creatures.length>=maxCreatures())return;
+  const[type,cfg]=pickType();
+  const side=Math.floor(Math.random()*4);
+  let x,y;
+  if(side===0){x=Math.random()*W;y=-70;}
+  else if(side===1){x=W+70;y=Math.random()*H;}
+  else if(side===2){x=Math.random()*W;y=H+70;}
+  else{x=-70;y=Math.random()*H;}
+  const pixSz=Math.round(cfg.sz*3);
+  const sz=16*pixSz;
+  creatures.push({
+    type,sprite:cfg.sprite,pts:cfg.pts,
+    col1:cfg.col[0],col2:cfg.col[1],
+    pixSz,sz,
+    spd:cfg.spd*(1+G.session*.04),
+    x,y,vx:0,vy:0,
+    wobble:Math.random()*Math.PI*2,
+    hp:cfg.hp*(1+G.session*.25),
+    maxHP:cfg.hp*(1+G.session*.25),
+    alpha:1,dying:false,dieScale:1,
+    hue:Math.random()*360,
+    dmgFlash:0,
+    sucking:false, // being pulled by BH
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  OCEAN BACKGROUND
+// ══════════════════════════════════════════════════════════════
+function drawOcean(){
+  const t=Date.now()*.001;
+  const h1=sk('ch2')?(BH.angle*20)%360:(185+G.session*8)%360;
+  const h2=(h1+25)%360;
+
+  const g=cx.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,`hsl(${h1},58%,36%)`);
+  g.addColorStop(.5,`hsl(${h2},52%,30%)`);
+  g.addColorStop(1,`hsl(${(h1+15)%360},55%,40%)`);
+  cx.fillStyle=g;cx.fillRect(0,0,W,H);
+
+  // Surface shimmer
+  cx.save();cx.globalAlpha=.05;
+  for(let wy=0;wy<H+60;wy+=48){
+    for(let wx=0;wx<W+60;wx+=48){
+      const ox=Math.sin(wy*.05+t)*15, oy=Math.cos(wx*.04+t*.8)*9;
+      cx.beginPath();
+      cx.ellipse(wx+ox,wy+oy,20,6,Math.sin(t+wx*.02)*.4,0,Math.PI*2);
+      cx.fillStyle='rgba(255,255,255,1)';cx.fill();
+    }
+  }
+  cx.restore();
+
+  // Caustic blobs
+  cx.save();cx.globalAlpha=.04;
+  for(let i=0;i<12;i++){
+    const bx=(Math.sin(i*2.1+t*.4)*.4+.5)*W;
+    const by=(Math.cos(i*1.7+t*.3)*.4+.5)*H;
+    const br=50+Math.sin(i+t)*20;
+    const bg=cx.createRadialGradient(bx,by,0,bx,by,br);
+    bg.addColorStop(0,'rgba(255,255,255,1)');bg.addColorStop(1,'rgba(255,255,255,0)');
+    cx.fillStyle=bg;cx.beginPath();cx.arc(bx,by,br,0,Math.PI*2);cx.fill();
+  }
+  cx.restore();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BLACK HOLE DRAW
+// ══════════════════════════════════════════════════════════════
+function drawBlackHole(){
+  const{x,y,r,pullR,angle}=BH;
+  BH.angle+=.022+BH.tier*.003+(sk('ch2')?.008:0);
+
+  const hue=sk('ch2')?(BH.angle*30)%360:270;
+  const col=`hsl(${hue},90%,55%)`;
+  const col2=`hsl(${(hue+60)%360},80%,65%)`;
+
+  // Gravity well rings on water surface
+  cx.save();
+  for(let i=4;i>=1;i--){
+    cx.beginPath();cx.arc(x,y,pullR*(i/4),0,Math.PI*2);
+    cx.strokeStyle=col;cx.globalAlpha=.025*i;cx.lineWidth=i+1;cx.stroke();
+  }
+  cx.restore();
+
+  // Accretion disk glow
+  [3.5,2.2,1.4].forEach((m,i)=>{
+    const ag=cx.createRadialGradient(x,y,0,x,y,r*m);
+    const c=sk('ch2')?`hsl(${(hue+i*50)%360},90%,55%)`:col;
+    ag.addColorStop(0,`${c.replace('hsl','hsla').replace(')',',0)')}`) ;
+    ag.addColorStop(.4,c.replace('hsl(','hsla(').replace(')',`,${.06-i*.015})`));
+    ag.addColorStop(1,'rgba(0,0,0,0)');
+    cx.beginPath();cx.arc(x,y,r*m,0,Math.PI*2);
+    cx.fillStyle=ag;cx.fill();
+  });
+
+  // Spiral accretion arms
+  const arms=3+BH.tier+(sk('ch4')?2:0);
+  for(let a=0;a<arms;a++){
+    cx.beginPath();
+    const base=angle+(a/arms)*Math.PI*2;
+    for(let rad=r*.8;rad<pullR*.7;rad+=2){
+      const ang=base+rad*.05;
+      const px=x+Math.cos(ang)*rad, py=y+Math.sin(ang)*rad;
+      rad===Math.round(r*.8)?cx.moveTo(px,py):cx.lineTo(px,py);
+    }
+    const ah=sk('ch2')?(hue+a*(360/arms))%360:hue;
+    cx.strokeStyle=`hsla(${ah},85%,55%,${.18-a*.025})`;
+    cx.lineWidth=1.5;cx.stroke();
+  }
+
+  // Event horizon (dark core)
+  const cg=cx.createRadialGradient(x,y,0,x,y,r);
+  cg.addColorStop(0,'rgba(0,0,0,1)');
+  cg.addColorStop(.5,'rgba(0,0,10,.98)');
+  cg.addColorStop(.8,`hsla(${hue},80%,15%,.85)`);
+  cg.addColorStop(1,'rgba(0,0,0,0)');
+  cx.beginPath();cx.arc(x,y,r,0,Math.PI*2);
+  cx.fillStyle=cg;cx.fill();
+
+  // Spinning inner ring
+  cx.save();cx.translate(x,y);cx.rotate(angle*2);
+  const dotN=8+BH.tier*2+(sk('ch2')?6:0);
+  for(let i=0;i<dotN;i++){
+    const da=(i/dotN)*Math.PI*2;
+    const dh=sk('ch2')?(hue+i*(360/dotN))%360:hue;
+    const blink=.45+Math.sin(Date.now()*.006+i)*.4;
+    cx.beginPath();cx.arc(Math.cos(da)*r*.78,Math.sin(da)*r*.78,2.5,0,Math.PI*2);
+    cx.fillStyle=`hsla(${dh},100%,70%,${blink})`;
+    if(sk('ch1')){cx.shadowColor=cx.fillStyle;cx.shadowBlur=10;}
+    cx.fill();
+  }
+  cx.shadowBlur=0;cx.restore();
+
+  // Singularity center
+  cx.beginPath();cx.arc(x,y,r*.22,0,Math.PI*2);
+  cx.fillStyle=sk('ch2')?`hsl(${hue},100%,80%)`:'rgba(180,130,255,.9)';
+  if(sk('ch1')){cx.shadowColor=cx.fillStyle;cx.shadowBlur=18;}
+  cx.fill();cx.shadowBlur=0;
+
+  // Orbiting chaos nodes at higher tiers
+  if(BH.tier>=3){
+    for(let i=0;i<BH.tier-1;i++){
+      const oa=angle*(1.3+i*.4)+(i/(BH.tier-1))*Math.PI*2;
+      const or=r*2.2+i*r*.4;
+      const ox=x+Math.cos(oa)*or, oy=y+Math.sin(oa)*or;
+      const mg=cx.createRadialGradient(ox,oy,0,ox,oy,7);
+      mg.addColorStop(0,'rgba(0,0,15,.98)');
+      mg.addColorStop(.6,`hsla(${(hue+i*90)%360},100%,55%,.7)`);
+      mg.addColorStop(1,'rgba(0,0,0,0)');
+      cx.beginPath();cx.arc(ox,oy,8,0,Math.PI*2);cx.fillStyle=mg;cx.fill();
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BREAKER — hover damages creatures
+// ══════════════════════════════════════════════════════════════
+function drawBreaker(){
+  if(mouse.x<0)return;
+  const{x,y}=mouse;
+  const aoe=G.breakerAoE;
+  const col=sk('ch2')?`hsl(${(BH.angle*30)%360},100%,60%)`:'rgba(0,220,255,.7)';
+
+  // AoE ring
+  cx.save();
+  cx.beginPath();cx.arc(x,y,aoe,0,Math.PI*2);
+  cx.strokeStyle=col;cx.lineWidth=1.5;cx.globalAlpha=.35;
+  cx.setLineDash([4,8]);cx.stroke();cx.setLineDash([]);
+  // soft fill
+  const bg=cx.createRadialGradient(x,y,0,x,y,aoe);
+  bg.addColorStop(0,'rgba(0,220,255,.06)');bg.addColorStop(1,'rgba(0,220,255,0)');
+  cx.fillStyle=bg;cx.globalAlpha=1;cx.fill();
+  cx.restore();
+
+  // Crosshair center
+  cx.save();cx.strokeStyle=col;cx.lineWidth=2;cx.globalAlpha=.6;
+  [[x-14,y,x-5,y],[x+5,y,x+14,y],[x,y-14,x,y-5],[x,y+5,x,y+14]]
+    .forEach(([x1,y1,x2,y2])=>{cx.beginPath();cx.moveTo(x1,y1);cx.lineTo(x2,y2);cx.stroke();});
+  cx.restore();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CREATURE TICK + DRAW
+// ══════════════════════════════════════════════════════════════
+function tickCreatures(dt){
+  const{x:bx,y:by,r:br,pullR,angle}=BH;
+  const aoe=G.breakerAoE;
+  const dmgTick=G.breakerDmg*G.breakerSpeed*dt;
+
+  creatures.forEach(c=>{
+    if(c.dying){c.dieScale*=.78;c.alpha-=.1;return;}
+
+    const dx=bx-c.x, dy=by-c.y;
+    const distBH=Math.sqrt(dx*dx+dy*dy)||1;
+
+    // ── Hover damage
+    const mdx=mouse.x-c.x, mdy=mouse.y-c.y;
+    const distM=Math.sqrt(mdx*mdx+mdy*mdy);
+    if(distM<aoe+c.sz*.5){
+      // Damage — more in center of AoE
+      const dmgMult=Math.max(.3,1-distM/(aoe+c.sz*.5));
+      let dmg=dmgTick*dmgMult*3;
+      // Crit
+      if(Math.random()*100<G.critChance){
+        dmg*=G.critMult;
+        floatText(c.x,c.y-c.sz*.4,'CRIT!','#fbbf24');
+      }
+      c.hp-=dmg;
+      c.dmgFlash=Math.min(1,c.dmgFlash+dmg/(c.maxHP*.2));
+    }
+    c.dmgFlash=Math.max(0,c.dmgFlash-.05);
+
+    // ── BH gravity pull (always)
+    if(distBH<pullR){
+      const pull=(1-distBH/pullR)*G.gravityMult*1.8;
+      c.vx+=(dx/distBH)*pull*.7;
+      c.vy+=(dy/distBH)*pull*.7;
+      // swirl
+      c.vx+=(-dy/distBH)*pull*.2;
+      c.vy+=(dx/distBH)*pull*.2;
+      c.sucking=true;
+    } else {
+      // Wander slowly inward
+      c.vx+=(dx/distBH)*.04;
+      c.vy+=(dy/distBH)*.04;
+      c.sucking=false;
+    }
+
+    c.vx*=.88;c.vy*=.88;
+    c.x+=c.vx;c.y+=c.vy;
+    c.wobble+=.06;
+
+    // ── Eaten when HP=0 OR touching BH
+    if(c.hp<=0||distBH<br*.85){
+      c.dying=true;
+      const critBonus=c.hp<=0?1:1;
+      let pts=Math.ceil(c.pts*G.matterMult*G.combo);
+      G.matter+=pts; G.totalMatter+=pts; G.eaten++;
+      // BH growth
+      const growth=c.pts*G.matterMult;
+      feedBlackHole(growth);
+      addCombo();
+      const col=sk('ch2')?`hsl(${Math.random()*360},90%,60%)`:c.col1;
+      burst(c.x,c.y,col,8+c.sz*.05|0);
+      if(sk('ch1'))spawnLightning(c.x,c.y,2);
+      if(sk('ch3'))spawnShockwave(c.x,c.y,col);
+      if(sk('ch3'))addShake(c.sz*.06);
+      floatText(c.x,c.y-c.sz*.5,'+'+fmt(pts),col);
+    }
+  });
+
+  // ── Draw creatures
+  creatures.forEach(c=>{
+    if(c.alpha<.05)return;
+    cx.save();cx.globalAlpha=c.alpha;
+
+    const csz=c.sz*c.dieScale;
+    const wx=c.x+Math.sin(c.wobble)*2.5;
+    const wy=c.y+Math.cos(c.wobble*.8)*1.8;
+
+    // Shadow
+    cx.save();cx.globalAlpha=c.alpha*.18;cx.filter='blur(4px)';
+    const ss=getSprite(c.sprite,'rgba(0,0,0,1)','rgba(0,0,0,1)',c.pixSz);
+    cx.drawImage(ss,wx-csz/2+csz*.15,wy-csz/2+csz*.2,csz,csz);
+    cx.filter='none';cx.restore();
+
+    // Sprite — flash white when damaged
+    const fc=c.dmgFlash>.4?'#ffffff':c.col1;
+    const fc2=c.dmgFlash>.4?'#cccccc':c.col2;
+    const sp=getSprite(c.sprite,fc,fc2,c.pixSz*c.dieScale>.5?c.pixSz:1);
+
+    cx.translate(wx,wy);
+    if(bx<c.x){cx.scale(-1,1);}
+    cx.drawImage(sp,-csz/2,-csz/2,csz,csz);
+
+    // HP bar
+    if(c.hp<c.maxHP&&!c.dying){
+      const bw=csz*.85, bh=5, bx2=-bw/2, by2=-csz/2-9;
+      cx.fillStyle='rgba(0,0,0,.5)';cx.fillRect(bx2,by2,bw,bh);
+      const pct=Math.max(0,c.hp/c.maxHP);
+      cx.fillStyle=pct>.5?`hsl(${pct*120},90%,48%)`:`hsl(${pct*60},90%,48%)`;
+      cx.fillRect(bx2,by2,bw*pct,bh);
+      cx.strokeStyle='rgba(255,255,255,.2)';cx.lineWidth=.5;
+      cx.strokeRect(bx2,by2,bw,bh);
+    }
+
+    // AoE damage indicator (creature glows when being hovered)
+    const mdx2=mouse.x-c.x, mdy2=mouse.y-c.y;
+    if(Math.sqrt(mdx2*mdx2+mdy2*mdy2)<G.breakerAoE+c.sz*.5){
+      cx.strokeStyle='rgba(255,255,255,.4)';cx.lineWidth=2;
+      cx.strokeRect(-csz/2-2,-csz/2-2,csz+4,csz+4);
+    }
+
+    cx.restore();
+  });
+  creatures=creatures.filter(c=>c.alpha>.03);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BLACK HOLE FEED + TIER
+// ══════════════════════════════════════════════════════════════
+function feedBlackHole(pts){
+  BH.growth+=pts;
+  const tier=BH.tiers[BH.tier];
+  if(BH.growth>=tier.threshold){
+    BH.growth=0;
+    BH.tier=Math.min(BH.tier+1,BH.tiers.length-1);
+    BH.r*=1.35;
+    BH.pullR*=1.2;
+    notify('🕳️ '+BH.tiers[BH.tier].name+'!');
+    burst(BH.x,BH.y,'#a78bfa',40);
+    spawnLightning(BH.x,BH.y,8);
+    addShake(15);
+  }
+  updateBHBar();
+}
+
+function updateBHBar(){
+  const tier=BH.tiers[BH.tier];
+  const pct=tier.threshold===Infinity?100:(BH.growth/tier.threshold)*100;
+  document.getElementById('bh-fill').style.width=Math.min(pct,100)+'%';
+  document.getElementById('bh-label').textContent=
+    `🕳️ BLACK HOLE — ${fmt(BH.growth)} / ${tier.threshold===Infinity?'∞':fmt(tier.threshold)}`;
+  document.getElementById('bh-tier').textContent=
+    `${BH.tiers[BH.tier].name}`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  EFFECTS
+// ══════════════════════════════════════════════════════════════
+function spawnLightning(x,y,n=2){
+  if(!sk('ch1'))return;
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2, len=60+Math.random()*140;
+    const segs=[];let cx2=x,cy2=y;
+    for(let s=0;s<8;s++){
+      const nx=cx2+Math.cos(a+(Math.random()-.5)*.9)*len/8;
+      const ny=cy2+Math.sin(a+(Math.random()-.5)*.9)*len/8;
+      segs.push({x:nx,y:ny});cx2=nx;cy2=ny;
+    }
+    const hue=sk('ch2')?(BH.angle*30+Math.random()*80)%360:55;
+    lightnings.push({segs,life:1,hue,w:1.5+Math.random()*2});
+  }
+}
+function tickLightnings(){
+  cx.save();
+  lightnings.forEach(l=>{
+    l.life-=.1;if(l.life<=0)return;
+    cx.globalAlpha=l.life;
+    cx.strokeStyle=`hsl(${l.hue},100%,70%)`;
+    cx.lineWidth=l.w*(1+l.life*.4);
+    cx.shadowColor=cx.strokeStyle;cx.shadowBlur=10;
+    cx.beginPath();l.segs.forEach((s,i)=>i===0?cx.moveTo(s.x,s.y):cx.lineTo(s.x,s.y));
+    cx.stroke();
+  });
+  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
+  lightnings=lightnings.filter(l=>l.life>0);
+}
+
+function spawnShockwave(x,y,col){shockwaves.push({x,y,r:20,maxR:BH.r+80,life:1,col});}
+function tickShockwaves(){
+  cx.save();
+  shockwaves.forEach(s=>{
+    s.r+=6;s.life-=.055;
+    cx.globalAlpha=s.life*.4;
+    cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    cx.strokeStyle=s.col;cx.lineWidth=2+s.life*2;
+    cx.shadowColor=s.col;cx.shadowBlur=10;cx.stroke();
+  });
+  cx.shadowBlur=0;cx.restore();
+  shockwaves=shockwaves.filter(s=>s.life>0);
+}
+
+function burst(x,y,col,n=8){
+  const cnt=sk('ch4')?n*4:sk('ch3')?n*2:n;
+  for(let i=0;i<cnt;i++){
+    const a=Math.random()*Math.PI*2, sp=1.5+Math.random()*5;
+    const h=sk('ch2')?(BH.angle*30+Math.random()*120)%360:null;
+    particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
+      r:2+Math.random()*4,alpha:1,
+      color:h?`hsl(${h},100%,62%)`:col,grav:.04});
+  }
+}
+function tickParticles(){
+  cx.save();
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.vy+=p.grav;
+    p.alpha-=.022;p.r*=.97;
+    cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    cx.fillStyle=p.color;cx.globalAlpha=p.alpha;
+    if(sk('ch2')){cx.shadowColor=p.color;cx.shadowBlur=5;}
+    cx.fill();
+  });
+  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
+  particles=particles.filter(p=>p.alpha>.03);
+}
+
+function addShake(pw){if(!sk('ch3'))return;shake.power=Math.min(shake.power+pw,18);}
+function applyShake(){
+  if(shake.power<.2){shake.x=shake.y=0;return;}
+  shake.x=(Math.random()-.5)*shake.power*2;
+  shake.y=(Math.random()-.5)*shake.power*2;
+  shake.power*=.8;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  COMBO
+// ══════════════════════════════════════════════════════════════
+function addCombo(){
+  G.comboCount++;
+  G.comboExpiry=Date.now()+2200;
+  G.combo=Math.min(1+Math.floor(G.comboCount/3),15);
+  document.getElementById('h-combo').textContent='×'+G.combo;
+  if(G.comboCount>1){
+    const el=document.getElementById('combo-pop');
+    el.style.color=sk('ch2')?`hsl(${(BH.angle*30)%360},100%,65%)`:'#fbbf24';
+    el.innerHTML=`🔥 COMBO ×${G.combo}!`;
+    el.classList.add('show');clearTimeout(el._t);
+    el._t=setTimeout(()=>el.classList.remove('show'),700);
+  }
+}
+function tickCombo(){
+  if(G.comboCount>0&&Date.now()>G.comboExpiry){
+    G.comboCount=0;G.combo=1;
+    document.getElementById('h-combo').textContent='×1';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLOAT TEXT + NOTIFY
+// ══════════════════════════════════════════════════════════════
+function floatText(x,y,txt,col='#fbbf24'){
+  const el=document.createElement('div');
+  el.className='ft';el.textContent=txt;
+  el.style.cssText=`left:${x}px;top:${y}px;color:${col};text-shadow:0 0 6px ${col};`;
+  document.getElementById('ui').appendChild(el);
+  setTimeout(()=>el.remove(),830);
+}
+
+function notify(msg){
+  const el=document.getElementById('notif');
+  el.textContent='★ '+msg;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SESSION SYSTEM
+// ══════════════════════════════════════════════════════════════
+window.startSession=function(){
+  document.getElementById('upgrade-overlay').classList.remove('show');
+  G.session++;
+  G.sessionTime=45+G.sessionTimeBonus+(BH.tier*5);
+  G.timeLeft=G.sessionTime;
+  G.active=true;
+  creatures=[];
+  document.getElementById('h-session').textContent=G.session;
+  document.getElementById('timer-wrap').style.display='block';
+};
+
+function endSession(){
+  G.active=false;
+  document.getElementById('timer-wrap').style.display='none';
+  // Show upgrade screen
+  showUpgrades();
+}
+
+function showUpgrades(){
+  const overlay=document.getElementById('upgrade-overlay');
+  overlay.classList.add('show');
+  document.getElementById('upg-currency').textContent=`💎 Matter: ${fmt(G.matter)}`;
+  buildUpgradeGrid();
+}
+
+function buildUpgradeGrid(){
+  const grid=document.getElementById('upg-grid');
+  grid.innerHTML='';
+  const cats={breaker:'⚔️ BREAKER',crit:'🎯 CRITICAL',spawn:'🌊 SPAWN',time:'⏱️ TIME',grav:'🌀 GRAVITY',matter:'💎 MATTER',chaos:'⚡ CHAOS'};
+  const catOrder=['breaker','crit','spawn','time','grav','matter','chaos'];
+
+  catOrder.forEach(cat=>{
+    const catUpgs=UPGRADES.filter(u=>u.cat===cat);
+    if(!catUpgs.length)return;
+
+    // Section header
+    const header=document.createElement('div');
+    header.style.cssText='grid-column:1/-1;font-family:"Press Start 2P",monospace;font-size:8px;color:#0ff;padding:8px 0 2px;border-bottom:1px solid rgba(0,220,255,.2);margin-bottom:2px;';
+    header.textContent=cats[cat];
+    grid.appendChild(header);
+
+    catUpgs.forEach(upg=>{
+      const req=upg.req?UP[upg.req]:null;
+      const locked=req&&req.level===0;
+      const maxed=upg.level>=upg.max;
+      const cost=upg.costFn(upg.level);
+      const canAfford=G.matter>=cost;
+
+      const card=document.createElement('div');
+      card.className='upg-card'+(maxed?' maxed':locked?' locked':'');
+      card.innerHTML=`
+        <span class="uc-icon">${upg.icon}</span>
+        <span class="uc-name">${upg.name}</span>
+        <span class="uc-level">${maxed?'MAX':upg.level+'/'+upg.max}</span>
+        <span class="uc-desc">${upg.desc}${req&&req.level===0?'<br>⚠ Requires: '+req.name:''}</span>
+        <span class="uc-cost">${maxed?'✅ MAXED':locked?'🔒 LOCKED':'💎 '+fmt(cost)+(canAfford?'':' ❌')}</span>
+      `;
+      if(!maxed&&!locked){
+        card.addEventListener('click',()=>{
+          const c2=upg.costFn(upg.level);
+          if(G.matter<c2)return;
+          G.matter-=c2;
+          upg.level++;
+          upg.fn();
+          notify(upg.name+' upgraded! ('+upg.level+'/'+upg.max+')');
+          burst(W/2,H/2,'#0ff',15);
+          buildUpgradeGrid();
+          document.getElementById('upg-currency').textContent=`💎 Matter: ${fmt(G.matter)}`;
+        });
+      }
+      grid.appendChild(card);
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HUD UPDATE
+// ══════════════════════════════════════════════════════════════
+function fmt(n){
+  if(n>=1e9)return(n/1e9).toFixed(1)+'B';
+  if(n>=1e6)return(n/1e6).toFixed(1)+'M';
+  if(n>=1e3)return(n/1e3).toFixed(1)+'K';
+  return Math.floor(n)+'';
+}
+
+let hudT=0;
+function updateHUD(ts,dt){
+  if(G.active){
+    G.timeLeft=Math.max(0,G.timeLeft-dt);
+    if(G.timeLeft===0){endSession();}
+    const pct=G.timeLeft/G.sessionTime;
+    const fill=document.getElementById('tbar');
+    fill.style.width=(pct*100)+'%';
+    const r2=pct<.4?255:Math.floor((1-pct)*430);
+    const g2=pct>.4?255:Math.floor(pct*640);
+    fill.style.background=`linear-gradient(90deg,rgb(${r2},${g2},0),rgb(${Math.min(r2+30,255)},${Math.min(g2+30,255)},40))`;
+    document.getElementById('timer-label').textContent=
+      `SESSION ${G.session}  ·  ⏱ ${Math.ceil(G.timeLeft)}s`;
+  }
+
+  if(ts-hudT<200)return;
+  hudT=ts;
+  document.getElementById('h-matter').textContent=fmt(G.matter);
+  document.getElementById('h-eaten').textContent=fmt(G.eaten);
+  document.getElementById('h-dmg').textContent=fmt(G.breakerDmg);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MAIN LOOP
+// ══════════════════════════════════════════════════════════════
+let lastT=0;
+function loop(ts){
+  const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;
+
+  applyShake();
+  cx.save();cx.translate(shake.x,shake.y);
+  cx.clearRect(-20,-20,W+40,H+40);
+
+  drawOcean();
+
+  // Spawn
+  spawnTimer+=dt*1000;
+  const spawnInterval=Math.max(300,1000-G.session*40);
+  if(spawnTimer>spawnInterval&&G.active){spawnCreature();spawnTimer=0;}
+
+  tickShockwaves();
+  tickParticles();
+  if(G.active||creatures.length>0)tickCreatures(dt);
+  tickLightnings();
+  drawBlackHole();
+  if(G.active)drawBreaker();
+  tickCombo();
+  cx.restore();
+  updateHUD(ts,dt);
+  requestAnimationFrame(loop);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INIT — start with upgrade screen (session 0 → pick upgrades)
+// ══════════════════════════════════════════════════════════════
+// Session 1 starts directly
+G.session=0;
+G.active=false;
+document.getElementById('timer-wrap').style.display='block';
+// Kick off first session immediately
+G.session=1;
+G.sessionTime=45+G.sessionTimeBonus;
+G.timeLeft=G.sessionTime;
+G.active=true;
+document.getElementById('h-session').textContent=1;
+updateBHBar();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
