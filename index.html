@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>OCEAN VORTEX</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -13,17 +14,32 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%;}
 
 /* HUD */
 #hud{
-  position:absolute;top:10px;left:50%;transform:translateX(-50%);
-  display:flex;align-items:center;gap:10px;
-  background:rgba(0,0,0,.7);border:2px solid rgba(0,220,255,.3);
-  border-radius:6px;padding:7px 16px;white-space:nowrap;
+  position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:8px;
+  background:rgba(0,0,0,.75);border:2px solid rgba(0,220,255,.3);
+  border-radius:8px;padding:6px 12px;white-space:nowrap;
+  max-width:calc(100vw - 20px);overflow:hidden;
 }
-.ts{text-align:center;min-width:52px;}
-.tl{font-size:5px;color:#0ff;opacity:.55;letter-spacing:1px;}
-.tv{font-size:11px;color:#fff;margin-top:2px;}
-.sep{width:1px;height:24px;background:rgba(0,220,255,.18);}
-#music-btn{pointer-events:all;cursor:pointer;min-width:32px;}
-#music-btn:hover .tv{transform:scale(1.3);}
+.ts{text-align:center;min-width:44px;}
+.tl{font-size:4.5px;color:#0ff;opacity:.55;letter-spacing:1px;}
+.tv{font-size:10px;color:#fff;margin-top:2px;}
+.sep{width:1px;height:22px;background:rgba(0,220,255,.18);flex-shrink:0;}
+#music-btn{pointer-events:all;cursor:pointer;min-width:28px;}
+#music-btn:hover .tv{transform:scale(1.2);}
+@media(max-width:520px){
+  .hud-hide{display:none!important;}
+  .ts{min-width:32px!important;} .tv{font-size:9px!important;} #hud{gap:4px!important;padding:5px 7px!important;}
+  #combo-count{right:8px!important;top:7px!important;}
+  #timer-wrap{top:52px!important;width:85vw!important;}
+  #bh-wrap{width:88vw!important;}
+  .shop-card{min-width:85px!important;padding:8px 6px!important;}
+  .shop-name{font-size:5px!important;} .shop-desc{font-size:9px!important;}
+  .st-node{width:82px!important;padding:8px 6px!important;}
+  .st-name{font-size:5px!important;}
+  #upg-ov{padding:8px 8px 6px!important;}
+  button#upg-start{font-size:7px!important;padding:10px 16px!important;}
+  #reroll-btn{font-size:5px!important;padding:5px 8px!important;}
+}
 
 /* TIMER */
 #timer-wrap{
@@ -59,9 +75,9 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%;}
 
 /* UPGRADE OVERLAY */
 #upg-ov{
-  position:absolute;inset:0;background:rgba(0,0,0,.9);
+  position:absolute;inset:0;background:rgba(0,0,10,.95);
   display:none;flex-direction:column;align-items:center;
-  padding:18px 14px;overflow-y:auto;pointer-events:all;gap:12px;
+  padding:16px 14px 10px;pointer-events:all;gap:0;overflow:hidden;
 }
 #upg-ov.show{display:flex;}
 #upg-title{font-size:14px;color:#0ff;text-align:center;}
@@ -71,6 +87,21 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%;}
   gap:8px;width:100%;max-width:960px;}
 .ug-head{grid-column:1/-1;font-size:7px;color:#0ff;padding:6px 0 2px;
   border-bottom:1px solid rgba(0,220,255,.2);}
+.panel-label{font-family:'Press Start 2P',monospace;font-size:7px;color:rgba(0,220,255,.5);letter-spacing:2px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid rgba(0,220,255,.1);}
+.shop-card{flex:1;min-width:110px;max-width:170px;background:rgba(0,10,30,.8);border:1.5px solid rgba(0,220,255,.15);border-radius:8px;padding:12px 10px;cursor:pointer;transition:all .15s;font-family:'Press Start 2P',monospace;display:flex;flex-direction:column;gap:5px;align-items:center;text-align:center;}
+.shop-card:hover{border-color:rgba(0,220,255,.5);background:rgba(0,30,60,.85);}
+.shop-card.affordable{border-color:rgba(0,220,255,.3);}
+.shop-icon{font-size:22px;}.shop-name{font-size:6px;color:#e2e8f0;letter-spacing:1px;}.shop-desc{font-size:10px;color:rgba(255,255,255,.4);font-family:sans-serif;}.shop-bought{font-size:5px;color:rgba(255,255,255,.2);}.shop-cost{font-size:7px;color:#0ff;margin-top:4px;}.shop-cost.nomat{color:rgba(255,100,100,.7);}
+.st-branch{margin-bottom:18px;}.st-branch-label{font-family:'Press Start 2P',monospace;font-size:6px;color:rgba(167,139,250,.55);letter-spacing:2px;margin-bottom:8px;}
+.st-nodes{display:flex;gap:8px;flex-wrap:wrap;}
+.st-node{width:106px;background:rgba(0,0,20,.65);border:1.5px solid rgba(255,255,255,.07);border-radius:8px;padding:10px 8px;font-family:'Press Start 2P',monospace;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;transition:all .15s;}
+.st-node.locked{opacity:.38;}
+.st-node.unlocked{border-color:rgba(167,139,250,.32);cursor:pointer;}
+.st-node.unlocked:hover{border-color:rgba(167,139,250,.75);background:rgba(30,0,60,.75);}
+.st-node.affordable{border-color:rgba(167,139,250,.55);box-shadow:0 0 12px rgba(167,139,250,.12);}
+.st-node.bought{border-color:rgba(0,220,255,.25);background:rgba(0,25,45,.5);opacity:.65;}
+.st-icon{font-size:20px;}.st-name{font-size:5.5px;color:#e2e8f0;letter-spacing:1px;}.st-desc{font-size:10px;color:rgba(255,255,255,.38);font-family:sans-serif;line-height:1.4;}.st-cost{font-size:6px;color:#a78bfa;margin-top:3px;}.st-cost.nomat{color:rgba(255,100,100,.7);}
+/* UPGRADE CARDS (legacy, hidden) */
 .ug{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.12);
   border-radius:7px;padding:10px 12px;cursor:pointer;pointer-events:all;
   transition:border-color .15s,background .15s,transform .1s;text-align:left;}
@@ -122,12 +153,21 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%;}
   opacity:0;transition:opacity .2s,transform .2s;white-space:nowrap;pointer-events:none;}
 #notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* COMBO */
-#combo-pop{position:absolute;top:43%;left:50%;
-  transform:translate(-50%,-50%) scale(.85);
-  font-size:14px;pointer-events:none;opacity:0;
-  transition:opacity .12s,transform .12s;text-align:center;}
-#combo-pop.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+/* COMBO — top right, persistent + big */
+#combo-pop{
+  position:absolute;top:12px;right:14px;
+  font-size:11px;pointer-events:none;opacity:0;
+  transition:opacity .18s,transform .18s;text-align:right;
+  line-height:1.3;
+}
+#combo-pop.show{opacity:1;}
+#combo-count{
+  position:absolute;top:10px;right:14px;
+  font-family:'Press Start 2P',monospace;
+  font-size:9px;color:rgba(255,255,255,0.15);
+  pointer-events:none;
+  transition:color .3s;
+}
 
 /* ACHIEVEMENT */
 #ach-toast{position:absolute;top:64px;right:12px;
@@ -140,9 +180,13 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%;}
 .at-ds{font-size:8px;color:rgba(255,255,255,.45);display:block;font-family:sans-serif;}
 
 /* FLOAT TXT */
-.ft{position:absolute;pointer-events:none;font-size:10px;
-  animation:ftu .85s ease-out forwards;}
-@keyframes ftu{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-42px);}}
+.ft{position:absolute;pointer-events:none;font-family:'Press Start 2P',monospace;
+  animation:ftu var(--dur,.85s) ease-out forwards;transform-origin:center;font-weight:bold;}
+@keyframes ftu{
+  0%{opacity:1;transform:translateY(0) scale(var(--sc,1));}
+  15%{opacity:1;transform:translateY(-8px) scale(calc(var(--sc,1)*1.12));}
+  100%{opacity:0;transform:translateY(var(--rise,-52px)) scale(calc(var(--sc,1)*0.8));}
+}
 
 /* CHAOS FLASH */
 #chaos-flash{position:absolute;inset:0;pointer-events:none;
@@ -156,18 +200,18 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%;}
 <canvas id="c"></canvas>
 <div id="ui">
   <div id="hud">
-    <div class="ts"><div class="tl">◈ MATTER</div><div class="tv" id="h-matter">0</div></div>
+    <div class="ts"><div class="tl">◈ GOLD</div><div class="tv" id="h-matter" style="color:#fbbf24">0</div></div>
+    <div class="sep"></div>
+    <div class="ts"><div class="tl">✦ XP</div><div class="tv" id="h-xp" style="color:#a78bfa">0</div></div>
     <div class="sep"></div>
     <div class="ts"><div class="tl">⊕ SESSION</div><div class="tv" id="h-sess">1</div></div>
     <div class="sep"></div>
-    <div class="ts"><div class="tl">★ EATEN</div><div class="tv" id="h-eaten">0</div></div>
-    <div class="sep"></div>
-    <div class="ts"><div class="tl">◉ COMBO</div><div class="tv" id="h-combo">×1</div></div>
-    <div class="sep"></div>
-    <div class="ts"><div class="tl">✦ DAMAGE</div><div class="tv" id="h-dmg">10</div></div>
+    <div class="ts"><div class="tl">★ KILLS</div><div class="tv" id="h-eaten">0</div></div>
+    <div class="sep hud-hide"></div>
+    <div class="ts hud-hide"><div class="tl">◈ DPS</div><div class="tv" id="h-dmg">10</div></div>
     <div class="sep"></div>
     <div class="ts" id="music-btn" onclick="toggleMusic()">
-      <div class="tl">⋆ SOUND</div><div class="tv" id="h-mus">♪ OFF</div>
+      <div class="tl">⋆ SFX</div><div class="tv" id="h-mus">♪ OFF</div>
     </div>
   </div>
 
@@ -176,13 +220,14 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%;}
     <div class="tbar-bg"><div class="tbar-f" id="tbar-f" style="width:100%"></div></div>
   </div>
 
-  <div id="bh-tier-label">🕳️ BABY BLACK HOLE</div>
+  <div id="bh-tier-label">⊗ BABY BLACK HOLE</div>
   <div id="bh-wrap">
     <div class="bh-l" id="bh-l">BLACK HOLE — 0 / 500</div>
     <div class="bh-bg"><div class="bh-f" id="bh-f" style="width:0%"></div></div>
   </div>
   <div id="passive-txt">PASSIVE: +0/sec</div>
 
+  <div id="combo-count">×1</div>
   <div id="combo-pop"></div>
   <div id="notif"></div>
   <div id="chaos-flash"></div>
@@ -197,14 +242,36 @@ canvas{display:block;position:absolute;inset:0;width:100%;height:100%;}
 
   <!-- UPGRADE OVERLAY -->
   <div id="upg-ov">
-    <div id="upg-title">◈ UPGRADE PHASE</div>
-    <div id="upg-sub">SESSION COMPLETE  ·  SPEND YOUR MATTER</div>
-    <div id="upg-cash">💎 0</div>
-    <div id="upg-grid"></div>
-    <div id="prestige-btn-wrap">
-      <button id="prs-btn" onclick="openPrestige()">🌌 PRESTIGE (need tier 3+)</button>
+    <div style="width:100%;max-width:960px;flex-shrink:0;padding-bottom:10px;border-bottom:1px solid rgba(0,220,255,.1);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:10px"><div id="upg-title">◈ SESSION COMPLETE</div><button onclick="showLeaderboard()" style="font-family:'Press Start 2P',monospace;font-size:5px;padding:5px 8px;border:1px solid rgba(251,191,36,0.35);color:#fbbf24;background:rgba(251,191,36,0.06);border-radius:4px;cursor:pointer;pointer-events:all;white-space:nowrap">★ SCORES</button></div>
+        <div style="display:flex;gap:14px;align-items:center;">
+          <div style="text-align:right;">
+            <div style="font-size:5px;color:rgba(251,191,36,.5);letter-spacing:1px;">GOLD</div>
+            <div id="upg-gold" style="font-family:'Press Start 2P',monospace;font-size:9px;color:#fbbf24;">◈ 0</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:5px;color:rgba(167,139,250,.5);letter-spacing:1px;">XP</div>
+            <div id="upg-xp" style="font-family:'Press Start 2P',monospace;font-size:9px;color:#a78bfa;">✦ 0 XP</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <button id="upg-start" onclick="startSession()">⊕ START SESSION</button>
+    <div id="upg-scroll" style="flex:1;overflow-y:auto;width:100%;max-width:960px;padding-right:4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;margin-bottom:10px;">
+        <div class="panel-label" style="margin:0">★ SHOP <span style="opacity:.35;font-size:5px;font-family:sans-serif">· 3 offers, buy with GOLD</span></div>
+<span id="reroll-cost-txt" style="font-size:5px;color:rgba(167,139,250,.55);font-family:'Press Start 2P',monospace;"></span>
+        <button id="reroll-btn" onclick="doReroll()" style="font-family:'Press Start 2P',monospace;font-size:6px;padding:6px 12px;border:1.5px solid rgba(167,139,250,.4);color:#a78bfa;background:rgba(167,139,250,.08);border-radius:5px;cursor:pointer;pointer-events:all;white-space:nowrap;transition:all .15s">◈ RE-ROLL</button>
+      </div>
+      <div id="shop-container" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;"></div>
+      <div class="panel-label">✦ SKILL TREE <span style="opacity:.35;font-size:5px;font-family:sans-serif">· buy with XP · unlock by kills &amp; BH tier</span></div>
+      <div id="skill-tree-container"></div>
+      <div id="upg-grid" style="display:none"></div>
+    </div>
+    <div style="display:flex;gap:10px;padding-top:10px;flex-shrink:0;justify-content:center;flex-wrap:wrap;">
+      <button id="upg-start" onclick="startSession()">⊕ START SESSION</button>
+      <div id="prestige-btn-wrap"><button id="prs-btn" onclick="openPrestige()">⊗ PRESTIGE</button></div>
+    </div>
   </div>
 
   <!-- PRESTIGE OVERLAY -->
@@ -232,8 +299,26 @@ window.addEventListener('resize', () => {
   W = cv.width = innerWidth; H = cv.height = innerHeight;
 });
 
-const mouse = { x: -999, y: -999 };
-window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+const mouse = { x: -999, y: -999, active: false };
+window.addEventListener('mousemove', e => {
+  mouse.x = e.clientX * (W / window.innerWidth);
+  mouse.y = e.clientY * (H / window.innerHeight);
+  mouse.active = true;
+});
+window.addEventListener('mouseleave', () => mouse.active = false);
+// Touch support — enable playing on mobile
+window.addEventListener('touchstart', e => {
+  e.preventDefault();
+  mouse.x = e.touches[0].clientX * (W / window.innerWidth);
+  mouse.y = e.touches[0].clientY * (H / window.innerHeight);
+  mouse.active = true;
+}, {passive: false});
+window.addEventListener('touchmove', e => {
+  e.preventDefault();
+  mouse.x = e.touches[0].clientX * (W / window.innerWidth);
+  mouse.y = e.touches[0].clientY * (H / window.innerHeight);
+}, {passive: false});
+window.addEventListener('touchend', () => { mouse.active = false; }, {passive: false});
 window.addEventListener('mouseleave', () => { mouse.x = -999; mouse.y = -999; });
 window.addEventListener('touchmove', e => {
   e.preventDefault(); mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY;
@@ -303,49 +388,49 @@ const BH = {
 //  GAME STATE
 // ═══════════════════════════════════════════════════
 const G = {
-  matter: 0, totalMatter: 0,
+  // ── Two currencies ──────────────────────
+  gold: 0,         // GOLD: from kills → spend in SHOP
+  totalGold: 0,
+  xp: 0,           // XP: from combo/score → spend in SKILL TREE + reroll
+  totalXp: 0,
+  // legacy alias (some functions still use matter)
+  get matter(){ return this.gold; }, set matter(v){ this.gold=v; this.totalGold=Math.max(this.totalGold,v); },
+  get totalMatter(){ return this.totalGold; }, set totalMatter(v){ this.totalGold=v; },
+  // ── Session ──────────────────────────────
   session: 1, eaten: 0, eatenTypes: {},
   combo: 1, comboCount: 0, comboExpiry: 0,
-  // Upgradeable stats
-  dmg: 10,         // damage per second
-  aoe: 65,         // hover radius
-  speed: 1,        // damage tick speed mult
-  critChance: 0,   // %
-  critMult: 2,
-  spawnRings: 1,   // number of orbit rings
-  sessionBonus: 0, // extra seconds
-  gravMult: 1,
-  matterMult: 1,
-  autoDPS: 0,
-  // Balatro-style scoring
-  chips: 0,    // base score this session
-  mult: 1,     // current multiplier
-  multCards: [], // active multiplier cards
-  sessionKills: {}, // kills per type this session
+  // ── Stats ────────────────────────────────
+  dmg: 10, aoe: 65, speed: 1,
+  critChance: 0, critMult: 2,
+  spawnRings: 1, sessionBonus: 0,
+  gravMult: 1, goldMult: 1, autoDPS: 0,
+  // ── Session scoring ──────────────────────
+  chips: 0, sessionKills: {},
   timeLeft: 20, sessionTime: 20,
   active: false,
-  clickers: {},
-  // Prestige permanents
+  // ── Prestige permanents ──────────────────
   pCount: 0,
-  pMatterMult: 1,
+  pGoldMult: 1,   // was pMatterMult
   pDmgMult: 1,
   pPassiveMult: 1,
   pTimeBonus: 0,
+  // ── Reroll tracking ──────────────────────
+  rerollsThisSession: 0,
 };
 
 // ═══════════════════════════════════════════════════
 //  CREATURE TYPES
 // ═══════════════════════════════════════════════════
 const CT = {
-  fish:     { sprite:'fish',     pts:1,    hp:35,   spd:0.8,  col:['#5eead4','#0f766e'], sz:0.9,  enabled:true,  w:6 },
-  crab:     { sprite:'crab',     pts:3,    hp:90,   spd:0.55, col:['#fb923c','#9a3412'], sz:0.95, enabled:true,  w:4 },
-  jellyfish:{ sprite:'jellyfish',pts:6,    hp:70,   spd:0.5,  col:['#f0abfc','#86198f'], sz:0.9,  enabled:false, w:3 },
-  squid:    { sprite:'squid',    pts:10,   hp:160,  spd:1.3,  col:['#818cf8','#3730a3'], sz:1.0,  enabled:false, w:3 },
-  turtle:   { sprite:'turtle',   pts:14,   hp:320,  spd:0.4,  col:['#86efac','#14532d'], sz:1.05, enabled:false, w:2 },
-  octopus:  { sprite:'octopus',  pts:28,   hp:550,  spd:0.7,  col:['#f87171','#7f1d1d'], sz:1.15, enabled:false, w:2 },
-  shark:    { sprite:'shark',    pts:75,   hp:1200, spd:1.7,  col:['#93c5fd','#1e3a8a'], sz:1.35, enabled:false, w:1 },
-  whale:    { sprite:'whale',    pts:300,  hp:5000, spd:0.35, col:['#a5f3fc','#164e63'], sz:1.85, enabled:false, w:1 },
-  kraken:   { sprite:'kraken',   pts:1800, hp:15000,spd:0.9,  col:['#f472b6','#831843'], sz:2.5,  enabled:false, w:1 },
+  fish:     { sprite:'fish',     pts:1,    hp:22,   spd:0.9,  col:['#5eead4','#0f766e'], sz:0.9,  enabled:true,  w:7 },
+  crab:     { sprite:'crab',     pts:5,    hp:70,   spd:0.55, col:['#fb923c','#9a3412'], sz:0.95, enabled:true,  w:5 },
+  jellyfish:{ sprite:'jellyfish',pts:18,   hp:65,   spd:0.5,  col:['#f0abfc','#86198f'], sz:0.9,  enabled:false, w:4 },
+  squid:    { sprite:'squid',    pts:35,   hp:140,  spd:1.3,  col:['#818cf8','#3730a3'], sz:1.0,  enabled:false, w:3 },
+  turtle:   { sprite:'turtle',   pts:60,   hp:280,  spd:0.4,  col:['#86efac','#14532d'], sz:1.05, enabled:false, w:3 },
+  octopus:  { sprite:'octopus',  pts:120,  hp:480,  spd:0.7,  col:['#f87171','#7f1d1d'], sz:1.15, enabled:false, w:2 },
+  shark:    { sprite:'shark',    pts:400,  hp:1000, spd:1.7,  col:['#93c5fd','#1e3a8a'], sz:1.35, enabled:false, w:1 },
+  whale:    { sprite:'whale',    pts:2000, hp:4200, spd:0.35, col:['#a5f3fc','#164e63'], sz:1.85, enabled:false, w:1 },
+  kraken:   { sprite:'kraken',   pts:12000,hp:12000,spd:0.9,  col:['#f472b6','#831843'], sz:2.5,  enabled:false, w:1 },
 };
 
 // ═══════════════════════════════════════════════════
@@ -369,6 +454,7 @@ const MAX_PARTICLES = 120, MAX_LIGHTNING = 18, MAX_SHOCKWAVE = 12, MAX_PULSE = 1
 let shake = { x: 0, y: 0, power: 0 };
 let chaosLevel = 0;
 let spawnTimer = 0;
+let _breakerR = 0, _breakerA = 0; // smooth AoE circle interpolation
 
 function getOrbitR(ring) {
   const base = Math.min(W, H) * 0.5;
@@ -405,7 +491,7 @@ function spawnCreature() {
   const cx2 = W / 2 + Math.cos(oAngle) * oR;
   const cy2 = H / 2 + Math.sin(oAngle) * oR;
 
-  const sessionScale = 1 + G.session * 0.35;  // HP grows fast each session
+  const sessionScale = 1 + G.session * 0.45;  // steep — late sessions need high combo
   creatures.push({
     type, sprite: cfg.sprite,
     col1: cfg.col[0], col2: cfg.col[1],
@@ -553,7 +639,7 @@ function tickCreatures(dt) {
   const cx2 = W / 2, cy2 = H / 2;
   const aoe = G.aoe;
   // Damage is INFINITE SCALING: base * session multiplier * prestige
-  const dmgTick = G.dmg * G.speed * dt * (1 + G.session * 0.12) * G.pDmgMult;
+  const dmgTick = G.dmg * G.speed * dt * G.pDmgMult * 4.5;
 
   creatures.forEach(c => {
     if (c.dying) {
@@ -634,7 +720,7 @@ function tickCreatures(dt) {
     const jellyOpen = c.behavior !== 'jellyfish' || c.pulseMod > 0.82;
     const inkBlocked = inkClouds.length > 0 && inkClouds.some(ink => Math.hypot(mouse.x - ink.x, mouse.y - ink.y) < ink.r * 0.9 && ink.life > 0.3);
 
-    if (!inkBlocked && jellyOpen && distM < aoe + c.sz * 0.5) {
+    if (mouse.active && !inkBlocked && jellyOpen && distM < aoe + c.sz * 0.5) {
       const dmgMult = Math.max(0.3, 1 - distM / (aoe + c.sz * 0.5));
       let dmg = dmgTick * dmgMult * 3.5;
       if (Math.random() * 100 < G.critChance) {
@@ -657,26 +743,33 @@ function tickCreatures(dt) {
     // ── DEATH
     if (c.hp <= 0) {
       c.dying = true;
-      // Balatro scoring: chips accumulate, mult applies at session end
-      const baseChips = Math.ceil(c.pts * G.matterMult * G.pMatterMult);
-      const comboChips = Math.ceil(baseChips * G.combo);
-      G.chips += comboChips;
-      G.matter += comboChips; G.totalMatter += comboChips; G.eaten++;
+      // Gold from kill (base reward, goes to shop currency)
+      const baseGold = Math.ceil(c.pts * G.goldMult * G.pGoldMult);
+      // Combo multiplier applies — high combo = huge gold
+      const comboGold = Math.ceil(baseGold * G.combo);
+      G.chips += comboGold;   // chips = session score
+      G.gold += comboGold; G.totalGold += comboGold; G.eaten++;
       G.eatenTypes[c.type] = (G.eatenTypes[c.type] || 0) + 1;
       G.sessionKills[c.type] = (G.sessionKills[c.type] || 0) + 1;
-      const pts = comboChips;
-      feedBH(c.pts * G.matterMult);
+      KILLS[c.type] = (KILLS[c.type]||0) + 1; // lifetime kill tracker
+      const pts = comboGold;
+      feedBH(c.pts * G.goldMult);
       addCombo();
-      playSfxEat(c.pts * G.matterMult);
+      playSfxEat(c.pts);
       checkAchievements();
       const hk = Math.floor(Math.random() * 360);
       const col = `hsl(${hk},${80 + chaosLevel * 2}%,${55 + Math.min(chaosLevel, 8)}%)`;
+      epicDeath(c); // epic VFX for big creatures
       burst(c.x, c.y, col, Math.floor(8 + c.sz * 0.06 + chaosLevel * 2.5));
       spawnLightning(c.x, c.y, 2 + Math.floor(chaosLevel * 0.8));
       spawnShockwave(c.x, c.y, col);
       addShake(c.sz * 0.06 + chaosLevel * 0.5);
       if (chaosLevel > 2 && pulseRings.length < MAX_PULSE) pulseRings.push({ x: c.x, y: c.y, r: 5, life: 1, hue: hk, thick: 1.5 });
-      floatText(c.x, c.y - c.sz * 0.5, '+' + fmt(pts), col);
+      // Float: show gold + combo indicator
+      // Float text: scales with combo level
+      const comboTag = G.combo >= 5 ? ` ×${G.combo}` : '';
+      const floatScale = 1 + Math.log2(Math.max(1, G.combo)) * 0.35;
+      floatText(c.x, c.y - c.sz * 0.5, '+' + fmt(comboGold) + comboTag, col, floatScale);
       chaosFlash(`hsla(${hk},80%,60%,0.06)`);
     }
   });
@@ -817,21 +910,80 @@ function drawSuctionTrails() {
 //  BREAKER AoE visual
 // ═══════════════════════════════════════════════════
 function drawBreaker() {
-  if (mouse.x < 0) return;
+  if (mouse.x < -100) return;
   const { x, y } = mouse;
   const aoe = G.aoe;
-  const col = chaosLevel > 2 ? `hsl(${(BH.angle * 28) % 360},100%,62%)` : 'rgba(0,220,255,.7)';
+  const t = Date.now() * 0.003;
+
+  // Check if actually hovering a creature
+  const isHovering = creatures.some(c => !c.dying &&
+    Math.hypot(mouse.x - c.x, mouse.y - c.y) < aoe + c.sz * 0.5);
+
+  // Circle scales: small+dim idle, full size+bright on hover
+  const targetR = isHovering ? aoe : aoe * 0.35;
+  const combo = G.combo;
+
+  // Smooth interpolation (store on drawBreaker itself)
+  if (!_breakerR) _breakerR = targetR;
+  _breakerR += (targetR - _breakerR) * 0.18;
+  const r = _breakerR;
+
+  // Opacity: almost invisible idle, fully visible on hover
+  const baseAlpha = isHovering ? 1.0 : 0.0;
+  _breakerA += (baseAlpha - _breakerA) * 0.14;
+  const alpha = _breakerA;
+
+  if (alpha < 0.02) return;
+
+  // Color: cyan idle, combo-colored on hover
+  const hue = !isHovering ? 190 :
+    combo < 5 ? 190 : combo < 15 ? 55 : combo < 30 ? 30 : combo < 60 ? 10 : 280;
+  const sat = (isHovering && combo > 1) ? 100 : 80;
+  const colBase = `hsl(${hue},${sat}%,65%)`;
+  const colGlow = `hsla(${hue},${sat}%,65%,`;
+
   cx.save();
-  cx.beginPath(); cx.arc(x, y, aoe, 0, Math.PI * 2);
-  cx.strokeStyle = col; cx.lineWidth = 1.5; cx.globalAlpha = 0.35;
-  cx.setLineDash([4, 8]); cx.stroke(); cx.setLineDash([]);
-  const bg = cx.createRadialGradient(x, y, 0, x, y, aoe);
-  bg.addColorStop(0, 'rgba(0,220,255,.07)'); bg.addColorStop(1, 'rgba(0,220,255,0)');
-  cx.fillStyle = bg; cx.globalAlpha = 1; cx.fill();
-  // Crosshair
-  cx.strokeStyle = col; cx.lineWidth = 2; cx.globalAlpha = 0.6;
-  [[x-13,y,x-4,y],[x+4,y,x+13,y],[x,y-13,x,y-4],[x,y+4,x,y+13]]
-    .forEach(([x1,y1,x2,y2]) => { cx.beginPath(); cx.moveTo(x1,y1); cx.lineTo(x2,y2); cx.stroke(); });
+
+  // Outer ring — solid, bright when hovering
+  cx.beginPath(); cx.arc(x, y, r, 0, Math.PI * 2);
+  cx.strokeStyle = colBase;
+  cx.lineWidth = isHovering ? Math.min(2 + combo * 0.07, 5) : 1.5;
+  cx.globalAlpha = alpha * (0.7 + Math.sin(t * 3) * 0.08);
+  cx.stroke();
+
+  // Spinning dashed inner ring — only when hovering
+  if (isHovering) {
+    const dashOff = (t * 38) % 22;
+    cx.beginPath(); cx.arc(x, y, r * 0.8, 0, Math.PI * 2);
+    cx.strokeStyle = colBase; cx.lineWidth = 1.2; cx.globalAlpha = alpha * 0.38;
+    cx.setLineDash([5, 9]); cx.lineDashOffset = -dashOff;
+    cx.stroke(); cx.setLineDash([]); cx.lineDashOffset = 0;
+  }
+
+  // Radial fill — subtle always, prominent on hover
+  const fillA = isHovering
+    ? (0.05 + Math.min(combo * 0.005, 0.13))
+    : 0.02;
+  const bg = cx.createRadialGradient(x, y, 0, x, y, r);
+  bg.addColorStop(0, colGlow + fillA * 2 + ')');
+  bg.addColorStop(0.6, colGlow + fillA + ')');
+  bg.addColorStop(1, colGlow + '0)');
+  cx.fillStyle = bg; cx.globalAlpha = alpha; cx.fill();
+
+  // Center dot — always visible as cursor indicator, scales up on hover
+  cx.globalAlpha = isHovering ? alpha * 0.85 : 0.4;
+  cx.fillStyle = colBase;
+  cx.beginPath(); cx.arc(x, y, isHovering ? 3 : 2, 0, Math.PI * 2); cx.fill();
+
+  // Crosshair arms — only on hover
+  if (isHovering) {
+    cx.strokeStyle = colBase; cx.lineWidth = 1.8; cx.globalAlpha = alpha * 0.55;
+    const arm = 8 + Math.min(combo * 0.3, 14);
+    const gap = 4;
+    [[x-arm-gap,y,x-gap,y],[x+gap,y,x+arm+gap,y],[x,y-arm-gap,x,y-gap],[x,y+gap,x,y+arm+gap]]
+      .forEach(([x1,y1,x2,y2])=>{ cx.beginPath(); cx.moveTo(x1,y1); cx.lineTo(x2,y2); cx.stroke(); });
+  }
+
   cx.restore();
 }
 
@@ -858,7 +1010,7 @@ function updateBHBar() {
   const cap = BH.tiers[BH.tier].cap;
   const pct = cap === Infinity ? 100 : (BH.growth / cap) * 100;
   document.getElementById('bh-f').style.width = Math.min(pct, 100) + '%';
-  document.getElementById('bh-l').textContent = `🕳️ ${fmt(BH.growth)} / ${cap === Infinity ? '∞' : fmt(cap)}`;
+  document.getElementById('bh-l').textContent = `⊗ ${fmt(BH.growth)} / ${cap === Infinity ? '∞' : fmt(cap)}`;
   document.getElementById('bh-tier-label').textContent = BH.tiers[BH.tier].name;
 }
 
@@ -866,7 +1018,7 @@ function updateBHBar() {
 //  BH PASSIVE INCOME
 // ═══════════════════════════════════════════════════
 function getPassive() {
-  return BH.tier * BH.tier * 2.5 * G.pPassiveMult * (1 + G.session * 0.04);
+  return BH.tier * BH.tier * 1.5 * G.pPassiveMult; // fixed rate, not session-scaled
 }
 function tickPassive(dt) {
   const p = getPassive();
@@ -874,7 +1026,7 @@ function tickPassive(dt) {
   const e = p * dt;
   G.matter += e; G.totalMatter += e;
   feedBH(e * 0.08);
-  document.getElementById('passive-txt').textContent = `🕳️ PASSIVE: +${fmt(p)}/sec`;
+  document.getElementById('passive-txt').textContent = `⊙ PASSIVE: +${fmt(p)}/sec`;
 }
 
 // ═══════════════════════════════════════════════════
@@ -1049,35 +1201,64 @@ function chaosFlash(col = 'rgba(255,255,255,.06)') {
 // ═══════════════════════════════════════════════════
 function addCombo() {
   G.comboCount++;
-  G.comboExpiry = Date.now() + 2300;
-  G.combo = Math.min(1 + Math.floor(G.comboCount / 3), 20);
-  document.getElementById('h-combo').textContent = '×' + G.combo;
+  G.comboExpiry = Date.now() + 1800; // tighter window — must keep killing
+  G.combo = Math.min(1 + Math.floor(G.comboCount / 5), 99); // 5 kills per step, max 99
+  // h-combo is hidden — combo shown in top-right #combo-count
   sfxComboNote(G.combo);
+  // Persistent combo display — top right
+  const cc = document.getElementById('combo-count');
+  if (cc) {
+    // Color: low=white, mid=yellow, high=orange→red→purple at 50+
+    const hue = G.combo < 10 ? 60 : G.combo < 30 ? 35 : G.combo < 60 ? 15 : 280;
+    const sat = G.combo > 1 ? 100 : 0;
+    const lit = G.combo > 1 ? 65 : 30;
+    cc.style.color = `hsl(${hue},${sat}%,${lit}%)`;
+    // Font scales dramatically: ×1=10px, ×10=19px, ×30=28px, ×99=44px
+    const szPx = Math.min(10 + Math.pow(G.combo, 0.72) * 2.8, 48);
+    cc.style.fontSize = szPx + 'px';
+    cc.textContent = G.combo > 1 ? `×${G.combo}` : '×1';
+    cc.style.textShadow = G.combo > 5 ? `0 0 ${Math.min(G.combo,30)}px hsl(${hue},100%,55%), 0 0 ${Math.min(G.combo*2,60)}px hsl(${hue},100%,35%)` : 'none';
+    cc.style.transform = G.combo > 1 ? `scale(${1 + Math.sin(Date.now()*0.015)*0.04})` : '';
+  }
   if (G.comboCount > 1) {
     const el = document.getElementById('combo-pop');
-    el.style.color = chaosLevel > 2 ? `hsl(${(BH.angle*28)%360},100%,65%)` : '#fbbf24';
-    el.innerHTML = `🔥 COMBO ×${G.combo}!`;
+    const hue2 = G.combo < 10 ? 60 : G.combo < 30 ? 35 : G.combo < 60 ? 15 : 280;
+    el.style.color = `hsl(${hue2},100%,65%)`;
+    el.style.textShadow = `0 0 12px hsl(${hue2},100%,55%)`;
+    const popSz = Math.min(11 + Math.pow(G.combo, 0.65) * 2.5, 38);
+    el.style.fontSize = popSz + 'px';
+    el.innerHTML = G.combo >= 50 ? `★ ×${G.combo}<br><span style="font-size:55%">LEGENDARY</span>` : G.combo >= 20 ? `◈ ×${G.combo}<br><span style="font-size:55%">INSANE</span>` : G.combo >= 10 ? `✦ ×${G.combo} SICK` : `✦ ×${G.combo}`;
     el.classList.add('show'); clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove('show'), 700);
+    el._t = setTimeout(() => el.classList.remove('show'), Math.min(350 + G.combo * 25, 1400));
+    // Shake on milestone combos
+    if (G.combo % 5 === 0) addShake(Math.min(G.combo * 0.35, 18));
+    if (G.combo % 10 === 0) { burst(W/2,H/2,`hsl(${hue2},100%,65%)`, Math.floor(G.combo * 0.4)); }
   }
 }
 function tickCombo() {
   if (G.comboCount > 0 && Date.now() > G.comboExpiry) {
     G.comboCount = 0; G.combo = 1;
-    document.getElementById('h-combo').textContent = '×1';
-    comboNoteIdx = 0;
+    // combo-count reset handled below
+    comboPitch = N ? N.C4 : 261.6; comboNoteIdx = 0;
+    const cc2=document.getElementById('combo-count'); if(cc2){cc2.textContent='×1';cc2.style.color='rgba(255,255,255,0.15)';cc2.style.textShadow='none';cc2.style.fontSize='9px';}
   }
 }
 
 // ═══════════════════════════════════════════════════
 //  FLOAT TEXT + NOTIFY
 // ═══════════════════════════════════════════════════
-function floatText(x, y, txt, col = '#fbbf24') {
+function floatText(x, y, txt, col = '#fbbf24', combo = 1) {
   const el = document.createElement('div');
   el.className = 'ft'; el.textContent = txt;
-  el.style.cssText = `left:${x}px;top:${y}px;color:${col};text-shadow:0 0 6px ${col};`;
+  const sc = Math.min(1 + (combo-1) * 0.1, 3.2);
+  const dur = Math.min(0.75 + combo * 0.018, 1.8);
+  const rise = -(45 + combo * 2.5);
+  const fs = Math.min(9 + combo * 0.55, 30);
+  el.style.cssText = `left:${x - txt.length*fs*0.32}px;top:${y}px;color:${col};` +
+    `font-size:${fs}px;text-shadow:0 0 ${7+combo*0.5}px ${col};` +
+    `--sc:${sc.toFixed(2)};--dur:${dur.toFixed(2)}s;--rise:${rise}px;`;
   document.getElementById('ui').appendChild(el);
-  setTimeout(() => el.remove(), 850);
+  setTimeout(() => el.remove(), dur * 1000 + 100);
 }
 function notify(msg) {
   const el = document.getElementById('notif');
@@ -1086,97 +1267,401 @@ function notify(msg) {
 }
 
 // ═══════════════════════════════════════════════════
-//  UPGRADES
+//  SKILL TREE + SHOP SYSTEM
+//  Philosophy: Balatro feel — few meaningful choices per session
+//  
+//  SHOP: 3 offers shown each session end, player buys 0-3
+//  SKILL TREE: nodes unlocked by kill milestones + BH tier
+//  All prices in one currency: Matter
 // ═══════════════════════════════════════════════════
-const UPGRADES = [
-  // BREAKER (infinite scaling)
-  {id:'d1',cat:'breaker',icon:'✦',name:'SHARPER',   desc:'Damage +10 (stacks forever)',  base:10,  max:999,level:0,costFn:l=>Math.floor(20*Math.pow(1.25,l)),  fn:()=>{G.dmg+=10;}},
-  {id:'d2',cat:'breaker',icon:'⊛',name:'POWER×',    desc:'Damage ×1.6',                 base:1,   max:30, level:0,costFn:l=>Math.floor(180*Math.pow(1.9,l)),   fn:()=>{G.dmg*=1.6;},req:'d1'},
-  {id:'d3',cat:'breaker',icon:'◈',name:'INFERNO',   desc:'Damage ×3',                   base:1,   max:15, level:0,costFn:l=>Math.floor(1800*Math.pow(2.8,l)),  fn:()=>{G.dmg*=3;},req:'d2'},
-  {id:'d4',cat:'breaker',icon:'⊗',name:'VOID DMG',  desc:'Damage ×10',                  base:1,   max:10, level:0,costFn:l=>Math.floor(20000*Math.pow(4,l)),   fn:()=>{G.dmg*=10;},req:'d3'},
-  {id:'a1',cat:'breaker',icon:'⊕',name:'WIDER',     desc:'AoE radius +20',              base:20,  max:999,level:0,costFn:l=>Math.floor(25*Math.pow(1.3,l)),   fn:()=>{G.aoe+=20;}},
-  {id:'a2',cat:'breaker',icon:'◉',name:'VORTEX',    desc:'AoE ×2',                      base:1,   max:8,  level:0,costFn:l=>Math.floor(400*Math.pow(2.2,l)),   fn:()=>{G.aoe*=2;},req:'a1'},
-  {id:'s1',cat:'breaker',icon:'⋆',name:'FASTER',    desc:'Tick speed ×1.6',             base:1,   max:8,  level:0,costFn:l=>Math.floor(80*Math.pow(1.6,l)),    fn:()=>{G.speed*=1.6;}},
-  {id:'s2',cat:'breaker',icon:'◈',name:'RAPID',     desc:'Tick speed ×2.5',             base:1,   max:6,  level:0,costFn:l=>Math.floor(600*Math.pow(2.5,l)),   fn:()=>{G.speed*=2.5;},req:'s1'},
-  // CRIT
-  {id:'c1',cat:'crit',icon:'◎',name:'LUCKY',      desc:'Crit chance +6%',             base:6,   max:16, level:0,costFn:l=>Math.floor(60*Math.pow(1.5,l)),    fn:()=>{G.critChance=Math.min(G.critChance+6,95);}},
-  {id:'c2',cat:'crit',icon:'✧',name:'DOUBLE',     desc:'Crit damage ×1.5',            base:1,   max:10, level:0,costFn:l=>Math.floor(150*Math.pow(1.8,l)),   fn:()=>{G.critMult*=1.5;},req:'c1'},
-  // SPAWN
-  {id:'sp1',cat:'spawn',icon:'★',name:'MORE FISH',  desc:'+1 orbit ring (more creatures)',base:1, max:999,level:0,costFn:l=>Math.floor(40*Math.pow(1.5,l)),    fn:()=>{G.spawnRings++;}},
-  {id:'sp2',cat:'spawn',icon:'✦',name:'SQUID',      desc:'Unlock squids',               base:1,  max:1,  level:0,costFn:()=>120,  fn:()=>{CT.squid.enabled=true;},req:'sp1'},
-  {id:'sp3',cat:'spawn',icon:'⊙',name:'JELLYFISH',  desc:'Unlock jellyfish',             base:1, max:1,  level:0,costFn:()=>180,  fn:()=>{CT.jellyfish.enabled=true;},req:'sp1'},
-  {id:'sp4',cat:'spawn',icon:'⊛',name:'OCTOPUS',    desc:'Unlock octopus',              base:1,  max:1,  level:0,costFn:()=>350,  fn:()=>{CT.octopus.enabled=true;},req:'sp2'},
-  {id:'sp5',cat:'spawn',icon:'▲',name:'SHARK',      desc:'Unlock sharks',               base:1,  max:1,  level:0,costFn:()=>900,  fn:()=>{CT.shark.enabled=true;},req:'sp4'},
-  {id:'sp6',cat:'spawn',icon:'◆',name:'TURTLE',     desc:'Unlock turtles',              base:1,  max:1,  level:0,costFn:()=>600,  fn:()=>{CT.turtle.enabled=true;},req:'sp3'},
-  {id:'sp7',cat:'spawn',icon:'◉',name:'WHALE',      desc:'Unlock whales',               base:1,  max:1,  level:0,costFn:()=>2800, fn:()=>{CT.whale.enabled=true;},req:'sp5'},
-  {id:'sp8',cat:'spawn',icon:'⊗',name:'KRAKEN',     desc:'Unlock the Kraken',           base:1,  max:1,  level:0,costFn:()=>18000,fn:()=>{CT.kraken.enabled=true;},req:'sp7'},
-  // TIME
-  {id:'t1',cat:'time',icon:'◷',name:'MORE TIME', desc:'+4s per session',              base:4,  max:99, level:0,costFn:l=>Math.floor(60*Math.pow(1.4,l)),    fn:()=>{G.sessionBonus+=4;}},
-  {id:'t2',cat:'time',icon:'◶',name:'DEEP DIVE', desc:'+10s per session',             base:10, max:20, level:0,costFn:l=>Math.floor(400*Math.pow(1.8,l)),   fn:()=>{G.sessionBonus+=10;},req:'t1'},
-  // GRAVITY
-  {id:'g1',cat:'grav',icon:'◉',name:'PULL+',     desc:'Gravity mult ×1.6',            base:1,  max:10, level:0,costFn:l=>Math.floor(100*Math.pow(1.7,l)),   fn:()=>{G.gravMult*=1.6;}},
-  {id:'g2',cat:'grav',icon:'⊗',name:'PULL ZONE', desc:'Pull radius +50',              base:50, max:8,  level:0,costFn:l=>Math.floor(200*Math.pow(2,l)),    fn:()=>{BH.pullR+=50;},req:'g1'},
-  // MATTER
-  {id:'m1',cat:'matter',icon:'◈',name:'DENSE',   desc:'Matter ×1.4',                  base:1,  max:15, level:0,costFn:l=>Math.floor(70*Math.pow(1.5,l)),    fn:()=>{G.matterMult*=1.4;}},
-  {id:'m2',cat:'matter',icon:'⊕',name:'GOLD',    desc:'Matter ×2.5',                  base:1,  max:8,  level:0,costFn:l=>Math.floor(500*Math.pow(2.2,l)),   fn:()=>{G.matterMult*=2.5;},req:'m1'},
-  // CHAOS
-  {id:'ch1',cat:'chaos',icon:'⋆',name:'LIGHTNING',desc:'Lightning effects',            base:1,  max:1,  level:0,costFn:()=>150, fn:()=>{}},
-  {id:'ch2',cat:'chaos',icon:'✦',name:'RGB CHAOS',desc:'Full color chaos',             base:1,  max:1,  level:0,costFn:()=>600, fn:()=>{},req:'ch1'},
-  {id:'ch3',cat:'chaos',icon:'⊛',name:'SHOCKWAVE',desc:'Big shockwaves',              base:1,  max:1,  level:0,costFn:()=>1500,fn:()=>{},req:'ch2'},
-  {id:'ch4',cat:'chaos',icon:'◌',name:'STORM',   desc:'Particle storm',               base:1,  max:1,  level:0,costFn:()=>4000,fn:()=>{},req:'ch3'},
-  // AUTO CLICKERS
-  {id:'ac1',cat:'auto',icon:'⊙',name:'MINI VORTEX',desc:'Auto +2/sec',               base:1,  max:20, level:0,costFn:l=>Math.floor(90*Math.pow(1.15,l)),   fn:()=>{G.autoDPS+=2;}},
-  {id:'ac2',cat:'auto',icon:'⋆',name:'LIGHTNING', desc:'Auto +8/sec',                 base:1,  max:15, level:0,costFn:l=>Math.floor(350*Math.pow(1.2,l)),   fn:()=>{G.autoDPS+=8;},req:'ac1'},
-  {id:'ac3',cat:'auto',icon:'◈',name:'FIRE JET',  desc:'Auto +25/sec',                base:1,  max:12, level:0,costFn:l=>Math.floor(1200*Math.pow(1.3,l)),  fn:()=>{G.autoDPS+=25;},req:'ac2'},
-  {id:'ac4',cat:'auto',icon:'◇',name:'VOID SHARD',desc:'Auto +200/sec',               base:1,  max:8,  level:0,costFn:l=>Math.floor(8000*Math.pow(1.5,l)),  fn:()=>{G.autoDPS+=200;},req:'ac3'},
+
+// ── Kill milestone tracker (lifetime, survives session resets)
+const KILLS = {}; // {fish:0, crab:0, ...} — total ever killed
+
+// ── SKILL TREE NODES
+// Each node: id, name, icon, desc, effect, cost, 
+//   unlock: { kills:{type:n,...}, tier:n }  — both conditions must be met if specified
+//   req: 'node_id' — must have this node first
+//   bought: false
+const SKILL_NODES = [
+  // ── BRANCH A: VOID MASTERY (unlock: BH tier 1 + 10 fish killed)
+  { id:'vA1', icon:'◉', name:'VOID SENSE',
+    desc:'AoE +40. Feel the pull.',
+    cost:80,
+    unlock:{ kills:{fish:10}, tier:1 },
+    effect:()=>{ G.aoe+=40; }, bought:false },
+  { id:'vA2', icon:'⊕', name:'WIDER MAW',
+    desc:'AoE ×2. Your reach is vast.',
+    cost:350,
+    unlock:{ kills:{fish:50}, tier:1 }, req:'vA1',
+    effect:()=>{ G.aoe*=2; }, bought:false },
+  { id:'vA3', icon:'◌', name:'EVENT HORIZON',
+    desc:'AoE ×3. Nothing escapes.',
+    cost:3000,
+    unlock:{ kills:{fish:200}, tier:3 }, req:'vA2',
+    effect:()=>{ G.aoe*=3; }, bought:false },
+
+  // ── BRANCH B: BREAKER (unlock: BH tier 1 + 5 fish)
+  { id:'vB1', icon:'✦', name:'SHARP EDGE',
+    desc:'Damage +15. Start breaking.',
+    cost:60,
+    unlock:{ kills:{fish:5}, tier:1 },
+    effect:()=>{ G.dmg+=15; }, bought:false },
+  { id:'vB2', icon:'⊛', name:'POWER SURGE',
+    desc:'Damage ×2. Double everything.',
+    cost:400,
+    unlock:{ kills:{fish:30}, tier:1 }, req:'vB1',
+    effect:()=>{ G.dmg*=2; }, bought:false },
+  { id:'vB3', icon:'◈', name:'INFERNO CORE',
+    desc:'Damage ×5. Pure destruction.',
+    cost:4000,
+    unlock:{ kills:{fish:100}, tier:2 }, req:'vB2',
+    effect:()=>{ G.dmg*=5; }, bought:false },
+  { id:'vB4', icon:'⊗', name:'VOID STRIKE',
+    desc:'Damage ×10. Obliteration.',
+    cost:40000,
+    unlock:{ kills:{shark:5}, tier:4 }, req:'vB3',
+    effect:()=>{ G.dmg*=10; }, bought:false },
+
+  // ── BRANCH C: SPEED (unlock: BH tier 1 + 15 fish)
+  { id:'vC1', icon:'⋆', name:'RAPID FIRE',
+    desc:'Attack speed ×2.',
+    cost:200,
+    unlock:{ kills:{fish:15}, tier:1 },
+    effect:()=>{ G.speed*=2; }, bought:false },
+  { id:'vC2', icon:'◷', name:'HYPERSPEED',
+    desc:'Attack speed ×2. Manic.',
+    cost:2500,
+    unlock:{ kills:{squid:10}, tier:2 }, req:'vC1',
+    effect:()=>{ G.speed*=2; }, bought:false },
+
+  // ── BRANCH D: CRIT (unlock: kill 5 crab + tier 1)
+  { id:'vD1', icon:'◎', name:'LUCKY STRIKE',
+    desc:'Crit chance +15%.',
+    cost:120,
+    unlock:{ kills:{crab:5}, tier:1 },
+    effect:()=>{ G.critChance=Math.min(G.critChance+15,90); }, bought:false },
+  { id:'vD2', icon:'✧', name:'CRIT AMPLIFY',
+    desc:'Crit damage ×3.',
+    cost:800,
+    unlock:{ kills:{crab:20}, tier:2 }, req:'vD1',
+    effect:()=>{ G.critMult*=3; }, bought:false },
+  { id:'vD3', icon:'◆', name:'VOID CRIT',
+    desc:'Crit damage ×5.',
+    cost:8000,
+    unlock:{ kills:{octopus:3}, tier:3 }, req:'vD2',
+    effect:()=>{ G.critMult*=5; }, bought:false },
+
+  // ── BRANCH E: PULL (unlock: BH tier 2)
+  { id:'vE1', icon:'◉', name:'DEEP PULL',
+    desc:'Pull radius +80. Suck them in.',
+    cost:300,
+    unlock:{ tier:2 },
+    effect:()=>{ BH.pullR+=80; }, bought:false },
+  { id:'vE2', icon:'⊗', name:'GRAVITY WELL',
+    desc:'Pull radius ×2.',
+    cost:3000,
+    unlock:{ tier:3 }, req:'vE1',
+    effect:()=>{ BH.pullR*=2; }, bought:false },
+
+  // ── BRANCH F: MATTER (unlock: 30 fish killed + tier 1)
+  { id:'vF1', icon:'◈', name:'DENSE CORE',
+    desc:'Matter gain ×1.8.',
+    cost:150,
+    unlock:{ kills:{fish:30}, tier:1 },
+    effect:()=>{ G.goldMult*=1.8; }, bought:false },
+  { id:'vF2', icon:'⊕', name:'GOLD FIELD',
+    desc:'Matter gain ×3.',
+    cost:1500,
+    unlock:{ kills:{turtle:5}, tier:2 }, req:'vF1',
+    effect:()=>{ G.goldMult*=3; }, bought:false },
+  { id:'vF3', icon:'◇', name:'DARK MATTER',
+    desc:'Matter gain ×8.',
+    cost:20000,
+    unlock:{ kills:{whale:1}, tier:4 }, req:'vF2',
+    effect:()=>{ G.goldMult*=8; }, bought:false },
+
+  // ── BRANCH G: SPAWN (kill-gated creature unlocks)
+  { id:'vG1', icon:'★', name:'MORE FISH',
+    desc:'+2 orbit rings. More targets.',
+    cost:50,
+    unlock:{ kills:{fish:8}, tier:1 },
+    effect:()=>{ G.spawnRings+=2; }, bought:false },
+  { id:'vG2', icon:'✦', name:'SQUID INK',
+    desc:'Unlock Squids.',
+    cost:180,
+    unlock:{ kills:{crab:10}, tier:1 }, req:'vG1',
+    effect:()=>{ CT.squid.enabled=true; }, bought:false },
+  { id:'vG3', icon:'⊙', name:'JELLYFISH',
+    desc:'Unlock Jellyfish.',
+    cost:250,
+    unlock:{ kills:{crab:15}, tier:1 }, req:'vG1',
+    effect:()=>{ CT.jellyfish.enabled=true; }, bought:false },
+  { id:'vG4', icon:'⊛', name:'OCTOPUS',
+    desc:'Unlock Octopus.',
+    cost:900,
+    unlock:{ kills:{squid:8}, tier:2 }, req:'vG2',
+    effect:()=>{ CT.octopus.enabled=true; }, bought:false },
+  { id:'vG5', icon:'◆', name:'TURTLE',
+    desc:'Unlock Turtles.',
+    cost:1200,
+    unlock:{ kills:{jellyfish:20}, tier:2 }, req:'vG3',
+    effect:()=>{ CT.turtle.enabled=true; }, bought:false },
+  { id:'vG6', icon:'▲', name:'SHARK',
+    desc:'Unlock Sharks. High risk.',
+    cost:4000,
+    unlock:{ kills:{octopus:5}, tier:3 }, req:'vG4',
+    effect:()=>{ CT.shark.enabled=true; }, bought:false },
+  { id:'vG7', icon:'◉', name:'WHALE',
+    desc:'Unlock Whales. Giant rewards.',
+    cost:15000,
+    unlock:{ kills:{shark:3}, tier:4 }, req:'vG6',
+    effect:()=>{ CT.whale.enabled=true; }, bought:false },
+  { id:'vG8', icon:'⊗', name:'KRAKEN',
+    desc:'Unlock the Kraken. End game.',
+    cost:100000,
+    unlock:{ kills:{whale:2}, tier:5 }, req:'vG7',
+    effect:()=>{ CT.kraken.enabled=true; }, bought:false },
+
+  // ── BRANCH H: CHAOS (visual upgrades, BH tier gated)
+  { id:'vH1', icon:'⋆', name:'LIGHTNING',
+    desc:'Lightning strike effects.',
+    cost:300,
+    unlock:{ tier:2 },
+    effect:()=>{}, bought:false },
+  { id:'vH2', icon:'✦', name:'RGB CHAOS',
+    desc:'Full chromatic chaos mode.',
+    cost:2000,
+    unlock:{ tier:3 }, req:'vH1',
+    effect:()=>{}, bought:false },
+  { id:'vH3', icon:'⊛', name:'VOID STORM',
+    desc:'Massive particle storm.',
+    cost:12000,
+    unlock:{ tier:4 }, req:'vH2',
+    effect:()=>{}, bought:false },
+
+  // ── BRANCH I: TIME (BH tier gated)
+  { id:'vI1', icon:'◷', name:'MORE TIME',
+    desc:'+8s per session.',
+    cost:100,
+    unlock:{ kills:{fish:20}, tier:1 },
+    effect:()=>{ G.sessionBonus+=8; }, bought:false },
+  { id:'vI2', icon:'◶', name:'DEEP DIVE',
+    desc:'+20s per session.',
+    cost:1000,
+    unlock:{ tier:2 }, req:'vI1',
+    effect:()=>{ G.sessionBonus+=20; }, bought:false },
+  { id:'vI3', icon:'◉', name:'TIME WARP',
+    desc:'+45s per session.',
+    cost:15000,
+    unlock:{ kills:{kraken:1}, tier:5 }, req:'vI2',
+    effect:()=>{ G.sessionBonus+=45; }, bought:false },
 ];
-const UP = {}; UPGRADES.forEach(u => UP[u.id] = u);
+const SN = {}; SKILL_NODES.forEach(n => SN[n.id] = n);
 
-function sk(id) { return (UP[id]?.level || 0) > 0; }
-
-// Progressive reveal: show upgrade if root OR parent is bought
-function isVisible(upg) {
-  if (!upg.req) return true;            // root — always visible
-  const par = UP[upg.req];
-  if (!par) return true;
-  if (par.level > 0) return true;       // parent bought → show (even if locked)
-  if (!par.req) return true;            // parent is root → peek ahead 1 tier
-  return (UP[par.req]?.level||0) > 0;  // grandparent bought → show parent's children
+// Check if a skill node is unlocked (conditions met) — not yet bought
+function nodeUnlocked(node) {
+  if (node.bought) return true;
+  const u = node.unlock || {};
+  // Tier condition
+  if (u.tier !== undefined && BH.tier < u.tier) return false;
+  // Kill conditions
+  if (u.kills) {
+    for (const [type, needed] of Object.entries(u.kills)) {
+      if ((KILLS[type]||0) < needed) return false;
+    }
+  }
+  // Req node
+  if (node.req && !SN[node.req]?.bought) return false;
+  return true;
 }
 
-function buildUpgradeGrid() {
-  const grid = document.getElementById('upg-grid');
-  grid.innerHTML = '';
-  const cats = { breaker:'✦ BREAKER', crit:'◎ CRITICAL', spawn:'★ SPAWN',
-    time:'◷ TIME', grav:'◉ GRAVITY', matter:'◈ MATTER', chaos:'⋆ CHAOS', auto:'⊙ AUTO' };
-  Object.keys(cats).forEach(cat => {
-    const list = UPGRADES.filter(u => u.cat === cat && isVisible(u));
-    if (!list.length) return;
-    const h = document.createElement('div'); h.className = 'ug-head'; h.textContent = cats[cat];
-    grid.appendChild(h);
-    list.forEach(upg => {
-      const req = upg.req ? UP[upg.req] : null;
-      const locked = req && req.level === 0;
-      const maxed = upg.level >= upg.max;
-      const cost = upg.costFn(upg.level);
-      const can = !locked && !maxed && G.matter >= cost;
-      const card = document.createElement('div');
-      card.className = 'ug' + (maxed ? ' maxed' : locked ? ' locked' : '');
-      card.innerHTML = `<span class="ug-ic">${upg.icon}</span>
-        <span class="ug-nm">${upg.name}</span><span class="ug-lv">${maxed ? '— MAX —' : upg.level + '/' + upg.max}</span>
-        <span class="ug-ds">${locked ? '⊗ LOCKED — need: '+req.name : upg.desc}</span>
-        <span class="ug-co">${maxed ? '' : locked ? '' : '◈ ' + fmt(cost) + (can ? '' : ' ✗')}</span>`;
-      if (!maxed && !locked) card.addEventListener('click', () => {
-        const c2 = upg.costFn(upg.level);
-        if (G.matter < c2) return;
-        G.matter -= c2; upg.level++; upg.fn();
-        notify(upg.name + ' lv' + upg.level + '!');
-        playSfxUpgrade();
-        burst(W/2, H/2, '#a78bfa', 14);
-        buildUpgradeGrid();
-        document.getElementById('upg-cash').textContent = '◈ ' + fmt(G.matter);
-      });
-      grid.appendChild(card);
+// Nodes visible in skill tree: bought, or all conditions met, or 1 condition away
+function nodeVisible(node) {
+  if (node.bought) return true;
+  if (nodeUnlocked(node)) return true;
+  // Show if req is bought (or no req) and only 1 condition away
+  const reqOk = !node.req || SN[node.req]?.bought;
+  if (!reqOk) return false;
+  const u = node.unlock || {};
+  // Check how many conditions are unmet
+  let unmet = 0;
+  if (u.tier !== undefined && BH.tier < u.tier) unmet++;
+  if (u.kills) {
+    for (const [t, n] of Object.entries(u.kills)) {
+      if ((KILLS[t]||0) < n) unmet++;
+    }
+  }
+  return unmet <= 1; // show if only 1 condition away
+}
+
+// ── SHOP SYSTEM
+// Each session end: player sees exactly 3 offers from a rolling pool
+// Shop offers: stackable small upgrades (repeatable, different from skill tree)
+const SHOP_POOL = [
+  { id:'sh_dmg',   icon:'✦', name:'EDGE SHARPEN', desc:'Damage +12',        cost:()=>Math.floor(45*Math.pow(1.35,shopPurchases.sh_dmg||0)),  fn:()=>G.dmg+=12 },
+  { id:'sh_aoe',   icon:'⊕', name:'WIDEN',         desc:'AoE +20',          cost:()=>Math.floor(35*Math.pow(1.3,shopPurchases.sh_aoe||0)),   fn:()=>G.aoe+=20 },
+  { id:'sh_spd',   icon:'⋆', name:'TEMPO UP',      desc:'Speed +20%',       cost:()=>Math.floor(80*Math.pow(1.5,shopPurchases.sh_spd||0)),   fn:()=>G.speed*=1.2 },
+  { id:'sh_mat',   icon:'◈', name:'MATTER LENS',   desc:'Matter ×1.3',      cost:()=>Math.floor(90*Math.pow(1.6,shopPurchases.sh_mat||0)),   fn:()=>G.goldMult*=1.3 },
+  { id:'sh_time',  icon:'◷', name:'EXTRA TIME',    desc:'+5s session',      cost:()=>Math.floor(40*Math.pow(1.25,shopPurchases.sh_time||0)), fn:()=>G.sessionBonus+=5 },
+  { id:'sh_pull',  icon:'◉', name:'PULL BOOST',    desc:'Pull radius +40',  cost:()=>Math.floor(55*Math.pow(1.4,shopPurchases.sh_pull||0)),  fn:()=>BH.pullR+=40 },
+  { id:'sh_crit',  icon:'◎', name:'FOCUS',         desc:'Crit chance +8%',  cost:()=>Math.floor(70*Math.pow(1.5,shopPurchases.sh_crit||0)),  fn:()=>G.critChance=Math.min(G.critChance+8,90) },
+  { id:'sh_ring',  icon:'★', name:'RING UP',       desc:'+1 orbit ring',    cost:()=>Math.floor(30*Math.pow(1.4,shopPurchases.sh_ring||0)),  fn:()=>G.spawnRings++ },
+  { id:'sh_auto',  icon:'⊙', name:'AUTO TICK',     desc:'Auto +3/sec',      cost:()=>Math.floor(150*Math.pow(1.3,shopPurchases.sh_auto||0)), fn:()=>G.autoDPS+=3 },
+];
+const shopPurchases = {}; // how many times each shop item bought
+let currentShopOffers = []; // 3 items shown this session
+
+function rollShop() {
+  // Shuffle pool and take 3
+  const pool = [...SHOP_POOL];
+  for (let i = pool.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [pool[i],pool[j]]=[pool[j],pool[i]];
+  }
+  currentShopOffers = pool.slice(0, 3);
+  updateRerollBtn();
+}
+
+function rerollCost() {
+  // Base 3 XP, doubles each reroll this session
+  return Math.ceil(3 * Math.pow(2, G.rerollsUsed));
+}
+
+function doReroll() {
+  const cost = rerollCost();
+  if (G.xp < cost) { notify('Not enough XP to reroll!'); return; }
+  G.xp -= cost;
+  G.rerollsUsed++;
+  rollShop();
+  buildShop();
+  buildSkillTree();
+  updateCurrencyDisplay();
+  updateRerollBtn();
+  playSfxUpgrade();
+  notify('Shop rerolled!');
+}
+
+function updateRerollBtn() {
+  const btn = document.getElementById('reroll-btn');
+  if (!btn) return;
+  const cost = rerollCost();
+  btn.textContent = `↺ REROLL  ✦${cost} XP`;
+  btn.style.opacity = G.xp >= cost ? '1' : '0.4';
+}
+
+function updateCurrencyDisplay() {
+  const g = document.getElementById('upg-gold');
+  const x = document.getElementById('upg-xp');
+  if (g) g.innerHTML = `<span>★ ${fmt(G.gold)}</span>`;
+  if (x) x.innerHTML = `<span>◈ ${fmt(G.xp)}</span>`;
+  // Also update HUD xp
+  const xpEl = document.getElementById('h-xp'); if(xpEl) xpEl.textContent = fmt(G.xp);
+  const matEl = document.getElementById('h-matter'); if(matEl) matEl.textContent = fmt(G.gold);
+  updateRerollBtn();
+}
+
+function buildSkillTree() {
+  const container = document.getElementById('skill-tree-container');
+  if (!container) return;
+
+  // Group visible nodes by branch
+  const branches = {
+    'VOID REACH':   ['vA1','vA2','vA3'],
+    'BREAKER':      ['vB1','vB2','vB3','vB4'],
+    'SPEED':        ['vC1','vC2'],
+    'CRITICAL':     ['vD1','vD2','vD3'],
+    'GRAVITY':      ['vE1','vE2'],
+    'MATTER':       ['vF1','vF2','vF3'],
+    'SPAWN':        ['vG1','vG2','vG3','vG4','vG5','vG6','vG7','vG8'],
+    'CHAOS':        ['vH1','vH2','vH3'],
+    'TIME':         ['vI1','vI2','vI3'],
+  };
+
+  let html = '';
+  for (const [branch, ids] of Object.entries(branches)) {
+    const visible = ids.map(id=>SN[id]).filter(n=>n&&nodeVisible(n));
+    if (!visible.length) continue;
+    html += `<div class="st-branch">
+      <div class="st-branch-label">${branch}</div>
+      <div class="st-nodes">`;
+    visible.forEach(node => {
+      const unlocked = nodeUnlocked(node);
+      const canBuy = unlocked && !node.bought && G.xp >= node.cost;
+      const cls = node.bought ? 'st-node bought' : unlocked ? 'st-node unlocked' + (canBuy ? ' affordable' : '') : 'st-node locked';
+      // Build unlock hint
+      let hint = '';
+      if (!node.bought && !unlocked) {
+        const parts = [];
+        const u = node.unlock||{};
+        if (u.tier && BH.tier < u.tier) parts.push(`BH tier ${u.tier}`);
+        if (u.kills) Object.entries(u.kills).forEach(([t,n])=>{
+          const have = KILLS[t]||0;
+          if (have < n) parts.push(`${n-have} more ${t}`);
+        });
+        if (node.req && !SN[node.req]?.bought) parts.push(SN[node.req].name);
+        hint = parts.join(' · ');
+      }
+      html += `<div class="${cls}" data-id="${node.id}">
+        <div class="st-icon">${node.icon}</div>
+        <div class="st-name">${node.name}</div>
+        <div class="st-desc">${node.bought ? '— OWNED —' : !unlocked ? hint : node.desc}</div>
+        ${!node.bought && unlocked ? `<div class="st-cost ${canBuy?'':'nomat'}">✦ ${fmt(node.cost)} XP</div>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+  container.innerHTML = html || '<div style="color:rgba(255,255,255,0.25);font-size:7px;padding:20px">Kill fish and grow your Black Hole to unlock the skill tree.</div>';
+
+  // Click handlers
+  container.querySelectorAll('.st-node.unlocked').forEach(el => {
+    el.addEventListener('click', () => {
+      const node = SN[el.dataset.id];
+      if (!node || node.bought) return;
+      if (G.xp < node.cost) { notify('Need ◈ ' + node.cost + ' XP!'); return; }
+      G.xp -= node.cost;
+      node.bought = true;
+      node.effect();
+      playSfxTierUp();
+      burst(W/2,H/2,'#a78bfa',20);
+      notify('✦ ' + node.name + ' unlocked!');
+      buildSkillTree(); buildShop(); updateCurrencyDisplay();
+    });
+  });
+}
+
+function buildShop() {
+  const container = document.getElementById('shop-container');
+  if (!container) return;
+  let html = '';
+  currentShopOffers.forEach(offer => {
+    const cost = offer.cost();
+    const can = G.gold >= cost;
+    const bought = shopPurchases[offer.id]||0;
+    html += `<div class="shop-card ${can?'affordable':''}" data-id="${offer.id}">
+      <div class="shop-icon">${offer.icon}</div>
+      <div class="shop-name">${offer.name}</div>
+      <div class="shop-desc">${offer.desc}</div>
+      <div class="shop-bought">×${bought} bought</div>
+      <div class="shop-cost ${can?'':'nomat'}">◈ ${fmt(cost)}</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+  container.querySelectorAll('.shop-card').forEach(el => {
+    el.addEventListener('click', () => {
+      const offer = SHOP_POOL.find(o=>o.id===el.dataset.id);
+      if (!offer) return;
+      const cost = offer.cost();
+      if (G.gold < cost) { notify('Not enough Gold!'); return; }
+      G.gold -= cost;
+      shopPurchases[offer.id] = (shopPurchases[offer.id]||0)+1;
+      offer.fn();
+      playSfxUpgrade();
+      burst(W/2,H/2,'#fbbf24',10);
+      notify('★ ' + offer.name + '!');
+      buildShop();
+      buildSkillTree();
+      const cashEl=document.getElementById('upg-cash');if(cashEl)cashEl.innerHTML=`<span style='color:#fbbf24'>★ ${fmt(G.gold)} G</span> &nbsp; <span style='color:#a78bfa'>◈ ${fmt(G.xp)} XP</span>`;
     });
   });
 }
@@ -1196,15 +1681,15 @@ function openPrestige() {
 window.closePrestige = () => document.getElementById('prestige-ov').classList.remove('show');
 
 window.doPrestige = function () {
-  G.pCount++; G.pMatterMult *= 1.6; G.pDmgMult *= 1.4; G.pTimeBonus += 10;
+  G.pCount++; G.pGoldMult *= 1.6; G.pDmgMult *= 1.4; G.pTimeBonus += 10;
 
   // Reset
-  G.matter = 0; G.totalMatter = 0; G.session = 0; G.eaten = 0; G.eatenTypes = {};
+  G.matter = 0; G.totalMatter = 0; G.gold = 0; G.session = 0; G.eaten = 0; G.eatenTypes = {};
   G.combo = 1; G.comboCount = 0;
   G.dmg = 10; G.aoe = 65; G.speed = 1; G.critChance = 0; G.critMult = 2;
   G.spawnRings = 1; G.sessionBonus = G.pTimeBonus; G.gravMult = 1;
-  G.matterMult = 1; G.autoDPS = 0;
-  UPGRADES.forEach(u => u.level = 0);
+  G.goldMult = 1; G.autoDPS = 0; G.rerollsThisSession = 0;
+  SKILL_NODES.forEach(n=>{n.bought=false; n.effect=SKILL_NODES.find(x=>x.id===n.id)?.effect||n.effect;}); Object.keys(shopPurchases).forEach(k=>delete shopPurchases[k]);
   Object.entries(CT).forEach(([k, v]) => { v.enabled = (k === 'fish' || k === 'crab'); });
   BH.r = 38 * Math.pow(1.1, G.pCount); BH.pullR = 200; BH.tier = 0; BH.growth = 0; BH.angle = 0;
   creatures = []; particles = []; lightnings = []; shockwaves = []; chaosParticles = []; pulseRings = [];
@@ -1213,8 +1698,9 @@ window.doPrestige = function () {
   ov.style.background = 'rgba(167,139,250,.9)';
   setTimeout(() => {
     ov.classList.remove('show'); ov.style.background = '';
-    updateBHBar(); buildUpgradeGrid();
+    updateBHBar(); rollShop(); buildShop(); buildSkillTree();
     notify('⊗ PRESTIGE ' + G.pCount + ' — Reborn stronger!');
+    saveGame();
     playSfxPrestige();
     for (let i = 0; i < 8; i++) setTimeout(() => burst(W/2, H/2, `hsl(${i*45},100%,65%)`, 28), i * 75);
     showUpgrades();
@@ -1257,31 +1743,53 @@ function checkAchievements() {
 // ═══════════════════════════════════════════════════
 //  SESSION
 // ═══════════════════════════════════════════════════
+function getRerollCost() {
+  return Math.floor(5 * Math.pow(2, G.rerollsThisSession));
+}
+window.doReroll = function() {
+  const cost = getRerollCost();
+  if (G.xp < cost) { notify('Need ' + cost + ' XP to reroll!'); return; }
+  G.xp -= cost;
+  G.rerollsThisSession++;
+  rollShop();
+  buildShop();
+  updateRerollBtn();
+  playSfxUpgrade();
+  updateCurrencyDisplay();
+};
+function updateRerollBtn() {
+  const cost = getRerollCost();
+  const el = document.getElementById('reroll-cost-txt');
+  const btn = document.getElementById('reroll-btn');
+  if (el) el.textContent = `cost: ◈ ${cost} XP` + (G.xp < cost ? ' (need more XP)' : '');
+  if (btn) btn.style.opacity = G.xp >= cost ? '1' : '0.4';
+}
 function showUpgrades() {
+  rollShop();
   document.getElementById('upg-ov').classList.add('show');
-  document.getElementById('upg-cash').textContent = '◈ ' + fmt(G.matter);
-  buildUpgradeGrid();
+  buildShop();
+  buildSkillTree();
+  updateCurrencyDisplay();
   const pb = document.getElementById('prs-btn');
   if (BH.tier >= 3) {
     pb.style.opacity = '1'; pb.textContent = `⊗ PRESTIGE ×${G.pCount+1} — TRANSCEND`;
   } else {
     pb.style.opacity = '.3'; pb.textContent = `⊗ PRESTIGE (tier 3+ needed, tier: ${BH.tier})`;
   }
-  // Show active mult cards
+  // Mult cards
   let cardsEl = document.getElementById('upg-cards');
   if (!cardsEl) {
     cardsEl = document.createElement('div');
     cardsEl.id = 'upg-cards';
     cardsEl.style.cssText = 'width:100%;max-width:960px;margin-top:4px;';
-    document.getElementById('upg-grid').after(cardsEl);
+    const grid = document.getElementById('upg-grid');
+    if(grid) grid.after(cardsEl);
   }
   if (activeMultCards.length) {
     cardsEl.innerHTML = '<div style="font-size:6px;color:rgba(167,139,250,0.6);letter-spacing:2px;margin:10px 0 6px">✦ ACTIVE MULTIPLIERS</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-      activeMultCards.map(c=>`<div style="background:rgba(167,139,250,0.1);border:1.5px solid rgba(167,139,250,0.3);border-radius:6px;padding:8px 12px;font-size:6px;color:#c4b5fd">${c.icon} ${c.name}<br><span style='color:rgba(255,255,255,0.4);font-family:sans-serif;font-size:10px'>${c.desc}</span></div>`).join('') +
+      activeMultCards.map(c=>`<div style="background:rgba(167,139,250,0.1);border:1.5px solid rgba(167,139,250,0.3);border-radius:6px;padding:8px 12px;font-size:6px;color:#c4b5fd">${c.icon} ${c.name}</div>`).join('') +
       '</div>';
-  } else {
-    cardsEl.innerHTML = '<div style="font-size:6px;color:rgba(255,255,255,0.2);margin-top:8px">✦ No multiplier cards yet — kill sessions to earn them</div>';
   }
 }
 
@@ -1289,12 +1797,12 @@ window.startSession = function () {
   document.getElementById('upg-ov').classList.remove('show');
   G.session++;
   G.dmg = Math.max(G.dmg, 10 * G.pDmgMult);
-  G.matterMult = Math.max(G.matterMult, G.pMatterMult);
+  G.goldMult = Math.max(G.goldMult, G.pGoldMult);
   G.sessionTime = 20 + G.sessionBonus + BH.tier * 3;
   G.timeLeft = G.sessionTime;
   G.active = true;
   creatures = [];
-  G.chips = 0; G.mult = 1; G.sessionKills = {};
+  G.chips = 0; G.mult = 1; G.sessionKills = {}; G.rerollsUsed = 0;
   document.getElementById('h-sess').textContent = G.session;
   // PRE-FILL: spawn creatures immediately on all active rings
   // so screen looks full from frame 1 like the screenshot
@@ -1385,13 +1893,17 @@ function endSession() {
   checkAchievements();
   playSfxSessionEnd();
 
-  // ── Apply mult cards → bonus matter
+  // ── Apply mult cards → bonus gold
   const { totalMult, bonusChips } = applyMultCards();
-  const bonusMatter = Math.ceil(G.chips * (totalMult - 1) + bonusChips);
-  if (bonusMatter > 0) {
-    G.matter += bonusMatter; G.totalMatter += bonusMatter;
-  }
-  const finalScore = G.chips + bonusMatter;
+  const bonusGold = Math.ceil(G.chips * (totalMult - 1) + bonusChips);
+  if (bonusGold > 0) { G.gold += bonusGold; G.totalGold += bonusGold; }
+  const finalScore = G.chips + bonusGold;
+  // ── Award XP from session performance
+  const xpEarned = Math.max(1, Math.floor(finalScore / 50) + Math.floor(G.combo / 5));
+  G.xp += xpEarned; G.totalXp += xpEarned;
+  G.rerollsThisSession = 0; // reset reroll count
+  addToLeaderboard(finalScore, G.session, G.eaten, G.combo);
+  saveGame();
 
   // ── Visual bursts
   for (let i=0;i<4;i++) setTimeout(()=>{
@@ -1413,7 +1925,7 @@ function endSession() {
     .sort(([,a],[,b])=>b-a)
     .map(([type,count])=>{
       const cfg = CT[type];
-      const earned = Math.ceil(cfg.pts * count * G.matterMult * G.pMatterMult);
+      const earned = Math.ceil(cfg.pts * count * G.goldMult * G.pGoldMult);
       return `<div style="display:flex;justify-content:space-between;align-items:center;
         padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.07);gap:16px;">
         <span style="color:#a5f3fc;font-size:7px;text-transform:uppercase;min-width:70px">${type}</span>
@@ -1462,7 +1974,7 @@ function endSession() {
         </div>
         ${totalMult > 1 ? `<div style="display:flex;justify-content:space-between;margin-bottom:6px;">
           <span style="font-size:6px;color:rgba(255,255,255,0.45);">MULT BONUS</span>
-          <span style="font-size:7px;color:#a78bfa;">+ ◈ ${fmt(bonusMatter)}</span>
+          <span style="font-size:7px;color:#a78bfa;">+ ◈ ${fmt(bonusGold)}</span>
         </div>` : ''}
         <div style="display:flex;justify-content:space-between;
           padding:8px 0 0;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
@@ -1513,8 +2025,9 @@ function fmt(n) {
 
 let hudT = 0, dmgSfxT = 0;
 function updateHUD(ts, dt) {
-  // Auto DPS
-  G.matter += G.autoDPS * dt; G.totalMatter += G.autoDPS * dt;
+  // Auto income — gives matter but NOT chips (no session score contribution)
+  // Intentionally weak: max auto ~100/s vs active play ~10k+/s at same investment
+  if (G.autoDPS > 0) { G.gold += G.autoDPS * dt; G.totalGold += G.autoDPS * dt; }
 
   if (G.active) {
     G.timeLeft = Math.max(0, G.timeLeft - dt);
@@ -1540,9 +2053,11 @@ function updateHUD(ts, dt) {
 
   if (ts - hudT < 180) return;
   hudT = ts;
-  document.getElementById('h-matter').textContent = fmt(G.matter);
+  checkTutorial();
+  document.getElementById('h-matter').textContent = fmt(G.gold);
+  const xpEl = document.getElementById('h-xp'); if(xpEl) xpEl.textContent = fmt(G.xp);
   document.getElementById('h-eaten').textContent = fmt(G.eaten);
-  document.getElementById('h-dmg').textContent = fmt(G.dmg * G.pDmgMult * (1 + G.session * 0.12));
+  document.getElementById('h-dmg').textContent = fmt(Math.floor(G.dmg * G.speed * G.pDmgMult * 4.5));
 }
 
 // ═══════════════════════════════════════════════════
@@ -1737,11 +2252,14 @@ function sfxComboNote(combo) {
     setTimeout(() => bell(comboPitch * 1.5, vol * 0.28, 0.3, pan * 0.5), 55);
   }
 
-  // MILESTONE flourishes
-  if (combo === 5)  sfxMilestone(5);
-  if (combo === 10) sfxMilestone(10);
-  if (combo === 15) sfxMilestone(15);
-  if (combo === 20) sfxMilestone(20);
+  // MILESTONE: shake + sfx
+  if (combo === 5)  { sfxMilestone(5);  addShake(4); }
+  if (combo === 10) { sfxMilestone(10); addShake(8);  chaosFlash('rgba(251,191,36,.1)'); }
+  if (combo === 15) { sfxMilestone(15); addShake(12); chaosFlash('rgba(251,191,36,.14)'); }
+  if (combo === 20) { sfxMilestone(20); addShake(18); chaosFlash('rgba(251,191,36,.18)'); }
+  if (combo === 30) { sfxMilestone(20); addShake(22); chaosFlash('rgba(255,100,30,.2)'); }
+  if (combo === 50) { sfxMilestone(20); addShake(28); chaosFlash('rgba(180,50,255,.22)'); }
+  if (combo === 99) { sfxKraken&&sfxKraken(); addShake(40); chaosFlash('rgba(180,50,255,.3)'); }
 }
 
 function sfxMilestone(combo) {
@@ -2019,6 +2537,263 @@ function loop(ts) {
   requestAnimationFrame(loop);
 }
 
+
+// ═══════════════════════════════════════════════════
+//  SAVE / LOAD  (localStorage)
+// ═══════════════════════════════════════════════════
+const SAVE_KEY = 'ocean_vortex_v1';
+
+function saveGame() {
+  try {
+    const data = {
+      // Currencies & stats
+      gold: G.gold, totalGold: G.totalGold,
+      xp: G.xp, totalXp: G.totalXp,
+      session: G.session, eaten: G.eaten, eatenTypes: G.eatenTypes,
+      dmg: G.dmg, aoe: G.aoe, speed: G.speed,
+      critChance: G.critChance, critMult: G.critMult,
+      spawnRings: G.spawnRings, sessionBonus: G.sessionBonus,
+      gravMult: G.gravMult, goldMult: G.goldMult, autoDPS: G.autoDPS,
+      // Prestige
+      pCount: G.pCount, pGoldMult: G.pGoldMult, pDmgMult: G.pDmgMult,
+      pPassiveMult: G.pPassiveMult, pTimeBonus: G.pTimeBonus,
+      // BH
+      bhR: BH.r, bhPullR: BH.pullR, bhTier: BH.tier, bhGrowth: BH.growth,
+      // Progression
+      kills: {...KILLS},
+      shopPurchases: {...shopPurchases},
+      skillBought: SKILL_NODES.filter(n=>n.bought).map(n=>n.id),
+      ctEnabled: Object.fromEntries(Object.entries(CT).map(([k,v])=>[k,v.enabled])),
+      activeMultCards: activeMultCards.map(c=>c.id),
+      unlockedAchs: [...unlockedAchs],
+      // Leaderboard
+      leaderboard: getLeaderboard(),
+      // Meta
+      savedAt: Date.now(),
+      version: 1,
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch(e) { console.warn('Save failed:', e); }
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
+    const d = JSON.parse(raw);
+    if (!d || d.version !== 1) return false;
+
+    G.gold = d.gold||0; G.totalGold = d.totalGold||0;
+    G.xp = d.xp||0; G.totalXp = d.totalXp||0;
+    G.session = d.session||1; G.eaten = d.eaten||0; G.eatenTypes = d.eatenTypes||{};
+    G.dmg = d.dmg||10; G.aoe = d.aoe||65; G.speed = d.speed||1;
+    G.critChance = d.critChance||0; G.critMult = d.critMult||2;
+    G.spawnRings = d.spawnRings||1; G.sessionBonus = d.sessionBonus||0;
+    G.gravMult = d.gravMult||1; G.goldMult = d.goldMult||1; G.autoDPS = d.autoDPS||0;
+    G.pCount = d.pCount||0; G.pGoldMult = d.pGoldMult||1; G.pDmgMult = d.pDmgMult||1;
+    G.pPassiveMult = d.pPassiveMult||1; G.pTimeBonus = d.pTimeBonus||0;
+
+    BH.r = d.bhR||38; BH.pullR = d.bhPullR||200; BH.tier = d.bhTier||0; BH.growth = d.bhGrowth||0;
+
+    if (d.kills) Object.assign(KILLS, d.kills);
+    if (d.shopPurchases) Object.assign(shopPurchases, d.shopPurchases);
+    if (d.skillBought) d.skillBought.forEach(id => {
+      if (SN[id]) { SN[id].bought = true; try { SN[id].effect(); } catch(e){} }
+    });
+    if (d.ctEnabled) Object.entries(d.ctEnabled).forEach(([k,v]) => { if(CT[k]) CT[k].enabled=v; });
+    if (d.activeMultCards) {
+      activeMultCards = d.activeMultCards.map(id=>MULT_CARD_DEFS.find(c=>c.id===id)).filter(Boolean);
+    }
+    if (d.unlockedAchs) d.unlockedAchs.forEach(id => unlockedAchs.add(id));
+    if (d.leaderboard) setLeaderboard(d.leaderboard);
+
+    return true;
+  } catch(e) { console.warn('Load failed:', e); return false; }
+}
+
+// Auto-save every 15s + on session end
+setInterval(saveGame, 15000);
+
+window.deleteSave = function() {
+  if (!confirm('Delete ALL save data? This cannot be undone!')) return;
+  localStorage.removeItem(SAVE_KEY);
+  location.reload();
+};
+
+
+// ═══════════════════════════════════════════════════
+//  LEADERBOARD  (top 10 session scores, local)
+// ═══════════════════════════════════════════════════
+let _leaderboard = []; // [{score, session, kills, combo, date}]
+
+function getLeaderboard() { return _leaderboard; }
+function setLeaderboard(lb) { _leaderboard = lb || []; }
+
+function addToLeaderboard(score, session, kills, combo) {
+  _leaderboard.push({
+    score, session, kills, combo,
+    date: new Date().toLocaleDateString('id-ID', {day:'2-digit',month:'short'})
+  });
+  _leaderboard.sort((a,b) => b.score - a.score);
+  _leaderboard = _leaderboard.slice(0, 10);
+  saveGame();
+}
+
+function showLeaderboard() {
+  const existing = document.getElementById('lb-ov');
+  if (existing) { existing.remove(); return; }
+
+  const ov = document.createElement('div');
+  ov.id = 'lb-ov';
+  ov.style.cssText = `position:fixed;inset:0;z-index:70;display:flex;align-items:center;
+    justify-content:center;background:rgba(0,0,10,0.92);font-family:'Press Start 2P',monospace;
+    pointer-events:all;`;
+
+  const rows = _leaderboard.length ? _leaderboard.map((e,i) => {
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`<span style="color:rgba(255,255,255,0.3)">#${i+1}</span>`;
+    const col = i===0?'#fbbf24':i===1?'#e2e8f0':i===2?'#fb923c':'rgba(255,255,255,0.55)';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;
+      border-bottom:1px solid rgba(255,255,255,0.06);font-size:7px;">
+      <span style="width:24px;text-align:center">${medal}</span>
+      <span style="color:${col};flex:1">◈ ${fmt(e.score)}</span>
+      <span style="color:rgba(0,220,255,0.6);font-size:6px">S${e.session}</span>
+      <span style="color:rgba(255,255,255,0.3);font-size:5px">×${e.combo}</span>
+      <span style="color:rgba(255,255,255,0.2);font-size:5px">${e.date}</span>
+    </div>`;
+  }).join('') : '<div style="color:rgba(255,255,255,0.25);font-size:7px;padding:20px 0;text-align:center">No scores yet.<br><br>Complete a session to start!</div>';
+
+  ov.innerHTML = `<div style="background:rgba(5,5,20,0.98);border:2px solid rgba(0,220,255,0.25);
+    border-radius:10px;padding:28px 28px;max-width:420px;width:88vw;
+    box-shadow:0 0 40px rgba(0,220,255,0.12);">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:14px;color:#0ff;letter-spacing:2px;text-shadow:0 0 20px rgba(0,220,255,0.5)">
+        ★ LEADERBOARD</div>
+      <div style="font-size:6px;color:rgba(255,255,255,0.3);margin-top:4px">TOP SESSION SCORES</div>
+    </div>
+    <div>${rows}</div>
+    <div style="display:flex;gap:8px;margin-top:18px">
+      <button onclick="document.getElementById('lb-ov').remove()"
+        style="flex:1;font-family:'Press Start 2P',monospace;font-size:7px;padding:10px;
+        border:2px solid rgba(0,220,255,0.4);color:#0ff;background:rgba(0,220,255,0.07);
+        border-radius:5px;cursor:pointer">✕ CLOSE</button>
+      <button onclick="deleteSave()"
+        style="font-family:'Press Start 2P',monospace;font-size:5px;padding:10px 12px;
+        border:1px solid rgba(255,50,50,0.25);color:rgba(255,80,80,0.5);background:transparent;
+        border-radius:5px;cursor:pointer">🗑 RESET</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.style.opacity='0'; ov.style.transition='opacity 0.2s';
+  requestAnimationFrame(()=>setTimeout(()=>ov.style.opacity='1',10));
+}
+
+
+// ═══════════════════════════════════════════════════
+//  TUTORIAL  — contextual tips, shown once each
+// ═══════════════════════════════════════════════════
+const TIPS = [
+  { id:'t_hover',  trigger:()=>true,            delay:1200,
+    msg:'☝ HOVER over creatures to damage them. Build a COMBO for massive gold!' },
+  { id:'t_combo',  trigger:()=>G.combo>=3,       delay:0,
+    msg:'🔥 COMBO ×'+3+'! Keep killing to grow it. High combo = more GOLD per kill.' },
+  { id:'t_shop',   trigger:()=>G.session>=2,     delay:400,
+    msg:'★ SHOP opens after each session. Spend GOLD to get stronger.' },
+  { id:'t_skill',  trigger:()=>BH.tier>=1,       delay:0,
+    msg:'✦ SKILL TREE unlocked! Spend XP — check kill counts to unlock nodes.' },
+  { id:'t_prestige',trigger:()=>BH.tier>=3,      delay:0,
+    msg:'⊗ PRESTIGE available! Rebirth for permanent multipliers.' },
+];
+const shownTips = new Set();
+
+function checkTutorial() {
+  if (!G.active) return;
+  TIPS.forEach(tip => {
+    if (shownTips.has(tip.id)) return;
+    if (!tip.trigger()) return;
+    shownTips.add(tip.id);
+    setTimeout(() => showTip(tip.msg), tip.delay);
+  });
+}
+
+let _tipTimer = null;
+function showTip(msg) {
+  let el = document.getElementById('tutorial-tip');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'tutorial-tip';
+    el.style.cssText = `position:fixed;bottom:58px;left:50%;transform:translateX(-50%);
+      background:rgba(0,5,20,0.92);border:1.5px solid rgba(0,220,255,0.35);
+      border-radius:8px;padding:11px 16px;font-family:'Press Start 2P',monospace;
+      font-size:7px;color:#e2e8f0;max-width:min(420px,88vw);text-align:center;
+      line-height:1.8;pointer-events:none;z-index:30;
+      box-shadow:0 0 24px rgba(0,220,255,0.12);
+      opacity:0;transition:opacity 0.3s,transform 0.3s;
+      transform:translateX(-50%) translateY(8px);`;
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  requestAnimationFrame(()=>{
+    el.style.opacity='1'; el.style.transform='translateX(-50%) translateY(0)';
+  });
+  if (_tipTimer) clearTimeout(_tipTimer);
+  _tipTimer = setTimeout(()=>{
+    el.style.opacity='0'; el.style.transform='translateX(-50%) translateY(8px)';
+  }, 3800);
+}
+
+
+// ═══════════════════════════════════════════════════
+//  EPIC DEATH VFX  — big creatures get big bangs
+// ═══════════════════════════════════════════════════
+function epicDeath(c) {
+  const type = c.type;
+  const x = c.x, y = c.y;
+
+  if (type === 'kraken') {
+    // KRAKEN: 3 expanding shockwave rings, 120 particles, screen whiteout
+    chaosFlash('rgba(244,114,182,0.35)');
+    addShake(32);
+    for (let w=0;w<3;w++) setTimeout(()=>{
+      shockwaves.push({x,y,r:20+w*30,life:1,col:'#f472b6'});
+      shockwaves.push({x,y,r:10+w*20,life:1,col:'#fff'});
+    }, w*80);
+    burst(x,y,'#f472b6', 60); burst(x,y,'#ffffff', 30); burst(x,y,'#a78bfa', 40);
+    for(let i=0;i<6;i++) setTimeout(()=>spawnLightning(x,y,4), i*55);
+    // Radial burst ring
+    for(let i=0;i<16;i++){
+      const a=(i/16)*Math.PI*2;
+      particles.push({x,y, vx:Math.cos(a)*8, vy:Math.sin(a)*8,
+        r:4+Math.random()*4, alpha:1, color:'#f472b6', grav:-0.01});
+    }
+    floatText(x,y-60,'💀 KRAKEN SLAIN!','#f472b6',20);
+    for(let i=0;i<4;i++) setTimeout(()=>chaosFlash('rgba(244,114,182,0.15)'),i*120);
+
+  } else if (type === 'whale') {
+    // WHALE: deep boom, 2 shockwaves, giant burst
+    chaosFlash('rgba(165,243,252,0.25)');
+    addShake(22);
+    setTimeout(()=>shockwaves.push({x,y,r:30,life:1,col:'#a5f3fc'}),0);
+    setTimeout(()=>shockwaves.push({x,y,r:15,life:1,col:'#fff'}),100);
+    burst(x,y,'#a5f3fc',50); burst(x,y,'#ffffff',20);
+    for(let i=0;i<4;i++) setTimeout(()=>spawnLightning(x,y,3), i*60);
+    floatText(x,y-50,'🐋 WHALE DOWN!','#a5f3fc',15);
+
+  } else if (type === 'shark') {
+    addShake(14);
+    burst(x,y,'#93c5fd',30);
+    shockwaves.push({x,y,r:20,life:1,col:'#93c5fd'});
+    floatText(x,y-40,'🦈 SHARK!','#93c5fd',8);
+
+  } else if (type === 'octopus') {
+    burst(x,y,'#f87171',22);
+    // ink splat
+    for(let i=0;i<4;i++){
+      const a=(i/4)*Math.PI*2+0.3;
+      inkClouds.push({x:x+Math.cos(a)*30,y:y+Math.sin(a)*30,r:0,maxR:40,life:0.7});
+    }
+  }
+}
+
 // ═══════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════
@@ -2029,8 +2804,14 @@ function tryStart() {
 }
 ['mousemove','click','touchstart'].forEach(ev => window.addEventListener(ev, tryStart, {once:true}));
 
+// Load save first
+const _loaded = loadGame();
 updateBHBar();
-// Show upgrade screen first so player picks upgrades before session 1
+if (_loaded) {
+  notify('✦ Progress loaded!');
+  // Re-apply effects from loaded skill nodes is done inside loadGame
+}
+// Show upgrade screen first
 showUpgrades();
 requestAnimationFrame(loop);
 </script>
