@@ -2,2270 +2,2036 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>🌊 OCEAN VORTEX — Feed the Black Hole</title>
+<title>OCEAN VORTEX</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:#0a2a42;}
-canvas{display:block;position:absolute;top:0;left:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0d4a6b;}
+canvas{display:block;position:absolute;inset:0;width:100%;height:100%;}
 
-/* ══ UI LAYER ══ */
 #ui{position:fixed;inset:0;pointer-events:none;z-index:20;font-family:'Press Start 2P',monospace;}
 
-/* ── TOP HUD ── */
+/* HUD */
 #hud{
   position:absolute;top:10px;left:50%;transform:translateX(-50%);
-  display:flex;align-items:center;gap:12px;
-  background:rgba(0,0,0,.72);
-  border:2px solid rgba(0,220,255,.3);
-  border-radius:6px;padding:8px 18px;
-  white-space:nowrap;
+  display:flex;align-items:center;gap:10px;
+  background:rgba(0,0,0,.7);border:2px solid rgba(0,220,255,.3);
+  border-radius:6px;padding:7px 16px;white-space:nowrap;
 }
-.ts{text-align:center;min-width:54px;}
-.tl{font-size:6px;color:#0ff;opacity:.55;letter-spacing:1px;text-transform:uppercase;}
-.tv{font-size:12px;color:#fff;margin-top:3px;}
-.sep{width:1px;height:26px;background:rgba(0,220,255,.18);}
+.ts{text-align:center;min-width:52px;}
+.tl{font-size:5px;color:#0ff;opacity:.55;letter-spacing:1px;}
+.tv{font-size:11px;color:#fff;margin-top:2px;}
+.sep{width:1px;height:24px;background:rgba(0,220,255,.18);}
+#music-btn{pointer-events:all;cursor:pointer;min-width:32px;}
+#music-btn:hover .tv{transform:scale(1.3);}
 
-/* ── SESSION TIMER BAR ── */
+/* TIMER */
 #timer-wrap{
-  position:absolute;top:70px;left:50%;transform:translateX(-50%);
-  width:min(420px,80vw);text-align:center;
+  position:absolute;top:68px;left:50%;transform:translateX(-50%);
+  width:min(380px,75vw);text-align:center;
 }
-.tbar-label{font-size:7px;color:rgba(255,255,255,.6);margin-bottom:4px;letter-spacing:1px;}
-.tbar-bg{background:rgba(0,0,0,.4);border:2px solid rgba(0,220,255,.25);border-radius:4px;height:14px;overflow:hidden;}
-.tbar-fill{height:100%;border-radius:2px;transition:width .1s linear;position:relative;overflow:hidden;}
-.tbar-fill::after{content:'';position:absolute;inset:0 -80% 0 -30%;
+.tbar-l{font-size:6px;color:rgba(255,255,255,.55);margin-bottom:3px;letter-spacing:1px;}
+.tbar-bg{background:rgba(0,0,0,.4);border:2px solid rgba(0,220,255,.22);border-radius:4px;height:13px;overflow:hidden;}
+.tbar-f{height:100%;border-radius:2px;transition:width .1s linear;position:relative;overflow:hidden;}
+.tbar-f::after{content:'';position:absolute;inset:0 -80% 0 -30%;
   background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.4) 50%,transparent 80%);
-  animation:shimmer 1.4s infinite;}
-@keyframes shimmer{to{transform:translateX(200%);}}
+  animation:sh 1.4s infinite;}
+@keyframes sh{to{transform:translateX(220%);}}
 
-/* ── BLACK HOLE PROGRESS BAR ── */
+/* BH PROGRESS */
 #bh-wrap{
-  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
-  width:min(460px,86vw);text-align:center;
+  position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+  width:min(440px,84vw);text-align:center;
 }
-.bh-label{font-size:7px;color:#a78bfa;margin-bottom:4px;letter-spacing:1px;}
-.bh-bg{background:rgba(0,0,0,.4);border:2px solid rgba(167,139,250,.3);border-radius:4px;height:16px;overflow:hidden;}
-.bh-fill{height:100%;border-radius:2px;transition:width .3s ease;
-  background:linear-gradient(90deg,#7c3aed,#a78bfa,#c4b5fd);}
-.bh-fill::after{content:'';position:absolute;inset:0 -80% 0 -30%;
+.bh-l{font-size:6px;color:#a78bfa;margin-bottom:3px;letter-spacing:1px;}
+.bh-bg{background:rgba(0,0,0,.4);border:2px solid rgba(167,139,250,.3);border-radius:4px;height:15px;overflow:hidden;}
+.bh-f{height:100%;border-radius:2px;background:linear-gradient(90deg,#6d28d9,#a78bfa,#c4b5fd);
+  transition:width .3s ease;position:relative;overflow:hidden;}
+.bh-f::after{content:'';position:absolute;inset:0 -80% 0 -30%;
   background:linear-gradient(90deg,transparent 20%,rgba(255,255,255,.35) 50%,transparent 80%);
-  animation:shimmer 1.8s infinite;}
+  animation:sh 2s infinite;}
+#bh-tier-label{font-size:7px;color:#c4b5fd;position:absolute;bottom:34px;
+  left:50%;transform:translateX(-50%);white-space:nowrap;}
 
-/* ── UPGRADE OVERLAY ── */
-#upgrade-overlay{
-  position:absolute;inset:0;
-  background:rgba(0,0,0,.88);
+/* PASSIVE */
+#passive-txt{position:absolute;bottom:34px;right:14px;
+  font-size:5px;color:rgba(167,139,250,.6);letter-spacing:1px;}
+
+/* UPGRADE OVERLAY */
+#upg-ov{
+  position:absolute;inset:0;background:rgba(0,0,0,.9);
   display:none;flex-direction:column;align-items:center;
-  padding:20px 16px;overflow-y:auto;
-  pointer-events:all;
-  gap:14px;
+  padding:18px 14px;overflow-y:auto;pointer-events:all;gap:12px;
 }
-#upgrade-overlay.show{display:flex;}
-#upg-title{font-size:16px;color:#0ff;text-align:center;margin-bottom:4px;}
-#upg-subtitle{font-size:7px;color:rgba(255,255,255,.45);text-align:center;letter-spacing:1px;}
-#upg-currency{font-size:10px;color:#fbbf24;text-align:center;}
-#upg-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:10px;width:100%;max-width:1000px;
-}
-.upg-card{
-  background:rgba(255,255,255,.04);
-  border:1.5px solid rgba(255,255,255,.12);
-  border-radius:8px;padding:12px 14px;
-  cursor:pointer;pointer-events:all;
-  transition:border-color .15s,background .15s,transform .1s;
-  text-align:left;
-}
-.upg-card:hover:not(.maxed):not(.locked){
-  border-color:#0ff;background:rgba(0,220,255,.08);transform:scale(1.02);
-}
-.upg-card.locked{opacity:.3;cursor:not-allowed;}
-.upg-card.maxed{border-color:#4ade80;background:rgba(74,222,128,.06);cursor:default;opacity:.7;}
-.uc-icon{font-size:22px;display:block;margin-bottom:6px;}
-.uc-name{font-size:7px;color:#0ff;display:block;margin-bottom:3px;}
-.uc-desc{font-size:8px;opacity:.5;display:block;margin-bottom:5px;line-height:1.6;font-family:'Nunito',sans-serif;font-weight:700;}
-.uc-cost{font-size:7px;color:#fbbf24;}
-.uc-level{font-size:6px;color:#4ade80;float:right;}
-#upg-continue{
-  font-family:'Press Start 2P',monospace;font-size:10px;
-  padding:14px 36px;border:2px solid #0ff;color:#0ff;
-  background:rgba(0,220,255,.1);border-radius:4px;
-  cursor:pointer;pointer-events:all;transition:background .2s;
-  margin-top:4px;
-}
-#upg-continue:hover{background:rgba(0,220,255,.25);}
+#upg-ov.show{display:flex;}
+#upg-title{font-size:14px;color:#0ff;text-align:center;}
+#upg-sub{font-size:6px;color:rgba(255,255,255,.4);letter-spacing:1px;}
+#upg-cash{font-size:9px;color:#fbbf24;}
+#upg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:8px;width:100%;max-width:960px;}
+.ug-head{grid-column:1/-1;font-size:7px;color:#0ff;padding:6px 0 2px;
+  border-bottom:1px solid rgba(0,220,255,.2);}
+.ug{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.12);
+  border-radius:7px;padding:10px 12px;cursor:pointer;pointer-events:all;
+  transition:border-color .15s,background .15s,transform .1s;text-align:left;}
+.ug:hover:not(.locked):not(.maxed){border-color:#0ff;background:rgba(0,220,255,.08);transform:scale(1.02);}
+.ug.locked{opacity:.25;cursor:not-allowed;}
+.ug.maxed{border-color:#4ade80;opacity:.6;cursor:default;}
+.ug-ic{font-size:20px;display:block;margin-bottom:5px;}
+.ug-nm{font-size:6px;color:#0ff;display:block;margin-bottom:2px;}
+.ug-ds{font-size:9px;opacity:.5;display:block;margin-bottom:4px;line-height:1.5;font-family:sans-serif;}
+.ug-lv{font-size:5px;color:#4ade80;float:right;}
+.ug-co{font-size:6px;color:#fbbf24;}
+#upg-start{font-family:'Press Start 2P',monospace;font-size:9px;padding:12px 32px;
+  border:2px solid #0ff;color:#0ff;background:rgba(0,220,255,.1);border-radius:4px;
+  cursor:pointer;pointer-events:all;transition:background .2s;}
+#upg-start:hover{background:rgba(0,220,255,.25);}
 
-/* ── COMBO POPUP ── */
-#combo-pop{
-  position:absolute;top:44%;left:50%;
-  transform:translate(-50%,-50%) scale(.85);
-  font-size:15px;pointer-events:none;opacity:0;
-  transition:opacity .12s,transform .12s;text-align:center;
+/* PRESTIGE */
+#prestige-btn-wrap{pointer-events:all;margin-top:2px;}
+#prs-btn{font-family:'Press Start 2P',monospace;font-size:7px;padding:9px 22px;
+  border:2px solid #a78bfa;color:#a78bfa;background:rgba(167,139,250,.08);
+  border-radius:4px;cursor:pointer;pointer-events:all;transition:all .2s;}
+#prs-btn:hover{background:rgba(167,139,250,.25);}
+#prestige-ov{
+  position:absolute;inset:0;background:rgba(0,0,0,.93);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:all;z-index:60;gap:10px;
 }
-#combo-pop.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+#prestige-ov.show{display:flex;}
+#prs-box{background:rgba(10,5,30,.98);border:2px solid #a78bfa;border-radius:10px;
+  padding:32px;max-width:480px;text-align:center;
+  box-shadow:0 0 50px rgba(167,139,250,.35);}
+#prs-box h2{font-size:13px;color:#c4b5fd;margin-bottom:8px;line-height:1.8;}
+#prs-box p{font-family:sans-serif;font-size:13px;color:rgba(255,255,255,.55);
+  line-height:1.8;margin-bottom:14px;}
+#prs-bonuses{font-size:7px;color:#fbbf24;line-height:2.4;margin-bottom:16px;}
+#prs-go{font-family:'Press Start 2P',monospace;font-size:10px;padding:13px 30px;
+  border:2px solid #c4b5fd;color:#c4b5fd;background:rgba(167,139,250,.12);
+  border-radius:4px;cursor:pointer;pointer-events:all;transition:all .2s;}
+#prs-go:hover{background:rgba(167,139,250,.3);box-shadow:0 0 25px rgba(167,139,250,.5);}
+#prs-cancel{font-family:'Press Start 2P',monospace;font-size:6px;padding:7px 16px;
+  border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.35);
+  background:transparent;border-radius:4px;cursor:pointer;pointer-events:all;margin-top:6px;display:block;width:100%;}
 
-/* ── NOTIF ── */
-#notif{
-  position:absolute;top:60px;left:50%;
-  transform:translateX(-50%) translateY(-5px);
+/* NOTIF */
+#notif{position:absolute;top:58px;left:50%;
+  transform:translateX(-50%) translateY(-4px);
   background:linear-gradient(90deg,#22c55e,#06b6d4);color:#fff;
-  font-size:7px;padding:8px 18px;border-radius:4px;
-  opacity:0;transition:opacity .2s,transform .2s;
-  white-space:nowrap;pointer-events:none;
-}
+  font-size:6px;padding:7px 16px;border-radius:4px;
+  opacity:0;transition:opacity .2s,transform .2s;white-space:nowrap;pointer-events:none;}
 #notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ── FLOAT TEXT ── */
-.ft{
-  position:absolute;pointer-events:none;
-  font-size:11px;animation:ftup .8s ease-out forwards;
-}
-@keyframes ftup{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-44px);}}
+/* COMBO */
+#combo-pop{position:absolute;top:43%;left:50%;
+  transform:translate(-50%,-50%) scale(.85);
+  font-size:14px;pointer-events:none;opacity:0;
+  transition:opacity .12s,transform .12s;text-align:center;}
+#combo-pop.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
 
-
-/* ── PRESTIGE OVERLAY ── */
-#prestige-overlay{
-  position:absolute;inset:0;
-  background:rgba(0,0,0,0);
-  display:none;align-items:center;justify-content:center;
-  pointer-events:all;z-index:60;
-  transition:background .6s;
-}
-#prestige-overlay.show{display:flex;background:rgba(0,0,0,.92);}
-#prestige-box{
-  text-align:center;padding:40px;
-  background:rgba(10,5,25,.98);
-  border:2px solid #a78bfa;
-  border-radius:12px;max-width:520px;
-  box-shadow:0 0 60px rgba(167,139,250,.4);
-}
-#prestige-box h1{font-size:14px;color:#c4b5fd;margin-bottom:10px;line-height:1.8;}
-#prestige-box p{font-family:'Nunito',sans-serif;font-size:13px;color:rgba(255,255,255,.6);
-  line-height:1.8;margin-bottom:16px;}
-.prestige-bonus{font-size:9px;color:#fbbf24;line-height:2.2;margin-bottom:20px;}
-#prestige-btn{
-  font-family:'Press Start 2P',monospace;font-size:10px;
-  padding:14px 32px;border:2px solid #c4b5fd;color:#c4b5fd;
-  background:rgba(167,139,250,.15);border-radius:4px;
-  cursor:pointer;pointer-events:all;transition:all .2s;margin:6px;
-}
-#prestige-btn:hover{background:rgba(167,139,250,.35);box-shadow:0 0 30px rgba(167,139,250,.5);}
-#no-prestige-btn{
-  font-family:'Press Start 2P',monospace;font-size:7px;
-  padding:8px 20px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.4);
-  background:transparent;border-radius:4px;cursor:pointer;pointer-events:all;margin:6px;display:block;
-}
-.prestige-count{
-  font-size:7px;color:#a78bfa;letter-spacing:2px;margin-bottom:8px;
-}
-
-/* ── ACHIEVEMENT TOAST ── */
-#ach-toast{
-  position:absolute;top:66px;right:14px;
-  background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(251,191,36,.05));
-  border:1.5px solid #fbbf24;border-radius:6px;
-  padding:10px 14px;pointer-events:none;
-  opacity:0;transform:translateX(20px);
-  transition:opacity .3s,transform .3s;max-width:200px;
-}
+/* ACHIEVEMENT */
+#ach-toast{position:absolute;top:64px;right:12px;
+  background:rgba(251,191,36,.12);border:1.5px solid #fbbf24;
+  border-radius:6px;padding:9px 13px;pointer-events:none;
+  opacity:0;transform:translateX(18px);transition:opacity .3s,transform .3s;max-width:190px;}
 #ach-toast.show{opacity:1;transform:translateX(0);}
-.ach-icon{font-size:18px;display:block;margin-bottom:3px;}
-.ach-name{font-size:7px;color:#fbbf24;display:block;}
-.ach-desc{font-size:8px;color:rgba(255,255,255,.5);display:block;font-family:'Nunito',sans-serif;}
+.at-ic{font-size:16px;display:block;margin-bottom:2px;}
+.at-nm{font-size:6px;color:#fbbf24;display:block;}
+.at-ds{font-size:8px;color:rgba(255,255,255,.45);display:block;font-family:sans-serif;}
 
-/* ── PASSIVE INCOME VISUAL ── */
-#passive-display{
-  position:absolute;bottom:52px;right:14px;
-  font-size:6px;color:rgba(167,139,250,.7);
-  letter-spacing:1px;text-align:right;pointer-events:none;
-}
+/* FLOAT TXT */
+.ft{position:absolute;pointer-events:none;font-size:10px;
+  animation:ftu .85s ease-out forwards;}
+@keyframes ftu{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-42px);}}
 
-/* ── CRACK OVERLAY on creatures (drawn on canvas) ── */
+/* CHAOS FLASH */
+#chaos-flash{position:absolute;inset:0;pointer-events:none;
+  opacity:0;transition:opacity .06s;mix-blend-mode:screen;z-index:5;}
 
-/* ── HINT ── */
-#hint{
-  position:absolute;bottom:4px;right:14px;
-  font-size:5px;color:rgba(255,255,255,.25);
-}
-
-/* ── CHAOS SCREEN FLASH ── */
-#chaos-flash{
-  position:absolute;inset:0;pointer-events:none;
-  opacity:0;transition:opacity .06s;
-  mix-blend-mode:screen;
-  z-index:5;
-}
-/* ── MUSIC BTN POINTER ── */
-#hud .ts[onclick]{cursor:pointer;user-select:none;}
-#hud .ts[onclick]:hover .tv{transform:scale(1.3);display:block;transition:.1s;}
-
-/* ── BEAT PULSE ring ── */
-#beat-ring{
-  position:absolute;inset:0;pointer-events:none;
-  display:flex;align-items:center;justify-content:center;
-}
-#beat-ring::after{
-  content:'';display:block;
-  width:0;height:0;border-radius:50%;
-  border:3px solid rgba(255,255,255,0);
-  animation:beatpulse 0s linear infinite;
-}
-@keyframes beatpulse{
-  0%{transform:scale(1);opacity:.6;}
-  100%{transform:scale(3);opacity:0;}
-}
-
-/* ── BH SIZE LABEL ── */
-#bh-tier{
-  position:absolute;bottom:48px;left:50%;transform:translateX(-50%);
-  font-size:8px;color:#c4b5fd;letter-spacing:2px;white-space:nowrap;
-}
+#hint{position:absolute;bottom:3px;right:12px;
+  font-size:5px;color:rgba(255,255,255,.2);}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-
 <div id="ui">
-  <!-- TOP HUD -->
   <div id="hud">
-    <div class="ts"><div class="tl">MATTER</div><div class="tv" id="h-matter">0</div></div>
+    <div class="ts"><div class="tl">◈ MATTER</div><div class="tv" id="h-matter">0</div></div>
     <div class="sep"></div>
-    <div class="ts"><div class="tl">SESSION</div><div class="tv" id="h-session">1</div></div>
+    <div class="ts"><div class="tl">⊕ SESSION</div><div class="tv" id="h-sess">1</div></div>
     <div class="sep"></div>
-    <div class="ts"><div class="tl">EATEN</div><div class="tv" id="h-eaten">0</div></div>
+    <div class="ts"><div class="tl">★ EATEN</div><div class="tv" id="h-eaten">0</div></div>
     <div class="sep"></div>
-    <div class="ts"><div class="tl">COMBO</div><div class="tv" id="h-combo">×1</div></div>
+    <div class="ts"><div class="tl">◉ COMBO</div><div class="tv" id="h-combo">×1</div></div>
     <div class="sep"></div>
-    <div class="ts"><div class="tl">BREAKER</div><div class="tv" id="h-dmg">10</div></div>
+    <div class="ts"><div class="tl">✦ DAMAGE</div><div class="tv" id="h-dmg">10</div></div>
     <div class="sep"></div>
-    <div class="ts" style="pointer-events:all;cursor:pointer;" onclick="toggleMusic()">
-      <div class="tl">MUSIC</div>
-      <div class="tv" id="h-music" style="font-size:16px;">🔇</div>
+    <div class="ts" id="music-btn" onclick="toggleMusic()">
+      <div class="tl">⋆ SOUND</div><div class="tv" id="h-mus">♪ OFF</div>
     </div>
   </div>
 
-  <!-- SESSION TIMER -->
   <div id="timer-wrap">
-    <div class="tbar-label" id="timer-label">SESSION 1 — 45s remaining</div>
-    <div class="tbar-bg"><div class="tbar-fill" id="tbar" style="width:100%;background:linear-gradient(90deg,#0891b2,#0ff);"></div></div>
+    <div class="tbar-l" id="tbar-l">SESSION 1 — 20s</div>
+    <div class="tbar-bg"><div class="tbar-f" id="tbar-f" style="width:100%"></div></div>
   </div>
 
-  <!-- BLACK HOLE TIER -->
-  <div id="bh-tier">🕳️ BABY BLACK HOLE</div>
-
-  <!-- BH PROGRESS -->
+  <div id="bh-tier-label">🕳️ BABY BLACK HOLE</div>
   <div id="bh-wrap">
-    <div class="bh-label" id="bh-label">BLACK HOLE GROWTH — 0 / 500</div>
-    <div class="bh-bg"><div class="bh-fill" id="bh-fill" style="width:0%"></div></div>
+    <div class="bh-l" id="bh-l">BLACK HOLE — 0 / 500</div>
+    <div class="bh-bg"><div class="bh-f" id="bh-f" style="width:0%"></div></div>
   </div>
+  <div id="passive-txt">PASSIVE: +0/sec</div>
 
-  <!-- COMBO + NOTIF -->
   <div id="combo-pop"></div>
   <div id="notif"></div>
-  <div id="hint">HOVER OVER CREATURES TO DAMAGE THEM</div>
-
-  <!-- PRESTIGE OVERLAY -->
-  <div id="prestige-overlay">
-    <div id="prestige-box">
-      <div class="prestige-count" id="prestige-count">✨ PRESTIGE × 0</div>
-      <h1>🌌 REBIRTH THE BLACK HOLE?</h1>
-      <p>Reset everything — but your power transcends death.<br>Each prestige makes you permanently stronger.</p>
-      <div class="prestige-bonus" id="prestige-bonuses"></div>
-      <button id="prestige-btn" onclick="doPrestige()">⚡ TRANSCEND ⚡</button>
-      <button id="no-prestige-btn" onclick="closePrestige()">Not yet...</button>
-    </div>
-  </div>
-
-  <!-- ACHIEVEMENT TOAST -->
-  <div id="ach-toast">
-    <span class="ach-icon" id="ach-icon">🏆</span>
-    <span class="ach-name" id="ach-name">Achievement!</span>
-    <span class="ach-desc" id="ach-desc">You did something cool</span>
-  </div>
-
-  <!-- PASSIVE INCOME DISPLAY -->
-  <div id="passive-display">BH PASSIVE: +0/sec</div>
-
   <div id="chaos-flash"></div>
-  <div id="beat-ring"></div>
+  <div id="hint">◉ HOVER TO DAMAGE  ·  ✦ CREATURES ORBIT THE VOID  ·  ★ BUILD YOUR COMBO</div>
+
+  <!-- ACHIEVEMENT -->
+  <div id="ach-toast">
+    <span class="at-ic" id="at-ic">🏆</span>
+    <span class="at-nm" id="at-nm">Achievement!</span>
+    <span class="at-ds" id="at-ds">You did something cool</span>
+  </div>
 
   <!-- UPGRADE OVERLAY -->
-  <div id="upgrade-overlay">
-    <div id="upg-title">⬆ UPGRADE PHASE</div>
-    <div id="upg-subtitle">SESSION COMPLETE — SPEND YOUR MATTER</div>
-    <div id="upg-currency">💎 Matter: 0</div>
+  <div id="upg-ov">
+    <div id="upg-title">◈ UPGRADE PHASE</div>
+    <div id="upg-sub">SESSION COMPLETE  ·  SPEND YOUR MATTER</div>
+    <div id="upg-cash">💎 0</div>
     <div id="upg-grid"></div>
-    <button id="upg-continue" onclick="startSession()">START SESSION ▶</button>
+    <div id="prestige-btn-wrap">
+      <button id="prs-btn" onclick="openPrestige()">🌌 PRESTIGE (need tier 3+)</button>
+    </div>
+    <button id="upg-start" onclick="startSession()">⊕ START SESSION</button>
+  </div>
+
+  <!-- PRESTIGE OVERLAY -->
+  <div id="prestige-ov">
+    <div id="prs-box">
+      <h2>🌌 TRANSCEND THE VOID?</h2>
+      <p>Reset everything — but your power is eternal.<br>Each rebirth makes you permanently stronger.</p>
+      <div id="prs-bonuses"></div>
+      <button id="prs-go" onclick="doPrestige()">⚡ REBIRTH ⚡</button>
+      <button id="prs-cancel" onclick="closePrestige()">Not yet...</button>
+    </div>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-//  CANVAS
-// ══════════════════════════════════════════════════════════════
-const cv=document.getElementById('c');
-const cx=cv.getContext('2d');
-cx.imageSmoothingEnabled=false;
-let W=cv.width=innerWidth, H=cv.height=innerHeight;
-window.addEventListener('resize',()=>{
-  W=cv.width=innerWidth; H=cv.height=innerHeight;
-  BH.x=W/2; BH.y=H/2;
+// ═══════════════════════════════════════════════════
+//  CANVAS SETUP
+// ═══════════════════════════════════════════════════
+const cv = document.getElementById('c');
+const cx = cv.getContext('2d');
+cx.imageSmoothingEnabled = false;
+let W = cv.width = innerWidth, H = cv.height = innerHeight;
+const center = () => ({ x: W / 2, y: H / 2 });
+window.addEventListener('resize', () => {
+  W = cv.width = innerWidth; H = cv.height = innerHeight;
 });
 
-const mouse={x:-999,y:-999};
-window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
-window.addEventListener('mouseleave',()=>{mouse.x=-999;mouse.y=-999;});
-window.addEventListener('touchmove',e=>{
-  e.preventDefault();
-  mouse.x=e.touches[0].clientX;mouse.y=e.touches[0].clientY;
-},{passive:false});
-window.addEventListener('touchend',()=>{mouse.x=-999;mouse.y=-999;});
+const mouse = { x: -999, y: -999 };
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener('mouseleave', () => { mouse.x = -999; mouse.y = -999; });
+window.addEventListener('touchmove', e => {
+  e.preventDefault(); mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY;
+}, { passive: false });
+window.addEventListener('touchend', () => { mouse.x = -999; mouse.y = -999; });
 
-// ══════════════════════════════════════════════════════════════
-//  PIXEL ART SPRITES  16×16
-// ══════════════════════════════════════════════════════════════
-const SPR={
-  fish:[
-    '0000000000000000','0000011000000000','0000111100000000','0001111111000000',
-    '0011111111110000','0111111111111000','1111111111111100','1111111111111110',
-    '1111111111111110','1111111111111100','0111111111111000','0011111111110000',
-    '0001111111000000','0000111100000000','0000011000000000','0000000000000000',
-  ],
-  crab:[
-    '1000000000000001','0110000000000110','0011000000001100','0001111111111000',
-    '0011111111111100','0111111111111110','1111111111111111','1111111111111111',
-    '1111111111111111','0111111111111110','0011111111111100','0001100000110000',
-    '0011000000001100','0110000000000110','1100000000000011','0000000000000000',
-  ],
-  squid:[
-    '0000011111100000','0001111111111000','0011111111111100','0111111111111110',
-    '1111111111111111','1111111111111111','0111111111111110','0011111111111100',
-    '0001111111111000','0001010101010000','0010101010101000','0100010001000100',
-    '1000100010001000','0001000100010000','0000000000000000','0000000000000000',
-  ],
-  octopus:[
-    '0000111111110000','0011111111111100','0111111111111110','1111111111111111',
-    '1111111111111111','1111111111111111','0111111111111110','0011111111111100',
-    '0001110000111000','0011000000001100','0110011001100110','1100110110011001',
-    '1001001001001001','0110000000000110','0000000000000000','0000000000000000',
-  ],
-  shark:[
-    '0000000100000000','0000001110000000','0000011111000000','0000111111100000',
-    '0001111111110000','0011111111111000','0111111111111100','1111111111111110',
-    '1111111111111111','1111111111111111','0111111111111100','0011111111110000',
-    '0001111111000000','0000111100000000','0000010000000000','0000000000000000',
-  ],
-  jellyfish:[
-    '0000011111100000','0001111111111000','0011111111111100','0111111111111110',
-    '1111111111111111','1111111111111111','1111111111111111','0111111111111110',
-    '0001111111111000','0000011111100000','0000010010100000','0000100001000000',
-    '0001000010000100','0000000100001000','0000001000010000','0000000000000000',
-  ],
-  whale:[
-    '0000001110000000','0000011111000000','0000111111100000','0001111111110000',
-    '0011111111111000','0111111111111100','1111111111111110','1111111111111111',
-    '1111111111111111','1111111111111111','0111111111111110','0011111111111000',
-    '0100111111110010','1000111111110001','0000000000000000','0000000000000000',
-  ],
-  turtle:[
-    '0000111111110000','0001111111111000','0011111111111100','0110110110110110',
-    '1101101101101101','1111111111111111','1111111111111111','1111111111111111',
-    '1111111111111111','1101101101101101','0110110110110110','0011111111111100',
-    '0001111111111000','0000111111110000','0000000000000000','0000000000000000',
-  ],
-  kraken:[
-    '0100010001000100','1010101010101010','0011111111111100','0111111111111110',
-    '1111111111111111','1111111111111111','1111111111111111','1111111111111111',
-    '0111111111111110','0011111111111100','0101011001101010','1010100110010101',
-    '0100010001000100','1000001000100001','0000000000000000','0000000000000000',
-  ],
+// ═══════════════════════════════════════════════════
+//  PIXEL SPRITES  16×16 grid, SCALE px per cell
+// ═══════════════════════════════════════════════════
+const SCALE = 3;
+const SPRITES = {
+  fish:['0000000000000000','0000011000000000','0000111100000000','0001111111000000','0011111111110000','0111111111111000','1111111111111100','1111111111111110','1111111111111110','1111111111111100','0111111111111000','0011111111110000','0001111111000000','0000111100000000','0000011000000000','0000000000000000'],
+  crab:['1000000000000001','0110000000000110','0011000000001100','0001111111111000','0011111111111100','0111111111111110','1111111111111111','1111111111111111','1111111111111111','0111111111111110','0011111111111100','0001100000110000','0011000000001100','0110000000000110','1100000000000011','0000000000000000'],
+  squid:['0000011111100000','0001111111111000','0011111111111100','0111111111111110','1111111111111111','1111111111111111','0111111111111110','0011111111111100','0001111111111000','0001010101010000','0010101010101000','0100010001000100','1000100010001000','0001000100010000','0000000000000000','0000000000000000'],
+  octopus:['0000111111110000','0011111111111100','0111111111111110','1111111111111111','1111111111111111','1111111111111111','0111111111111110','0011111111111100','0001110000111000','0011000000001100','0110011001100110','1100110110011001','1001001001001001','0110000000000110','0000000000000000','0000000000000000'],
+  shark:['0000000100000000','0000001110000000','0000011111000000','0000111111100000','0001111111110000','0011111111111000','0111111111111100','1111111111111110','1111111111111111','1111111111111111','0111111111111100','0011111111110000','0001111111000000','0000111100000000','0000010000000000','0000000000000000'],
+  jellyfish:['0000011111100000','0001111111111000','0011111111111100','0111111111111110','1111111111111111','1111111111111111','1111111111111111','0111111111111110','0001111111111000','0000011111100000','0000010010100000','0000100001000000','0001000010000100','0000000100001000','0000001000010000','0000000000000000'],
+  whale:['0000001110000000','0000011111000000','0000111111100000','0001111111110000','0011111111111000','0111111111111100','1111111111111110','1111111111111111','1111111111111111','1111111111111111','0111111111111110','0011111111111000','0100111111110010','1000111111110001','0000000000000000','0000000000000000'],
+  turtle:['0000111111110000','0001111111111000','0011111111111100','0110110110110110','1101101101101101','1111111111111111','1111111111111111','1111111111111111','1111111111111111','1101101101101101','0110110110110110','0011111111111100','0001111111111000','0000111111110000','0000000000000000','0000000000000000'],
+  kraken:['0100010001000100','1010101010101010','0011111111111100','0111111111111110','1111111111111111','1111111111111111','1111111111111111','1111111111111111','0111111111111110','0011111111111100','0101011001101010','1010100110010101','0100010001000100','1000001000100001','0000000000000000','0000000000000000'],
 };
 
-const sprCache={};
-function getSprite(name,c1,c2,pixelSize=3){
-  const k=`${name}_${c1}_${c2}_${pixelSize}`;
-  if(sprCache[k])return sprCache[k];
-  const rows=SPR[name]||SPR.fish;
-  const sz=16*pixelSize;
-  const sc=document.createElement('canvas');
-  sc.width=sz;sc.height=sz;
-  const scx=sc.getContext('2d');
-  scx.imageSmoothingEnabled=false;
-  rows.forEach((row,ry)=>{
-    [...row].forEach((px,rx)=>{
-      if(px==='0')return;
-      const t=ry>0?rows[ry-1][rx]:'0';
-      const b=ry<15?rows[ry+1][rx]:'0';
-      const l=rx>0?row[rx-1]:'0';
-      const r=rx<15?row[rx+1]:'0';
-      const edge=t==='0'||b==='0'||l==='0'||r==='0';
-      scx.fillStyle=edge?c2:c1;
-      scx.fillRect(rx*pixelSize,ry*pixelSize,pixelSize,pixelSize);
+const sprCache = {};
+function getSprite(name, c1, c2, scale = SCALE) {
+  const k = `${name}_${c1}_${c2}_${scale}`;
+  if (sprCache[k]) return sprCache[k];
+  const rows = SPRITES[name] || SPRITES.fish;
+  const sz = 16 * scale;
+  const sc = document.createElement('canvas');
+  sc.width = sz; sc.height = sz;
+  const ctx = sc.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  rows.forEach((row, ry) => {
+    [...row].forEach((px, rx) => {
+      if (px === '0') return;
+      const t = ry > 0 ? rows[ry - 1][rx] : '0';
+      const b = ry < 15 ? rows[ry + 1][rx] : '0';
+      const l = rx > 0 ? row[rx - 1] : '0';
+      const r = rx < 15 ? row[rx + 1] : '0';
+      ctx.fillStyle = (t==='0'||b==='0'||l==='0'||r==='0') ? c2 : c1;
+      ctx.fillRect(rx * scale, ry * scale, scale, scale);
     });
   });
-  sprCache[k]=sc;
+  sprCache[k] = sc;
   return sc;
 }
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  BLACK HOLE
-// ══════════════════════════════════════════════════════════════
-const BH={
-  x:W/2, y:H/2,
-  r:38,           // visual radius
-  pullR:180,      // gravitational pull radius
-  angle:0,
-  // Growth / tier system
-  growth:0,
-  growthNeeded:500,
-  tier:0,
-  tiers:[
-    {name:'BABY BLACK HOLE',     threshold:500,   bonus:5},
-    {name:'SMALL BLACK HOLE',    threshold:1500,  bonus:10},
-    {name:'HALFLING',            threshold:4000,  bonus:20},
-    {name:'DWARF',               threshold:10000, bonus:30},
-    {name:'AVERAGE JOE',         threshold:30000, bonus:50},
-    {name:'GROWING MONSTER',     threshold:100000,bonus:80},
-    {name:'COLOSSUS',            threshold:350000,bonus:120},
-    {name:'GOD OF THE DEEP',     threshold:Infinity,bonus:0},
+// ═══════════════════════════════════════════════════
+const BH = {
+  r: 38, pullR: 200, angle: 0,
+  growth: 0, tier: 0,
+  tiers: [
+    { name: 'BABY BLACK HOLE',   cap: 500   },
+    { name: 'SMALL BLACK HOLE',  cap: 1500  },
+    { name: 'HALFLING',          cap: 4000  },
+    { name: 'DWARF',             cap: 10000 },
+    { name: 'AVERAGE JOE',       cap: 30000 },
+    { name: 'GROWING MONSTER',   cap: 100000},
+    { name: 'COLOSSUS',          cap: 350000},
+    { name: 'GOD OF THE DEEP',   cap: Infinity },
   ],
 };
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  GAME STATE
-// ══════════════════════════════════════════════════════════════
-const G={
-  matter:0,        // currency
-  totalMatter:0,   // all-time
-  session:1,
-  eaten:0,
-  combo:1, comboCount:0, comboExpiry:0,
-  sessionTime:45,
-  timeLeft:45,
-  active:false,    // session running?
-
-  // Upgrades — real values
-  breakerDmg:10,
-  breakerAoE:60,
-  breakerSpeed:1,
-  critChance:0,
-  critMult:2,
-  spawnCount:1,
-  sessionTimeBonus:0,
-  gravityMult:1,
-  matterMult:1,
+// ═══════════════════════════════════════════════════
+const G = {
+  matter: 0, totalMatter: 0,
+  session: 1, eaten: 0, eatenTypes: {},
+  combo: 1, comboCount: 0, comboExpiry: 0,
+  // Upgradeable stats
+  dmg: 10,         // damage per second
+  aoe: 65,         // hover radius
+  speed: 1,        // damage tick speed mult
+  critChance: 0,   // %
+  critMult: 2,
+  spawnRings: 1,   // number of orbit rings
+  sessionBonus: 0, // extra seconds
+  gravMult: 1,
+  matterMult: 1,
+  autoDPS: 0,
+  // Balatro-style scoring
+  chips: 0,    // base score this session
+  mult: 1,     // current multiplier
+  multCards: [], // active multiplier cards
+  sessionKills: {}, // kills per type this session
+  timeLeft: 20, sessionTime: 20,
+  active: false,
+  clickers: {},
+  // Prestige permanents
+  pCount: 0,
+  pMatterMult: 1,
+  pDmgMult: 1,
+  pPassiveMult: 1,
+  pTimeBonus: 0,
 };
 
-// ══════════════════════════════════════════════════════════════
-//  UPGRADE SYSTEM  (200+ upgrade tree)
-// ══════════════════════════════════════════════════════════════
-const UPGRADES=[
-  // ── BREAKER track
-  {id:'dmg1',cat:'breaker',icon:'⚔️',name:'SHARPER EDGE',   desc:'Breaker damage +25',    base:25, max:20,level:0,costFn:l=>Math.floor(30*Math.pow(1.4,l)),  fn:()=>{G.breakerDmg+=25;}},
-  {id:'dmg2',cat:'breaker',icon:'🗡️',name:'POWER SURGE',    desc:'Breaker damage ×1.5',   base:1,  max:10,level:0,costFn:l=>Math.floor(200*Math.pow(2,l)),    fn:()=>{G.breakerDmg*=1.5;},req:'dmg1'},
-  {id:'dmg3',cat:'breaker',icon:'💥',name:'NUKE BEAM',       desc:'Breaker damage ×3',     base:1,  max:5, level:0,costFn:l=>Math.floor(2000*Math.pow(3,l)),   fn:()=>{G.breakerDmg*=3;},req:'dmg2'},
-  {id:'aoe1',cat:'breaker',icon:'🌊',name:'WIDER WAVE',      desc:'AoE radius +20',        base:20, max:15,level:0,costFn:l=>Math.floor(50*Math.pow(1.45,l)),  fn:()=>{G.breakerAoE+=20;}},
-  {id:'aoe2',cat:'breaker',icon:'🌀',name:'VORTEX FIELD',    desc:'AoE radius ×1.8',       base:1,  max:8, level:0,costFn:l=>Math.floor(400*Math.pow(2.2,l)),  fn:()=>{G.breakerAoE*=1.8;},req:'aoe1'},
-  {id:'spd1',cat:'breaker',icon:'⚡',name:'QUICK BITE',      desc:'Damage tick speed +50%',base:1,  max:8, level:0,costFn:l=>Math.floor(80*Math.pow(1.6,l)),   fn:()=>{G.breakerSpeed*=1.5;}},
-  {id:'spd2',cat:'breaker',icon:'🔥',name:'RAPID FIRE',      desc:'Speed ×2',              base:1,  max:6, level:0,costFn:l=>Math.floor(600*Math.pow(2.5,l)),  fn:()=>{G.breakerSpeed*=2;},req:'spd1'},
-  // ── CRIT track
-  {id:'crit1',cat:'crit',icon:'🎯',name:'LUCKY STRIKE',     desc:'Crit chance +5%',       base:5,  max:20,level:0,costFn:l=>Math.floor(60*Math.pow(1.5,l)),   fn:()=>{G.critChance=Math.min(G.critChance+5,95);}},
-  {id:'crit2',cat:'crit',icon:'💫',name:'DOUBLE CRIT',      desc:'Crit damage ×1.5',      base:1,  max:10,level:0,costFn:l=>Math.floor(150*Math.pow(1.8,l)),  fn:()=>{G.critMult*=1.5;},req:'crit1'},
-  {id:'crit3',cat:'crit',icon:'⭐',name:'MEGA CRIT',         desc:'Crit chance +15%',      base:15, max:5, level:0,costFn:l=>Math.floor(1500*Math.pow(3,l)),   fn:()=>{G.critChance=Math.min(G.critChance+15,95);},req:'crit2'},
-  // ── SPAWN / ENVIRONMENT track
-  {id:'sp1', cat:'spawn', icon:'🐟',name:'MORE FISH',        desc:'+1 max creatures',      base:1,  max:15,level:0,costFn:l=>Math.floor(40*Math.pow(1.35,l)),  fn:()=>{G.spawnCount+=1;}},
-  {id:'sp2', cat:'spawn', icon:'🦑',name:'UNLOCK SQUID',     desc:'Squid start spawning',  base:1,  max:1, level:0,costFn:l=>120,                             fn:()=>{CTYPES.squid.enabled=true;},req:'sp1'},
-  {id:'sp3', cat:'spawn', icon:'🐙',name:'OCTOPUS DEPTHS',   desc:'Octopus start spawning',base:1,  max:1, level:0,costFn:l=>300,                             fn:()=>{CTYPES.octopus.enabled=true;},req:'sp2'},
-  {id:'sp4', cat:'spawn', icon:'🦈',name:'SHARK TERRITORY',  desc:'Sharks start spawning', base:1,  max:1, level:0,costFn:l=>800,                             fn:()=>{CTYPES.shark.enabled=true;},req:'sp3'},
-  {id:'sp5', cat:'spawn', icon:'🐋',name:'WHALE ZONE',       desc:'Whales start spawning', base:1,  max:1, level:0,costFn:l=>2500,                            fn:()=>{CTYPES.whale.enabled=true;},req:'sp4'},
-  {id:'sp6', cat:'spawn', icon:'🐢',name:'TURTLE PATROL',    desc:'Turtles start spawning',base:1,  max:1, level:0,costFn:l=>1200,                            fn:()=>{CTYPES.turtle.enabled=true;},req:'sp3'},
-  {id:'sp7', cat:'spawn', icon:'🐉',name:'KRAKEN DEPTHS',    desc:'Kraken start spawning', base:1,  max:1, level:0,costFn:l=>15000,                           fn:()=>{CTYPES.kraken.enabled=true;},req:'sp5'},
-  {id:'sp8', cat:'spawn', icon:'🪼',name:'JELLY BLOOM',      desc:'Jellyfish start spawning',base:1,max:1, level:0,costFn:l=>180,                             fn:()=>{CTYPES.jellyfish.enabled=true;},req:'sp1'},
-  {id:'spm', cat:'spawn', icon:'🌊',name:'TIDAL SURGE',      desc:'+3 max creatures',      base:3,  max:10,level:0,costFn:l=>Math.floor(250*Math.pow(1.6,l)), fn:()=>{G.spawnCount+=3;},req:'sp1'},
-  // ── TIME track
-  {id:'t1',  cat:'time',  icon:'⏱️',name:'MORE TIME',       desc:'+5s per session',       base:5,  max:12,level:0,costFn:l=>Math.floor(80*Math.pow(1.5,l)),  fn:()=>{G.sessionTimeBonus+=5;}},
-  {id:'t2',  cat:'time',  icon:'⌛',name:'DEEP DIVE',        desc:'+15s per session',      base:15, max:6, level:0,costFn:l=>Math.floor(600*Math.pow(2,l)),   fn:()=>{G.sessionTimeBonus+=15;},req:'t1'},
-  {id:'t3',  cat:'time',  icon:'🕰️',name:'EXTENDED RUN',    desc:'+30s per session',      base:30, max:4, level:0,costFn:l=>Math.floor(3000*Math.pow(3,l)),  fn:()=>{G.sessionTimeBonus+=30;},req:'t2'},
-  // ── GRAVITY track
-  {id:'g1',  cat:'grav',  icon:'🌀',name:'STRONGER PULL',   desc:'Gravity ×1.5',          base:1,  max:10,level:0,costFn:l=>Math.floor(100*Math.pow(1.7,l)), fn:()=>{G.gravityMult*=1.5;}},
-  {id:'g2',  cat:'grav',  icon:'🕳️',name:'DEEP GRAVITY',   desc:'Pull radius +40',       base:40, max:8, level:0,costFn:l=>Math.floor(200*Math.pow(2,l)),   fn:()=>{BH.pullR+=40;},req:'g1'},
-  {id:'g3',  cat:'grav',  icon:'💫',name:'SINGULARITY',     desc:'Gravity ×3',            base:1,  max:5, level:0,costFn:l=>Math.floor(2000*Math.pow(3.5,l)),fn:()=>{G.gravityMult*=3;},req:'g2'},
-  // ── MATTER track
-  {id:'m1',  cat:'matter',icon:'💎',name:'DENSE MATTER',    desc:'Matter value ×1.3',     base:1,  max:15,level:0,costFn:l=>Math.floor(70*Math.pow(1.5,l)),  fn:()=>{G.matterMult*=1.3;}},
-  {id:'m2',  cat:'matter',icon:'🪙',name:'GOLD RUSH',       desc:'Matter value ×2',       base:1,  max:8, level:0,costFn:l=>Math.floor(500*Math.pow(2.2,l)), fn:()=>{G.matterMult*=2;},req:'m1'},
-  {id:'m3',  cat:'matter',icon:'🏆',name:'ULTRA VALUE',     desc:'Matter value ×5',       base:1,  max:4, level:0,costFn:l=>Math.floor(5000*Math.pow(4,l)),  fn:()=>{G.matterMult*=5;},req:'m2'},
-  // ── CHAOS visuals
-  {id:'ch1', cat:'chaos', icon:'⚡',name:'LIGHTNING',        desc:'Lightning on destroy',  base:1,  max:1, level:0,costFn:l=>150,fn:()=>{}},
-  {id:'ch2', cat:'chaos', icon:'🌈',name:'RGB VORTEX',       desc:'Full color cycling',    base:1,  max:1, level:0,costFn:l=>600,fn:()=>{},req:'ch1'},
-  {id:'ch3', cat:'chaos', icon:'💥',name:'SHOCKWAVE',        desc:'Big shockwaves',        base:1,  max:1, level:0,costFn:l=>1500,fn:()=>{},req:'ch2'},
-  {id:'ch4', cat:'chaos', icon:'🌪️',name:'PARTICLE STORM',  desc:'Mega particle bursts',  base:1,  max:1, level:0,costFn:l=>4000,fn:()=>{},req:'ch3'},
-];
-
-const UP={}; // id → upgrade obj
-UPGRADES.forEach(u=>UP[u.id]=u);
-
-function sk(id){return (UP[id]?.level||0)>0;} // skill owned?
-
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  CREATURE TYPES
-// ══════════════════════════════════════════════════════════════
-const CTYPES={
-  fish:     {sprite:'fish',     pts:1,   hp:25,  spd:.9,  col:['#4ade80','#166534'],enabled:true, weight:5,  sz:1.0},
-  crab:     {sprite:'crab',     pts:3,   hp:60,  spd:.5,  col:['#fb923c','#9a3412'],enabled:true, weight:3,  sz:1.0},
-  jellyfish:{sprite:'jellyfish',pts:5,   hp:40,  spd:.6,  col:['#f0abfc','#86198f'],enabled:false,weight:2,  sz:1.0},
-  squid:    {sprite:'squid',    pts:8,   hp:100, spd:1.4, col:['#818cf8','#3730a3'],enabled:false,weight:3,  sz:1.05},
-  turtle:   {sprite:'turtle',   pts:12,  hp:200, spd:.4,  col:['#86efac','#14532d'],enabled:false,weight:2,  sz:1.1},
-  octopus:  {sprite:'octopus',  pts:22,  hp:320, spd:.75, col:['#f87171','#7f1d1d'],enabled:false,weight:2,  sz:1.2},
-  shark:    {sprite:'shark',    pts:65,  hp:700, spd:1.8, col:['#93c5fd','#1e3a8a'],enabled:false,weight:1,  sz:1.4},
-  whale:    {sprite:'whale',    pts:280, hp:2500,spd:.38, col:['#a5f3fc','#164e63'],enabled:false,weight:1,  sz:1.9},
-  kraken:   {sprite:'kraken',   pts:1500,hp:8000,spd:.95, col:['#f472b6','#831843'],enabled:false,weight:1,  sz:2.6},
+// ═══════════════════════════════════════════════════
+const CT = {
+  fish:     { sprite:'fish',     pts:1,    hp:35,   spd:0.8,  col:['#5eead4','#0f766e'], sz:0.9,  enabled:true,  w:6 },
+  crab:     { sprite:'crab',     pts:3,    hp:90,   spd:0.55, col:['#fb923c','#9a3412'], sz:0.95, enabled:true,  w:4 },
+  jellyfish:{ sprite:'jellyfish',pts:6,    hp:70,   spd:0.5,  col:['#f0abfc','#86198f'], sz:0.9,  enabled:false, w:3 },
+  squid:    { sprite:'squid',    pts:10,   hp:160,  spd:1.3,  col:['#818cf8','#3730a3'], sz:1.0,  enabled:false, w:3 },
+  turtle:   { sprite:'turtle',   pts:14,   hp:320,  spd:0.4,  col:['#86efac','#14532d'], sz:1.05, enabled:false, w:2 },
+  octopus:  { sprite:'octopus',  pts:28,   hp:550,  spd:0.7,  col:['#f87171','#7f1d1d'], sz:1.15, enabled:false, w:2 },
+  shark:    { sprite:'shark',    pts:75,   hp:1200, spd:1.7,  col:['#93c5fd','#1e3a8a'], sz:1.35, enabled:false, w:1 },
+  whale:    { sprite:'whale',    pts:300,  hp:5000, spd:0.35, col:['#a5f3fc','#164e63'], sz:1.85, enabled:false, w:1 },
+  kraken:   { sprite:'kraken',   pts:1800, hp:15000,spd:0.9,  col:['#f472b6','#831843'], sz:2.5,  enabled:false, w:1 },
 };
 
-// ══════════════════════════════════════════════════════════════
-//  ENTITY POOLS
-// ══════════════════════════════════════════════════════════════
-let creatures=[],particles=[],lightnings=[],shockwaves=[];
-let shake={x:0,y:0,power:0};
-let spawnTimer=0;
+// ═══════════════════════════════════════════════════
+//  ORBIT SYSTEM  — creatures tawaf around BH center
+// ═══════════════════════════════════════════════════
+// Each creature has: orbitRadius, orbitAngle, orbitSpeed, orbitDir
+// Multiple rings at different radii based on type
 
-// Max creatures on screen
-function maxCreatures(){return Math.min(8+G.spawnCount*2,120);}
+const ORBIT_RINGS = [
+  { r: 0.30 }, // innermost
+  { r: 0.42 },
+  { r: 0.54 },
+  { r: 0.66 },
+  { r: 0.78 }, // outermost
+];
+// r is fraction of Math.min(W,H)*0.5
 
-function pickType(){
-  const enabled=Object.entries(CTYPES).filter(([,v])=>v.enabled);
-  const total=enabled.reduce((s,[,v])=>s+v.weight,0);
-  let r=Math.random()*total;
-  for(const[type,cfg]of enabled){r-=cfg.weight;if(r<=0)return[type,cfg];}
-  return enabled[enabled.length-1];
+let creatures = [], particles = [], lightnings = [], shockwaves = [], pulseRings = [];
+let inkClouds = [], chaosParticles = [];
+const MAX_PARTICLES = 120, MAX_LIGHTNING = 18, MAX_SHOCKWAVE = 12, MAX_PULSE = 16, MAX_CHAOS_P = 60;
+let shake = { x: 0, y: 0, power: 0 };
+let chaosLevel = 0;
+let spawnTimer = 0;
+
+function getOrbitR(ring) {
+  const base = Math.min(W, H) * 0.5;
+  return ORBIT_RINGS[ring % ORBIT_RINGS.length].r * base;
 }
 
-function spawnCreature(){
-  if(!G.active||creatures.length>=maxCreatures())return;
-  const[type,cfg]=pickType();
-  const side=Math.floor(Math.random()*4);
-  let x,y;
-  if(side===0){x=Math.random()*W;y=-70;}
-  else if(side===1){x=W+70;y=Math.random()*H;}
-  else if(side===2){x=Math.random()*W;y=H+70;}
-  else{x=-70;y=Math.random()*H;}
-  const pixSz=Math.round(cfg.sz*3);
-  const sz=16*pixSz;
-  const hp0=cfg.hp*(1+G.session*.25);
+function pickType() {
+  const pool = Object.entries(CT).filter(([, v]) => v.enabled);
+  const tot = pool.reduce((s, [, v]) => s + v.w, 0);
+  let r = Math.random() * tot;
+  for (const [type, cfg] of pool) { r -= cfg.w; if (r <= 0) return [type, cfg]; }
+  return pool[pool.length - 1];
+}
+
+function spawnCreature() {
+  if (!G.active) return;
+  const maxC = Math.min(8 + G.spawnRings * 14, 280);
+  if (creatures.length >= maxC) return;
+
+  const [type, cfg] = pickType();
+  const px = Math.round(cfg.sz * SCALE);
+  const sz = 16 * px;
+
+  // Assign to a random ring — inner rings are faster
+  const ring = Math.floor(Math.random() * Math.min(G.spawnRings + 1, ORBIT_RINGS.length));
+  const oR = getOrbitR(ring);
+  const oAngle = Math.random() * Math.PI * 2;
+  // Speed: inner ring = fast, outer ring = slow; tangent tawaf feel
+  // base radians/frame: inner ~0.012, outer ~0.005
+  const baseSpd = cfg.spd * (0.013 - ring * 0.002) * (1 + G.session * 0.018);
+  const dir = Math.random() < 0.5 ? 1 : -1;
+
+  // Starting position on the orbit
+  const cx2 = W / 2 + Math.cos(oAngle) * oR;
+  const cy2 = H / 2 + Math.sin(oAngle) * oR;
+
+  const sessionScale = 1 + G.session * 0.35;  // HP grows fast each session
   creatures.push({
-    type,sprite:cfg.sprite,pts:cfg.pts,
-    col1:cfg.col[0],col2:cfg.col[1],
-    pixSz,sz,
-    spd:cfg.spd*(1+G.session*.04),
-    behavior:cfg.behavior||null,
-    x,y,vx:0,vy:0,
-    wobble:Math.random()*Math.PI*2,
-    hp:hp0, maxHP:hp0,
-    alpha:1,dying:false,dieScale:1,
-    hue:Math.random()*360,
-    dmgFlash:0, sucking:false,
-    // behavior state
-    chargeTimer:null, charging:false, chargeFx:false,
-    inked:false, hasSplit:false,
-    pulseMod:1, pulsePhase:Math.random()*Math.PI*2,
-    camoPhase:Math.random()*Math.PI*2,
+    type, sprite: cfg.sprite,
+    col1: cfg.col[0], col2: cfg.col[1],
+    pts: cfg.pts, pixSz: px, sz,
+    x: cx2, y: cy2,
+    orbitR: oR, orbitAngle: oAngle,
+    orbitSpeed: Math.abs(baseSpd) * (1 + G.session * 0.015),
+    orbitDir: dir,
+    wobble: Math.random() * Math.PI * 2,
+    hp: cfg.hp * sessionScale,
+    maxHP: cfg.hp * sessionScale,
+    alpha: 1, dying: false, dieScale: 1,
+    dmgFlash: 0,
+    // behavior
+    behavior: cfg.sprite,
+    pulsePhase: Math.random() * Math.PI * 2,
+    pulseMod: 1,
+    hasSplit: false, inked: false,
+    chargeTimer: 2 + Math.random() * 4,
+    charging: false,
   });
 }
 
-// ══════════════════════════════════════════════════════════════
-//  OCEAN BACKGROUND
-// ══════════════════════════════════════════════════════════════
-function drawOcean(){
-  const t=Date.now()*.001;
-  const h1=sk('ch2')?(BH.angle*20)%360:(185+G.session*8)%360;
-  const h2=(h1+25)%360;
-
-  const g=cx.createLinearGradient(0,0,W,H);
-  g.addColorStop(0,`hsl(${h1},58%,36%)`);
-  g.addColorStop(.5,`hsl(${h2},52%,30%)`);
-  g.addColorStop(1,`hsl(${(h1+15)%360},55%,40%)`);
-  cx.fillStyle=g;cx.fillRect(0,0,W,H);
+// ═══════════════════════════════════════════════════
+//  DRAW BACKGROUND (bright top-down ocean)
+// ═══════════════════════════════════════════════════
+function drawOcean() {
+  const t = Date.now() * 0.001;
+  const hue = chaosLevel > 3 ? (BH.angle * 25) % 360 : (185 + G.session * 7) % 360;
+  const g = cx.createLinearGradient(0, 0, W, H);
+  g.addColorStop(0, `hsl(${hue},62%,40%)`);
+  g.addColorStop(0.5, `hsl(${(hue+20)%360},56%,34%)`);
+  g.addColorStop(1, `hsl(${(hue+40)%360},60%,44%)`);
+  cx.fillStyle = g; cx.fillRect(0, 0, W, H);
 
   // Surface shimmer
-  cx.save();cx.globalAlpha=.05;
-  for(let wy=0;wy<H+60;wy+=48){
-    for(let wx=0;wx<W+60;wx+=48){
-      const ox=Math.sin(wy*.05+t)*15, oy=Math.cos(wx*.04+t*.8)*9;
+  cx.save(); cx.globalAlpha = 0.05;
+  for (let wy = 0; wy < H + 60; wy += 68) {
+    for (let wx = 0; wx < W + 60; wx += 68) {
+      const ox = Math.sin(wy * 0.05 + t) * 14, oy = Math.cos(wx * 0.04 + t * 0.8) * 8;
       cx.beginPath();
-      cx.ellipse(wx+ox,wy+oy,20,6,Math.sin(t+wx*.02)*.4,0,Math.PI*2);
-      cx.fillStyle='rgba(255,255,255,1)';cx.fill();
+      cx.ellipse(wx + ox, wy + oy, 19, 6, Math.sin(t + wx * 0.02) * 0.4, 0, Math.PI * 2);
+      cx.fillStyle = 'rgba(255,255,255,1)'; cx.fill();
     }
   }
   cx.restore();
 
-  // Caustic blobs
-  cx.save();cx.globalAlpha=.04;
-  for(let i=0;i<12;i++){
-    const bx=(Math.sin(i*2.1+t*.4)*.4+.5)*W;
-    const by=(Math.cos(i*1.7+t*.3)*.4+.5)*H;
-    const br=50+Math.sin(i+t)*20;
-    const bg=cx.createRadialGradient(bx,by,0,bx,by,br);
-    bg.addColorStop(0,'rgba(255,255,255,1)');bg.addColorStop(1,'rgba(255,255,255,0)');
-    cx.fillStyle=bg;cx.beginPath();cx.arc(bx,by,br,0,Math.PI*2);cx.fill();
+  // Caustics
+  cx.save(); cx.globalAlpha = 0.04;
+  for (let i = 0; i < 6; i++) {
+    const bx = (Math.sin(i * 2.1 + t * 0.4) * 0.4 + 0.5) * W;
+    const by = (Math.cos(i * 1.7 + t * 0.35) * 0.4 + 0.5) * H;
+    const br = 48 + Math.sin(i + t) * 18;
+    const bg = cx.createRadialGradient(bx, by, 0, bx, by, br);
+    bg.addColorStop(0, 'rgba(255,255,255,1)'); bg.addColorStop(1, 'rgba(255,255,255,0)');
+    cx.fillStyle = bg; cx.beginPath(); cx.arc(bx, by, br, 0, Math.PI * 2); cx.fill();
   }
   cx.restore();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  BLACK HOLE DRAW
-// ══════════════════════════════════════════════════════════════
-function drawBlackHole(){
-  const{x,y,r,pullR,angle}=BH;
-  BH.angle+=.022+BH.tier*.003+(sk('ch2')?.008:0);
+// ═══════════════════════════════════════════════════
+//  DRAW BLACK HOLE
+// ═══════════════════════════════════════════════════
+function drawBH() {
+  const cx2 = W / 2, cy2 = H / 2;
+  const { r, pullR, angle } = BH;
+  BH.angle += 0.018 + BH.tier * 0.003 + (chaosLevel > 3 ? 0.008 : 0);
 
-  const hue=sk('ch2')?(BH.angle*30)%360:270;
-  const col=`hsl(${hue},90%,55%)`;
-  const col2=`hsl(${(hue+60)%360},80%,65%)`;
+  const hue = chaosLevel > 2 ? (angle * 28) % 360 : 270;
+  const col = `hsl(${hue},90%,55%)`;
 
-  // Gravity well rings on water surface
+  // Pull zone glow
   cx.save();
-  for(let i=4;i>=1;i--){
-    cx.beginPath();cx.arc(x,y,pullR*(i/4),0,Math.PI*2);
-    cx.strokeStyle=col;cx.globalAlpha=.025*i;cx.lineWidth=i+1;cx.stroke();
+  for (let i = 4; i >= 1; i--) {
+    cx.beginPath(); cx.arc(cx2, cy2, pullR * (i / 4), 0, Math.PI * 2);
+    cx.strokeStyle = col; cx.globalAlpha = 0.02 * i; cx.lineWidth = i + 1; cx.stroke();
   }
   cx.restore();
 
-  // Accretion disk glow
-  [3.5,2.2,1.4].forEach((m,i)=>{
-    const ag=cx.createRadialGradient(x,y,0,x,y,r*m);
-    const c=sk('ch2')?`hsl(${(hue+i*50)%360},90%,55%)`:col;
-    ag.addColorStop(0,`${c.replace('hsl','hsla').replace(')',',0)')}`) ;
-    ag.addColorStop(.4,c.replace('hsl(','hsla(').replace(')',`,${.06-i*.015})`));
-    ag.addColorStop(1,'rgba(0,0,0,0)');
-    cx.beginPath();cx.arc(x,y,r*m,0,Math.PI*2);
-    cx.fillStyle=ag;cx.fill();
+  // Accretion glow halos
+  [3.2, 2.0, 1.3].forEach((m, i) => {
+    const ag = cx.createRadialGradient(cx2, cy2, 0, cx2, cy2, r * m);
+    const hh = chaosLevel > 2 ? (hue + i * 40) % 360 : hue;
+    ag.addColorStop(0, 'rgba(0,0,0,0)');
+    ag.addColorStop(0.4, `hsla(${hh},90%,55%,${0.055 - i * 0.012})`);
+    ag.addColorStop(1, 'rgba(0,0,0,0)');
+    cx.beginPath(); cx.arc(cx2, cy2, r * m, 0, Math.PI * 2);
+    cx.fillStyle = ag; cx.fill();
   });
 
-  // Spiral accretion arms
-  const arms=3+BH.tier+(sk('ch4')?2:0);
-  for(let a=0;a<arms;a++){
+  // Spiral arms
+  const arms = 3 + BH.tier + (chaosLevel > 4 ? 2 : 0);
+  for (let a = 0; a < arms; a++) {
     cx.beginPath();
-    const base=angle+(a/arms)*Math.PI*2;
-    for(let rad=r*.8;rad<pullR*.7;rad+=2){
-      const ang=base+rad*.05;
-      const px=x+Math.cos(ang)*rad, py=y+Math.sin(ang)*rad;
-      rad===Math.round(r*.8)?cx.moveTo(px,py):cx.lineTo(px,py);
+    const base = angle + (a / arms) * Math.PI * 2;
+    for (let rad = r * 0.8; rad < pullR * 0.7; rad += 2) {
+      const ang = base + rad * 0.048;
+      const px = cx2 + Math.cos(ang) * rad, py = cy2 + Math.sin(ang) * rad;
+      rad === Math.round(r * 0.8) ? cx.moveTo(px, py) : cx.lineTo(px, py);
     }
-    const ah=sk('ch2')?(hue+a*(360/arms))%360:hue;
-    cx.strokeStyle=`hsla(${ah},85%,55%,${.18-a*.025})`;
-    cx.lineWidth=1.5;cx.stroke();
+    const ah = chaosLevel > 2 ? (hue + a * (360 / arms)) % 360 : hue;
+    cx.strokeStyle = `hsla(${ah},85%,55%,${0.16 - a * 0.02})`; cx.lineWidth = 1.4; cx.stroke();
   }
 
-  // Event horizon (dark core)
-  const cg=cx.createRadialGradient(x,y,0,x,y,r);
-  cg.addColorStop(0,'rgba(0,0,0,1)');
-  cg.addColorStop(.5,'rgba(0,0,10,.98)');
-  cg.addColorStop(.8,`hsla(${hue},80%,15%,.85)`);
-  cg.addColorStop(1,'rgba(0,0,0,0)');
-  cx.beginPath();cx.arc(x,y,r,0,Math.PI*2);
-  cx.fillStyle=cg;cx.fill();
+  // Event horizon
+  const cg = cx.createRadialGradient(cx2, cy2, 0, cx2, cy2, r);
+  cg.addColorStop(0, 'rgba(0,0,0,1)');
+  cg.addColorStop(0.5, 'rgba(0,0,10,.98)');
+  cg.addColorStop(0.85, `hsla(${hue},80%,14%,.88)`);
+  cg.addColorStop(1, 'rgba(0,0,0,0)');
+  cx.beginPath(); cx.arc(cx2, cy2, r, 0, Math.PI * 2); cx.fillStyle = cg; cx.fill();
 
-  // Spinning inner ring
-  cx.save();cx.translate(x,y);cx.rotate(angle*2);
-  const dotN=8+BH.tier*2+(sk('ch2')?6:0);
-  for(let i=0;i<dotN;i++){
-    const da=(i/dotN)*Math.PI*2;
-    const dh=sk('ch2')?(hue+i*(360/dotN))%360:hue;
-    const blink=.45+Math.sin(Date.now()*.006+i)*.4;
-    cx.beginPath();cx.arc(Math.cos(da)*r*.78,Math.sin(da)*r*.78,2.5,0,Math.PI*2);
-    cx.fillStyle=`hsla(${dh},100%,70%,${blink})`;
-    if(sk('ch1')){cx.shadowColor=cx.fillStyle;cx.shadowBlur=10;}
-    cx.fill();
+  // Spinning dots
+  cx.save(); cx.translate(cx2, cy2); cx.rotate(angle * 2);
+  const dn = 7 + BH.tier * 2 + (chaosLevel > 2 ? 4 : 0);
+  for (let i = 0; i < dn; i++) {
+    const da = (i / dn) * Math.PI * 2;
+    const dh = chaosLevel > 2 ? (hue + i * (360 / dn)) % 360 : hue;
+    cx.beginPath(); cx.arc(Math.cos(da) * r * 0.75, Math.sin(da) * r * 0.75, 2.2, 0, Math.PI * 2);
+    cx.fillStyle = `hsla(${dh},100%,72%,${0.5 + Math.sin(Date.now() * 0.006 + i) * 0.38})`;
+    cx.shadowColor = cx.fillStyle; cx.shadowBlur = 8; cx.fill();
   }
-  cx.shadowBlur=0;cx.restore();
+  cx.shadowBlur = 0; cx.restore();
 
-  // Singularity center
-  cx.beginPath();cx.arc(x,y,r*.22,0,Math.PI*2);
-  cx.fillStyle=sk('ch2')?`hsl(${hue},100%,80%)`:'rgba(180,130,255,.9)';
-  if(sk('ch1')){cx.shadowColor=cx.fillStyle;cx.shadowBlur=18;}
-  cx.fill();cx.shadowBlur=0;
+  // Center singularity
+  cx.beginPath(); cx.arc(cx2, cy2, r * 0.24, 0, Math.PI * 2);
+  cx.fillStyle = chaosLevel > 2 ? `hsl(${hue},100%,82%)` : 'rgba(190,140,255,.92)';
+  cx.shadowColor = cx.fillStyle; cx.shadowBlur = 18; cx.fill(); cx.shadowBlur = 0;
 
-  // Orbiting chaos nodes at higher tiers
-  if(BH.tier>=3){
-    for(let i=0;i<BH.tier-1;i++){
-      const oa=angle*(1.3+i*.4)+(i/(BH.tier-1))*Math.PI*2;
-      const or=r*2.2+i*r*.4;
-      const ox=x+Math.cos(oa)*or, oy=y+Math.sin(oa)*or;
-      const mg=cx.createRadialGradient(ox,oy,0,ox,oy,7);
-      mg.addColorStop(0,'rgba(0,0,15,.98)');
-      mg.addColorStop(.6,`hsla(${(hue+i*90)%360},100%,55%,.7)`);
-      mg.addColorStop(1,'rgba(0,0,0,0)');
-      cx.beginPath();cx.arc(ox,oy,8,0,Math.PI*2);cx.fillStyle=mg;cx.fill();
-    }
+  // Orbit rings (visual guide)
+  cx.save(); cx.globalAlpha = 0.06;
+  for (let ring = 0; ring < Math.min(G.spawnRings + 1, ORBIT_RINGS.length, 5); ring++) {
+    const oR = getOrbitR(ring);
+    cx.beginPath(); cx.arc(cx2, cy2, oR, 0, Math.PI * 2);
+    cx.strokeStyle = `hsl(${hue},70%,60%)`; cx.lineWidth = 1; cx.setLineDash([6, 14]); cx.stroke();
+    cx.setLineDash([]);
   }
-}
-
-// ══════════════════════════════════════════════════════════════
-//  BREAKER — hover damages creatures
-// ══════════════════════════════════════════════════════════════
-function drawBreaker(){
-  if(mouse.x<0)return;
-  const{x,y}=mouse;
-  const aoe=G.breakerAoE;
-  const col=sk('ch2')?`hsl(${(BH.angle*30)%360},100%,60%)`:'rgba(0,220,255,.7)';
-
-  // AoE ring
-  cx.save();
-  cx.beginPath();cx.arc(x,y,aoe,0,Math.PI*2);
-  cx.strokeStyle=col;cx.lineWidth=1.5;cx.globalAlpha=.35;
-  cx.setLineDash([4,8]);cx.stroke();cx.setLineDash([]);
-  // soft fill
-  const bg=cx.createRadialGradient(x,y,0,x,y,aoe);
-  bg.addColorStop(0,'rgba(0,220,255,.06)');bg.addColorStop(1,'rgba(0,220,255,0)');
-  cx.fillStyle=bg;cx.globalAlpha=1;cx.fill();
-  cx.restore();
-
-  // Crosshair center
-  cx.save();cx.strokeStyle=col;cx.lineWidth=2;cx.globalAlpha=.6;
-  [[x-14,y,x-5,y],[x+5,y,x+14,y],[x,y-14,x,y-5],[x,y+5,x,y+14]]
-    .forEach(([x1,y1,x2,y2])=>{cx.beginPath();cx.moveTo(x1,y1);cx.lineTo(x2,y2);cx.stroke();});
   cx.restore();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  CREATURE TICK + DRAW
-// ══════════════════════════════════════════════════════════════
-function tickCreatures(dt){
-  const{x:bx,y:by,r:br,pullR,angle}=BH;
-  const aoe=G.breakerAoE;
-  const dmgTick=G.breakerDmg*G.breakerSpeed*dt;
+// ═══════════════════════════════════════════════════
+//  TICK CREATURES  (orbit + damage)
+// ═══════════════════════════════════════════════════
+function tickCreatures(dt) {
+  const cx2 = W / 2, cy2 = H / 2;
+  const aoe = G.aoe;
+  // Damage is INFINITE SCALING: base * session multiplier * prestige
+  const dmgTick = G.dmg * G.speed * dt * (1 + G.session * 0.12) * G.pDmgMult;
 
-  creatures.forEach(c=>{
-    if(c.dying){
-      // Big POP effect - scale up then vanish
-      if(c.dieScale>0.5&&c.alpha>0.8){
-        c.dieScale*=1.18; // scale UP first
-      } else {
-        c.dieScale*=.72;
-      }
-      c.alpha-=.08;
+  creatures.forEach(c => {
+    if (c.dying) {
+      if (c.dieScale > 0.55 && c.alpha > 0.82) c.dieScale *= 1.16;
+      else c.dieScale *= 0.74;
+      c.alpha -= 0.09;
       return;
     }
 
-    const dx=bx-c.x, dy=by-c.y;
-    const distBH=Math.sqrt(dx*dx+dy*dy)||1;
+    // ── ORBIT UPDATE: advance angle along orbit path
+    c.orbitAngle += c.orbitSpeed * c.orbitDir;
+    c.wobble += 0.06;
 
-    // ── Behavior update
-    const mdx=mouse.x-c.x, mdy=mouse.y-c.y;
-    const distM=Math.sqrt(mdx*mdx+mdy*mdy);
-    updateCreatureBehavior(c, dt, distBH, distM);
+    // Behavior modifiers
+    let orbitRmod = 1;
+    switch (c.behavior) {
+      case 'squid': // flee outward on low HP
+        if (c.hp / c.maxHP < 0.35) orbitRmod = 1.08;
+        break;
+      case 'shark': // charge inward periodically
+        c.chargeTimer -= dt;
+        if (c.chargeTimer <= 0) {
+          c.chargeTimer = 3 + Math.random() * 3;
+          c.charging = true; setTimeout(() => c.charging = false, 700);
+        }
+        if (c.charging) orbitRmod = 0.6;
+        break;
+      case 'whale': // resist pull, stays in outer ring
+        orbitRmod = 1.12;
+        break;
+      case 'jellyfish': // pulse
+        c.pulsePhase += dt * 2.2;
+        c.pulseMod = 0.65 + Math.abs(Math.sin(c.pulsePhase)) * 0.42;
+        break;
+      case 'turtle': // slow but steady
+        c.orbitSpeed = Math.max(c.orbitSpeed * 0.999, 0.001);
+        break;
+      case 'octopus': // camo
+        c.dmgFlash = Math.max(0, c.dmgFlash - 0.01);
+        c.alpha = c.dying ? c.alpha : 0.35 + Math.abs(Math.sin(c.wobble * 0.5)) * 0.65;
+        break;
+      case 'kraken': // split at 30%
+        if (!c.hasSplit && c.hp / c.maxHP < 0.3) {
+          c.hasSplit = true;
+          for (let i = 0; i < 3; i++) {
+            const a2 = (i / 3) * Math.PI * 2;
+            const ring2 = Math.floor(Math.random() * 2);
+            const oR2 = getOrbitR(ring2);
+            creatures.push({
+              type: 'squid', sprite: 'squid',
+              col1: '#f472b6', col2: '#831843',
+              pts: 30, pixSz: 2, sz: 16 * 2, behavior: 'squid',
+              x: cx2 + Math.cos(a2) * oR2, y: cy2 + Math.sin(a2) * oR2,
+              orbitR: oR2, orbitAngle: a2,
+              orbitSpeed: 0.012, orbitDir: c.orbitDir,
+              wobble: Math.random() * Math.PI * 2,
+              hp: 300, maxHP: 300, alpha: 1, dying: false, dieScale: 1,
+              dmgFlash: 0, pulsePhase: 0, pulseMod: 1,
+              hasSplit: true, inked: false,
+              chargeTimer: 99, charging: false,
+            });
+          }
+          floatText(c.x, c.y - 34, '💥 SPLIT!', '#f472b6');
+          burst(c.x, c.y, '#f472b6', 16);
+          playSfxEat(50);
+        }
+        break;
+    }
 
-    // ── Hover damage (blocked by ink, gated by jellyfish pulse)
-    const inkedOut=mouseInInk();
-    const jellyOpen=c.behavior!=='pulse'||(c.pulseMod||1)>0.85;
-    if(!inkedOut && jellyOpen && distM<aoe+c.sz*.5){
-      const dmgMult=Math.max(.3,1-distM/(aoe+c.sz*.5));
-      let dmg=dmgTick*dmgMult*3;
-      if(Math.random()*100<G.critChance){
-        dmg*=G.critMult;
-        if(Math.random()<.3) floatText(c.x,c.y-c.sz*.4,'CRIT!','#fbbf24');
+    // Update actual position from orbit
+    const effectiveR = c.orbitR * orbitRmod;
+    c.x = cx2 + Math.cos(c.orbitAngle) * effectiveR;
+    c.y = cy2 + Math.sin(c.orbitAngle) * effectiveR;
+
+    // ── HOVER DAMAGE
+    const mdx = mouse.x - c.x, mdy = mouse.y - c.y;
+    const distM = Math.sqrt(mdx * mdx + mdy * mdy);
+    const jellyOpen = c.behavior !== 'jellyfish' || c.pulseMod > 0.82;
+    const inkBlocked = inkClouds.length > 0 && inkClouds.some(ink => Math.hypot(mouse.x - ink.x, mouse.y - ink.y) < ink.r * 0.9 && ink.life > 0.3);
+
+    if (!inkBlocked && jellyOpen && distM < aoe + c.sz * 0.5) {
+      const dmgMult = Math.max(0.3, 1 - distM / (aoe + c.sz * 0.5));
+      let dmg = dmgTick * dmgMult * 3.5;
+      if (Math.random() * 100 < G.critChance) {
+        dmg *= G.critMult;
+        if (Math.random() < 0.25) floatText(c.x, c.y - c.sz * 0.4, 'CRIT!', '#fbbf24');
       }
-      c.hp-=dmg;
-      c.dmgFlash=Math.min(1,c.dmgFlash+dmg/(c.maxHP*.2));
+      c.hp -= dmg;
+      c.dmgFlash = Math.min(1, c.dmgFlash + dmg / (c.maxHP * 0.18));
+
+      // Squid ink burst on low HP
+      if (c.behavior === 'squid' && !c.inked && c.hp / c.maxHP < 0.35 && Math.random() < 0.007) {
+        c.inked = true;
+        inkClouds.push({ x: c.x, y: c.y, r: 0, maxR: 55 + aoe * 0.3, life: 1 });
+        floatText(c.x, c.y - 28, '💨 INK!', '#818cf8');
+        setTimeout(() => { c.inked = false; }, 3200);
+      }
     }
-    c.dmgFlash=Math.max(0,c.dmgFlash-.05);
+    c.dmgFlash = Math.max(0, c.dmgFlash - 0.055);
 
-    // ── BH gravity pull (always)
-    if(distBH<pullR){
-      const pull=(1-distBH/pullR)*G.gravityMult*1.8;
-      c.vx+=(dx/distBH)*pull*.7;
-      c.vy+=(dy/distBH)*pull*.7;
-      // swirl
-      c.vx+=(-dy/distBH)*pull*.2;
-      c.vy+=(dx/distBH)*pull*.2;
-      c.sucking=true;
-    } else {
-      // Wander slowly inward
-      c.vx+=(dx/distBH)*.04;
-      c.vy+=(dy/distBH)*.04;
-      c.sucking=false;
-    }
-
-    c.vx*=.88;c.vy*=.88;
-    c.x+=c.vx;c.y+=c.vy;
-    c.wobble+=.06;
-
-    // ── Eaten when HP=0 OR touching BH
-    if(c.hp<=0||distBH<br*.85){
-      c.dying=true;
-      const critBonus=c.hp<=0?1:1;
-      let pts=Math.ceil(c.pts*G.matterMult*G.combo);
-      G.matter+=pts; G.totalMatter+=pts; G.eaten++;
-      G.eaten_types[c.type]=(G.eaten_types[c.type]||0)+1;
-      checkAchievements();
-      // BH growth
-      const growth=c.pts*G.matterMult;
-      feedBlackHole(growth);
+    // ── DEATH
+    if (c.hp <= 0) {
+      c.dying = true;
+      // Balatro scoring: chips accumulate, mult applies at session end
+      const baseChips = Math.ceil(c.pts * G.matterMult * G.pMatterMult);
+      const comboChips = Math.ceil(baseChips * G.combo);
+      G.chips += comboChips;
+      G.matter += comboChips; G.totalMatter += comboChips; G.eaten++;
+      G.eatenTypes[c.type] = (G.eatenTypes[c.type] || 0) + 1;
+      G.sessionKills[c.type] = (G.sessionKills[c.type] || 0) + 1;
+      const pts = comboChips;
+      feedBH(c.pts * G.matterMult);
       addCombo();
-      // SFX + chaos on eat (raw pts determines sound tier)
       playSfxEat(c.pts * G.matterMult);
-      const hkill=Math.floor(Math.random()*360);
-      const col=`hsl(${hkill},${80+chaosLevel*2}%,${55+Math.min(chaosLevel,10)}%)`;
-      burst(c.x,c.y,col,Math.floor(8+c.sz*.05+chaosLevel*3));
-      spawnLightning(c.x,c.y,2+Math.floor(chaosLevel*.8));
-      spawnShockwave(c.x,c.y,col);
-      addShake(c.sz*.06+chaosLevel*.5);
-      if(chaosLevel>3) spawnLightning(BH.x+(c.x-BH.x)*.5,BH.y+(c.y-BH.y)*.5,Math.floor(chaosLevel));
-      if(chaosLevel>1) pulseRings.push({x:c.x,y:c.y,r:5,maxR:60+chaosLevel*15,life:1,hue:hkill,thick:1.5});
-      floatText(c.x,c.y-c.sz*.5,'+'+fmt(pts),col);
-      chaosFlash(`hsla(${hkill},80%,60%,0.05)`);
+      checkAchievements();
+      const hk = Math.floor(Math.random() * 360);
+      const col = `hsl(${hk},${80 + chaosLevel * 2}%,${55 + Math.min(chaosLevel, 8)}%)`;
+      burst(c.x, c.y, col, Math.floor(8 + c.sz * 0.06 + chaosLevel * 2.5));
+      spawnLightning(c.x, c.y, 2 + Math.floor(chaosLevel * 0.8));
+      spawnShockwave(c.x, c.y, col);
+      addShake(c.sz * 0.06 + chaosLevel * 0.5);
+      if (chaosLevel > 2 && pulseRings.length < MAX_PULSE) pulseRings.push({ x: c.x, y: c.y, r: 5, life: 1, hue: hk, thick: 1.5 });
+      floatText(c.x, c.y - c.sz * 0.5, '+' + fmt(pts), col);
+      chaosFlash(`hsla(${hk},80%,60%,0.06)`);
     }
   });
 
-  // ── Draw creatures
-  creatures.forEach(c=>{
-    if(c.alpha<.05)return;
-    cx.save();cx.globalAlpha=c.alpha;
+  // ── DRAW CREATURES
+  creatures.forEach(c => {
+    if (c.alpha < 0.04) return;
+    cx.save(); cx.globalAlpha = c.alpha;
 
-    const csz=c.dying?c.sz*c.dieScale:c.sz;
-    const wx=c.x+(c.dying?0:Math.sin(c.wobble)*2.5);
-    const wy=c.y+(c.dying?0:Math.cos(c.wobble*.8)*1.8);
+    const csz = c.dying ? c.sz * c.dieScale : c.sz;
+    const wx = c.x + (c.dying ? 0 : Math.sin(c.wobble) * 2.2);
+    const wy = c.y + (c.dying ? 0 : Math.cos(c.wobble * 0.8) * 1.6);
 
-    // Shadow
-    cx.save();cx.globalAlpha=c.alpha*.18;cx.filter='blur(4px)';
-    const ss=getSprite(c.sprite,'rgba(0,0,0,1)','rgba(0,0,0,1)',c.pixSz);
-    cx.drawImage(ss,wx-csz/2+csz*.15,wy-csz/2+csz*.2,csz,csz);
-    cx.filter='none';cx.restore();
-
-    // Sprite — flash white when damaged
-    const fc=c.dmgFlash>.4?'#ffffff':c.col1;
-    const fc2=c.dmgFlash>.4?'#cccccc':c.col2;
-    const sp=getSprite(c.sprite,fc,fc2,c.pixSz*c.dieScale>.5?c.pixSz:1);
-
-    cx.translate(wx,wy);
-    if(bx<c.x){cx.scale(-1,1);}
-    // Pulse size for jellyfish
-    const pscale=c.pulseMod||1;
-    cx.scale(pscale,pscale);
-    cx.drawImage(sp,-csz/2,-csz/2,csz,csz);
-    // Draw cracks on top
-    drawCracks(c,csz);
-
-    // HP bar
-    if(c.hp<c.maxHP&&!c.dying){
-      const bw=csz*.85, bh=5, bx2=-bw/2, by2=-csz/2-9;
-      cx.fillStyle='rgba(0,0,0,.5)';cx.fillRect(bx2,by2,bw,bh);
-      const pct=Math.max(0,c.hp/c.maxHP);
-      cx.fillStyle=pct>.5?`hsl(${pct*120},90%,48%)`:`hsl(${pct*60},90%,48%)`;
-      cx.fillRect(bx2,by2,bw*pct,bh);
-      cx.strokeStyle='rgba(255,255,255,.2)';cx.lineWidth=.5;
-      cx.strokeRect(bx2,by2,bw,bh);
-    }
-
-    // AoE damage indicator (creature glows when being hovered)
-    const mdx2=mouse.x-c.x, mdy2=mouse.y-c.y;
-    if(Math.sqrt(mdx2*mdx2+mdy2*mdy2)<G.breakerAoE+c.sz*.5){
-      cx.strokeStyle='rgba(255,255,255,.4)';cx.lineWidth=2;
-      cx.strokeRect(-csz/2-2,-csz/2-2,csz+4,csz+4);
-    }
-
+    // Drop shadow — simple offset, no blur (performance)
+    cx.save(); cx.globalAlpha = c.alpha * 0.18;
+    cx.drawImage(getSprite(c.sprite, '#111', '#000', c.pixSz),
+      wx - csz/2 + csz*0.1, wy - csz/2 + csz*0.13, csz, csz);
     cx.restore();
+
+    // Sprite — rotate to face tangent of orbit (like screenshot)
+    const fc = c.dmgFlash > 0.38 ? '#ffffff' : c.col1;
+    const fc2 = c.dmgFlash > 0.38 ? '#cccccc' : c.col2;
+    cx.translate(wx, wy);
+    // Tangent angle = orbitAngle + PI/2 * direction (perpendicular to radius)
+    // Sprites face right by default, so rotate to orbit tangent
+    if (!c.dying) {
+      const tangent = c.orbitAngle + (Math.PI / 2) * (c.orbitDir || 1);
+      cx.rotate(tangent);
+    }
+    const ps = c.pulseMod || 1; cx.scale(ps, ps);
+    cx.drawImage(getSprite(c.sprite, fc, fc2, c.pixSz), -csz / 2, -csz / 2, csz, csz);
+
+    // Cracks (in rotated space — looks like cracks on creature body)
+    drawCracks(c, csz);
+    cx.restore(); // end rotated context
+
+    // HP bar + hover glow drawn in screen space (no rotation)
+    if (!c.dying) {
+      cx.save(); cx.globalAlpha = c.alpha;
+      if (c.hp < c.maxHP) {
+        const bw = csz * 0.88, bh = 5, bx2 = wx - bw / 2, by2 = wy - csz / 2 - 10;
+        cx.fillStyle = 'rgba(0,0,0,.5)'; cx.fillRect(bx2, by2, bw, bh);
+        const pct = Math.max(0, c.hp / c.maxHP);
+        cx.fillStyle = `hsl(${pct * 110},90%,48%)`; cx.fillRect(bx2, by2, bw * pct, bh);
+        cx.strokeStyle = 'rgba(255,255,255,.18)'; cx.lineWidth = 0.5; cx.strokeRect(bx2, by2, bw, bh);
+      }
+      const mdx2 = mouse.x - c.x, mdy2 = mouse.y - c.y;
+      if (Math.hypot(mdx2, mdy2) < G.aoe + c.sz * 0.5) {
+        cx.beginPath(); cx.arc(wx, wy, csz * 0.55, 0, Math.PI * 2);
+        cx.strokeStyle = 'rgba(255,255,255,.42)'; cx.lineWidth = 2; cx.stroke();
+      }
+      cx.restore();
+    }
   });
-  creatures=creatures.filter(c=>c.alpha>.03);
+  creatures = creatures.filter(c => c.alpha > 0.03);
 }
 
-// ══════════════════════════════════════════════════════════════
-//  BLACK HOLE FEED + TIER
-// ══════════════════════════════════════════════════════════════
-function feedBlackHole(pts){
-  BH.growth+=pts;
-  const tier=BH.tiers[BH.tier];
-  if(BH.growth>=tier.threshold){
-    BH.growth=0;
-    BH.tier=Math.min(BH.tier+1,BH.tiers.length-1);
-    BH.r*=1.35;
-    BH.pullR*=1.2;
-    notify('🕳️ '+BH.tiers[BH.tier].name+'!');
-    burst(BH.x,BH.y,'#a78bfa',40);
-    spawnLightning(BH.x,BH.y,8);
-    addShake(15);
+// ═══════════════════════════════════════════════════
+//  CRACK VISUALS
+// ═══════════════════════════════════════════════════
+function drawCracks(c, csz) {
+  const pct = c.hp / c.maxHP;
+  if (pct > 0.85 || c.dying) return;
+  const lvl = Math.floor((1 - pct) * 6);
+  cx.save();
+  const seed = (c.x * 1000 + c.y) | 0;
+  const r2 = csz * 0.38;
+  for (let i = 0; i < lvl * 2; i++) {
+    const ang = (seed * i * 2654435761) % 1000 / 1000 * Math.PI * 2;
+    const len = r2 * (0.3 + ((seed * i * 1234567) % 100) / 100 * 0.55);
+    cx.beginPath(); cx.moveTo(r2 * 0.18 * Math.cos(ang), r2 * 0.18 * Math.sin(ang));
+    let lx = r2 * 0.18 * Math.cos(ang), ly = r2 * 0.18 * Math.sin(ang);
+    for (let s = 0; s < 3 + lvl; s++) {
+      const sa = ang + ((seed * s * 9876543) % 1000 / 1000 - 0.5) * 1.1;
+      const sl = len / (3 + lvl);
+      lx += Math.cos(sa) * sl; ly += Math.sin(sa) * sl;
+      cx.lineTo(lx, ly);
+    }
+    cx.strokeStyle = 'rgba(0,0,0,.55)'; cx.lineWidth = 1.5; cx.stroke();
+    cx.strokeStyle = 'rgba(255,255,255,.18)'; cx.lineWidth = 0.5; cx.stroke();
+  }
+  if (pct < 0.22) {
+    cx.beginPath(); cx.arc(0, 0, csz * 0.38, 0, Math.PI * 2);
+    cx.strokeStyle = `rgba(255,50,50,${(0.22 - pct) * 2.2})`;
+    cx.lineWidth = 2; cx.shadowColor = 'rgba(255,0,0,.8)'; cx.shadowBlur = 10; cx.stroke();
+    cx.shadowBlur = 0;
+  }
+  cx.restore();
+}
+
+// ═══════════════════════════════════════════════════
+//  SUCTION TRAILS — visual pull lines BH → creatures
+// ═══════════════════════════════════════════════════
+function drawSuctionTrails() {
+  const cx2 = W/2, cy2 = H/2;
+  const t = Date.now() * 0.001;
+  // Limit trail rendering: max 40 creatures, throttle at high count
+  const maxTrail = creatures.length > 60 ? 30 : creatures.length > 30 ? 45 : creatures.length;
+  cx.save();
+  creatures.slice(0, maxTrail).forEach((c, ci) => {
+    if (c.dying || c.alpha < 0.5) return;
+    const dx = cx2 - c.x, dy = cy2 - c.y;
+    const dist = Math.sqrt(dx*dx+dy*dy);
+    if (dist > BH.pullR * 1.1) return;
+    // Trail opacity: stronger when closer to BH
+    const pull = Math.pow(1 - dist/BH.pullR, 1.8);
+    if (pull < 0.04) return;
+
+    // Animated dashes flowing toward BH
+    const segments = 5;
+    const speed = 0.6 + BH.tier * 0.12;
+    const phase = (t * speed + ci * 0.37) % 1;
+
+    for (let s = 0; s < segments; s++) {
+      const frac = ((s / segments) + phase) % 1;
+      // position along line from creature to BH
+      const px = c.x + dx * frac;
+      const py = c.y + dy * frac;
+      const fade = Math.sin(frac * Math.PI); // bright in middle
+      const r = 1.5 + fade * 2.2;
+      const hue = chaosLevel > 2 ? (BH.angle*30 + s*40)%360 : 260;
+      cx.beginPath(); cx.arc(px, py, r, 0, Math.PI*2);
+      cx.fillStyle = `hsla(${hue},90%,70%,${pull * fade * 0.55})`;
+      cx.fill();
+    }
+
+    // Thin line (very faint)
+    cx.beginPath(); cx.moveTo(c.x, c.y); cx.lineTo(cx2, cy2);
+    const hue2 = chaosLevel > 2 ? (BH.angle*30)%360 : 260;
+    cx.strokeStyle = `hsla(${hue2},80%,65%,${pull*0.08})`;
+    cx.lineWidth = 1; cx.stroke();
+  });
+  cx.shadowBlur = 0;
+  cx.restore();
+}
+
+// ═══════════════════════════════════════════════════
+//  BREAKER AoE visual
+// ═══════════════════════════════════════════════════
+function drawBreaker() {
+  if (mouse.x < 0) return;
+  const { x, y } = mouse;
+  const aoe = G.aoe;
+  const col = chaosLevel > 2 ? `hsl(${(BH.angle * 28) % 360},100%,62%)` : 'rgba(0,220,255,.7)';
+  cx.save();
+  cx.beginPath(); cx.arc(x, y, aoe, 0, Math.PI * 2);
+  cx.strokeStyle = col; cx.lineWidth = 1.5; cx.globalAlpha = 0.35;
+  cx.setLineDash([4, 8]); cx.stroke(); cx.setLineDash([]);
+  const bg = cx.createRadialGradient(x, y, 0, x, y, aoe);
+  bg.addColorStop(0, 'rgba(0,220,255,.07)'); bg.addColorStop(1, 'rgba(0,220,255,0)');
+  cx.fillStyle = bg; cx.globalAlpha = 1; cx.fill();
+  // Crosshair
+  cx.strokeStyle = col; cx.lineWidth = 2; cx.globalAlpha = 0.6;
+  [[x-13,y,x-4,y],[x+4,y,x+13,y],[x,y-13,x,y-4],[x,y+4,x,y+13]]
+    .forEach(([x1,y1,x2,y2]) => { cx.beginPath(); cx.moveTo(x1,y1); cx.lineTo(x2,y2); cx.stroke(); });
+  cx.restore();
+}
+
+// ═══════════════════════════════════════════════════
+//  BH FEED + TIER
+// ═══════════════════════════════════════════════════
+function feedBH(pts) {
+  BH.growth += pts;
+  const cap = BH.tiers[BH.tier].cap;
+  if (BH.growth >= cap) {
+    BH.growth = 0;
+    BH.tier = Math.min(BH.tier + 1, BH.tiers.length - 1);
+    BH.r *= 1.32; BH.pullR *= 1.18;
+    notify('⊗ ' + BH.tiers[BH.tier].name + '!');
+    burst(W/2, H/2, '#a78bfa', 40);
+    for (let i = 0; i < 8; i++) setTimeout(() => spawnLightning(W/2, H/2, 4), i * 60);
+    addShake(16); chaosFlash('rgba(167,139,250,.14)');
+    playSfxTierUp();
   }
   updateBHBar();
 }
 
-function updateBHBar(){
-  const tier=BH.tiers[BH.tier];
-  const pct=tier.threshold===Infinity?100:(BH.growth/tier.threshold)*100;
-  document.getElementById('bh-fill').style.width=Math.min(pct,100)+'%';
-  document.getElementById('bh-label').textContent=
-    `🕳️ BLACK HOLE — ${fmt(BH.growth)} / ${tier.threshold===Infinity?'∞':fmt(tier.threshold)}`;
-  document.getElementById('bh-tier').textContent=
-    `${BH.tiers[BH.tier].name}`;
+function updateBHBar() {
+  const cap = BH.tiers[BH.tier].cap;
+  const pct = cap === Infinity ? 100 : (BH.growth / cap) * 100;
+  document.getElementById('bh-f').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('bh-l').textContent = `🕳️ ${fmt(BH.growth)} / ${cap === Infinity ? '∞' : fmt(cap)}`;
+  document.getElementById('bh-tier-label').textContent = BH.tiers[BH.tier].name;
 }
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+//  BH PASSIVE INCOME
+// ═══════════════════════════════════════════════════
+function getPassive() {
+  return BH.tier * BH.tier * 2.5 * G.pPassiveMult * (1 + G.session * 0.04);
+}
+function tickPassive(dt) {
+  const p = getPassive();
+  if (p <= 0) return;
+  const e = p * dt;
+  G.matter += e; G.totalMatter += e;
+  feedBH(e * 0.08);
+  document.getElementById('passive-txt').textContent = `🕳️ PASSIVE: +${fmt(p)}/sec`;
+}
+
+// ═══════════════════════════════════════════════════
 //  EFFECTS
-// ══════════════════════════════════════════════════════════════
-function spawnLightning(x,y,n=2){
-  if(!sk('ch1')&&chaosLevel<2)return;
-  for(let i=0;i<n;i++){
-    const a=Math.random()*Math.PI*2, len=60+Math.random()*140;
-    const segs=[];let cx2=x,cy2=y;
-    for(let s=0;s<8;s++){
-      const nx=cx2+Math.cos(a+(Math.random()-.5)*.9)*len/8;
-      const ny=cy2+Math.sin(a+(Math.random()-.5)*.9)*len/8;
-      segs.push({x:nx,y:ny});cx2=nx;cy2=ny;
+// ═══════════════════════════════════════════════════
+function spawnLightning(x, y, n = 2) {
+  if (lightnings.length >= MAX_LIGHTNING) return;
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2, len = 55 + Math.random() * 130;
+    const segs = []; let lx = x, ly = y;
+    for (let s = 0; s < 8; s++) {
+      lx += Math.cos(a + (Math.random() - 0.5) * 0.9) * len / 8;
+      ly += Math.sin(a + (Math.random() - 0.5) * 0.9) * len / 8;
+      segs.push({ x: lx, y: ly });
     }
-    const hue=sk('ch2')?(BH.angle*30+Math.random()*80)%360:55;
-    lightnings.push({segs,life:1,hue,w:1.5+Math.random()*2});
+    const hue = chaosLevel > 2 ? (BH.angle * 28 + Math.random() * 80) % 360 : 55;
+    lightnings.push({ segs, life: 1, hue, w: 1.5 + Math.random() * 2 });
   }
 }
-function tickLightnings(){
+function tickLightnings() {
   cx.save();
-  lightnings.forEach(l=>{
-    l.life-=.1;if(l.life<=0)return;
-    cx.globalAlpha=l.life;
-    cx.strokeStyle=`hsl(${l.hue},100%,70%)`;
-    cx.lineWidth=l.w*(1+l.life*.4);
-    cx.shadowColor=cx.strokeStyle;cx.shadowBlur=10;
-    cx.beginPath();l.segs.forEach((s,i)=>i===0?cx.moveTo(s.x,s.y):cx.lineTo(s.x,s.y));
+  lightnings.forEach(l => {
+    l.life -= 0.1; if (l.life <= 0) return;
+    cx.globalAlpha = l.life;
+    cx.strokeStyle = `hsl(${l.hue},100%,72%)`;
+    cx.lineWidth = l.w * (1 + l.life * 0.4);
+    cx.shadowColor = cx.strokeStyle; cx.shadowBlur = 10;
+    cx.beginPath(); l.segs.forEach((s, i) => i === 0 ? cx.moveTo(s.x, s.y) : cx.lineTo(s.x, s.y));
     cx.stroke();
   });
-  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
-  lightnings=lightnings.filter(l=>l.life>0);
+  cx.shadowBlur = 0; cx.globalAlpha = 1; cx.restore();
+  lightnings = lightnings.filter(l => l.life > 0);
 }
 
-function spawnShockwave(x,y,col){shockwaves.push({x,y,r:20,maxR:BH.r+80,life:1,col});}
-function tickShockwaves(){
+function spawnShockwave(x, y, col) { if (shockwaves.length < MAX_SHOCKWAVE) shockwaves.push({ x, y, r: 18, life: 1, col }); }
+function tickShockwaves() {
   cx.save();
-  shockwaves.forEach(s=>{
-    s.r+=6;s.life-=.055;
-    cx.globalAlpha=s.life*.4;
-    cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    cx.strokeStyle=s.col;cx.lineWidth=2+s.life*2;
-    cx.shadowColor=s.col;cx.shadowBlur=10;cx.stroke();
+  shockwaves.forEach(s => {
+    s.r += 5 + chaosLevel * 0.6; s.life -= 0.055;
+    cx.globalAlpha = s.life * 0.42;
+    cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    cx.strokeStyle = s.col; cx.lineWidth = 2 + s.life * 2;
+    cx.shadowColor = s.col; cx.shadowBlur = 9; cx.stroke();
   });
-  cx.shadowBlur=0;cx.restore();
-  shockwaves=shockwaves.filter(s=>s.life>0);
+  cx.shadowBlur = 0; cx.restore();
+  shockwaves = shockwaves.filter(s => s.life > 0);
 }
 
-function burst(x,y,col,n=8){
-  const cnt=Math.floor((sk('ch4')?n*4:sk('ch3')?n*2:n)*(1+chaosLevel*.15));
-  for(let i=0;i<cnt;i++){
-    const a=Math.random()*Math.PI*2, sp=1.5+Math.random()*(5+chaosLevel*.5);
-    // Always use rainbow at chaos>3
-    const h=(chaosLevel>3||sk('ch2'))?(BH.angle*30+Math.random()*360)%360:null;
-    const r2=2+Math.random()*(3+chaosLevel*.3);
-    particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
-      r:r2,alpha:1,
-      color:h?`hsl(${h},100%,62%)`:col,grav:.04-(Math.random()*.02)});
+function burst(x, y, col, n = 8) {
+  const space = MAX_PARTICLES - particles.length;
+  if (space <= 0) return;
+  const cnt = Math.min(space, Math.floor(n * (1 + chaosLevel * 0.1)));
+  for (let i = 0; i < cnt; i++) {
+    const a = Math.random() * Math.PI * 2, sp = 1.5 + Math.random() * (4.5 + chaosLevel * 0.4);
+    const h = chaosLevel > 2 ? (BH.angle * 28 + Math.random() * 360) % 360 : null;
+    particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+      r: 2 + Math.random() * (3 + chaosLevel * 0.25), alpha: 1,
+      color: h ? `hsl(${h},100%,63%)` : col, grav: 0.038 - Math.random() * 0.018 });
   }
 }
-function tickParticles(){
+function tickParticles() {
   cx.save();
-  particles.forEach(p=>{
-    p.x+=p.vx;p.y+=p.vy;p.vy+=p.grav;
-    p.alpha-=.022;p.r*=.97;
-    cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    cx.fillStyle=p.color;cx.globalAlpha=p.alpha;
-    if(sk('ch2')){cx.shadowColor=p.color;cx.shadowBlur=5;}
+  // Group by color would be ideal but too complex — just disable shadow for perf
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += p.grav;
+    p.alpha -= 0.024; p.r *= 0.97;
+    cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    cx.fillStyle = p.color; cx.globalAlpha = p.alpha;
     cx.fill();
   });
-  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
-  particles=particles.filter(p=>p.alpha>.03);
+  cx.globalAlpha = 1; cx.restore();
+  particles = particles.filter(p => p.alpha > 0.03);
 }
 
-function addShake(pw){shake.power=Math.min(shake.power+pw*(sk('ch3')?2:1)*(1+chaosLevel*.1),25);}
-function applyShake(){
-  if(shake.power<.2){shake.x=shake.y=0;return;}
-  shake.x=(Math.random()-.5)*shake.power*2;
-  shake.y=(Math.random()-.5)*shake.power*2;
-  shake.power*=.8;
+// Chaos particles orbiting BH
+function tickChaosParticles() {
+  const spRate = chaosLevel * 0.06 + BH.tier * 0.02;
+  if (chaosParticles.length < MAX_CHAOS_P && Math.random() < spRate) {
+    const a = Math.random() * Math.PI * 2;
+    const dist = BH.r * 1.4 + Math.random() * BH.pullR * 0.7;
+    chaosParticles.push({ orbit: a, orbitDist: dist, orbitSpd: 0.012 + Math.random() * 0.025,
+      r: 1 + Math.random() * chaosLevel * 0.4, hue: Math.random() * 360, life: 1, alpha: 0.7 });
+  }
+  if (Math.random() < spRate * 0.4) {
+    pulseRings.push({ x: W/2, y: H/2, r: BH.r, life: 1, hue: (BH.angle * 28) % 360, thick: 1.5 });
+  }
+  cx.save();
+  pulseRings.forEach(r2 => {
+    r2.r += 2.8 + chaosLevel * 0.7; r2.life -= 0.04;
+    cx.globalAlpha = r2.life * 0.38;
+    cx.beginPath(); cx.arc(r2.x, r2.y, r2.r, 0, Math.PI * 2);
+    cx.strokeStyle = `hsl(${r2.hue},90%,65%)`; cx.lineWidth = r2.thick * (1 + r2.life);
+    cx.shadowColor = cx.strokeStyle; cx.shadowBlur = chaosLevel * 2.5; cx.stroke();
+  });
+  cx.shadowBlur = 0;
+  chaosParticles.forEach(p => {
+    p.orbit += p.orbitSpd; p.orbitDist = Math.max(BH.r, p.orbitDist - 0.28); p.life -= 0.005;
+    p.hue = (p.hue + chaosLevel * 0.5) % 360;
+    const px = W/2 + Math.cos(p.orbit) * p.orbitDist;
+    const py = H/2 + Math.sin(p.orbit) * p.orbitDist;
+    cx.beginPath(); cx.arc(px, py, p.r, 0, Math.PI * 2);
+    cx.fillStyle = `hsl(${p.hue},100%,65%)`; cx.globalAlpha = p.alpha * p.life;
+    cx.fill();
+  });
+  cx.shadowBlur = 0; cx.globalAlpha = 1; cx.restore();
+  pulseRings = pulseRings.filter(r2 => r2.life > 0);
+  chaosParticles = chaosParticles.filter(p => p.life > 0 && p.orbitDist > BH.r + 2);
 }
 
-// ══════════════════════════════════════════════════════════════
+function tickInkClouds() {
+  cx.save();
+  inkClouds.forEach(ink => {
+    ink.r = Math.min(ink.r + 70 * 0.016, ink.maxR); ink.life -= 0.007;
+    cx.globalAlpha = ink.life * 0.5;
+    cx.beginPath(); cx.arc(ink.x, ink.y, ink.r, 0, Math.PI * 2);
+    cx.fillStyle = 'rgba(40,15,80,.45)'; cx.fill();
+    cx.strokeStyle = '#818cf8'; cx.lineWidth = 1.5; cx.stroke();
+  });
+  cx.restore();
+  inkClouds = inkClouds.filter(i => i.life > 0);
+}
+
+// Post-process effects
+function drawVignette() {
+  if (chaosLevel < 0.5) return;
+  const v = chaosLevel * 0.038;
+  const g = cx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.3,W/2,H/2,Math.min(W,H)*0.82);
+  g.addColorStop(0, 'rgba(0,0,0,0)');
+  const vc = chaosLevel > 4 ? `hsla(${(BH.angle*28)%360},70%,12%,${v*1.4})` : `rgba(0,0,0,${v})`;
+  g.addColorStop(1, vc);
+  cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+}
+function drawChromAbr() {
+  if (chaosLevel < 1) return;
+  const amt = chaosLevel * 0.75;
+  cx.save(); cx.globalCompositeOperation = 'screen'; cx.globalAlpha = 0.055;
+  cx.drawImage(cv, -amt, 0, W, H); cx.drawImage(cv, amt, 0, W, H);
+  cx.globalCompositeOperation = 'source-over'; cx.globalAlpha = 1; cx.restore();
+}
+function drawScanlines() {
+  if (chaosLevel < 4) return;
+  cx.save(); cx.globalAlpha = Math.min(0.07, chaosLevel * 0.011);
+  for (let y = 0; y < H; y += 3) { cx.fillStyle = 'rgba(0,0,0,1)'; cx.fillRect(0, y, W, 1); }
+  cx.restore();
+}
+function drawRGBBorder() {
+  if (BH.tier < 4) return;
+  const t = Date.now() * 0.003;
+  cx.save();
+  cx.strokeStyle = `hsl(${(t*55)%360},100%,62%)`;
+  cx.lineWidth = 3 + Math.sin(t) * 1.5; cx.globalAlpha = 0.38 + Math.sin(t * 1.6) * 0.26;
+  cx.shadowColor = cx.strokeStyle; cx.shadowBlur = 18;
+  cx.strokeRect(2, 2, W - 4, H - 4);
+  cx.restore();
+}
+
+function addShake(pw) { shake.power = Math.min(shake.power + pw, 22); }
+function applyShake() {
+  if (shake.power < 0.2) { shake.x = shake.y = 0; return; }
+  shake.x = (Math.random() - 0.5) * shake.power * 2;
+  shake.y = (Math.random() - 0.5) * shake.power * 2;
+  shake.power *= 0.8;
+}
+function chaosFlash(col = 'rgba(255,255,255,.06)') {
+  const el = document.getElementById('chaos-flash');
+  el.style.background = col; el.style.opacity = '1';
+  setTimeout(() => el.style.opacity = '0', 62);
+}
+
+// ═══════════════════════════════════════════════════
 //  COMBO
-// ══════════════════════════════════════════════════════════════
-function addCombo(){
+// ═══════════════════════════════════════════════════
+function addCombo() {
   G.comboCount++;
-  G.comboExpiry=Date.now()+2200;
-  G.combo=Math.min(1+Math.floor(G.comboCount/3),15);
-  document.getElementById('h-combo').textContent='×'+G.combo;
-  if(G.comboCount>1){
-    const el=document.getElementById('combo-pop');
-    el.style.color=sk('ch2')?`hsl(${(BH.angle*30)%360},100%,65%)`:'#fbbf24';
-    el.innerHTML=`🔥 COMBO ×${G.combo}!`;
-    el.classList.add('show');clearTimeout(el._t);
-    el._t=setTimeout(()=>el.classList.remove('show'),700);
+  G.comboExpiry = Date.now() + 2300;
+  G.combo = Math.min(1 + Math.floor(G.comboCount / 3), 20);
+  document.getElementById('h-combo').textContent = '×' + G.combo;
+  sfxComboNote(G.combo);
+  if (G.comboCount > 1) {
+    const el = document.getElementById('combo-pop');
+    el.style.color = chaosLevel > 2 ? `hsl(${(BH.angle*28)%360},100%,65%)` : '#fbbf24';
+    el.innerHTML = `🔥 COMBO ×${G.combo}!`;
+    el.classList.add('show'); clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 700);
   }
 }
-function tickCombo(){
-  if(G.comboCount>0&&Date.now()>G.comboExpiry){
-    G.comboCount=0;G.combo=1;
-    document.getElementById('h-combo').textContent='×1';
+function tickCombo() {
+  if (G.comboCount > 0 && Date.now() > G.comboExpiry) {
+    G.comboCount = 0; G.combo = 1;
+    document.getElementById('h-combo').textContent = '×1';
+    comboNoteIdx = 0;
   }
 }
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  FLOAT TEXT + NOTIFY
-// ══════════════════════════════════════════════════════════════
-function floatText(x,y,txt,col='#fbbf24'){
-  const el=document.createElement('div');
-  el.className='ft';el.textContent=txt;
-  el.style.cssText=`left:${x}px;top:${y}px;color:${col};text-shadow:0 0 6px ${col};`;
+// ═══════════════════════════════════════════════════
+function floatText(x, y, txt, col = '#fbbf24') {
+  const el = document.createElement('div');
+  el.className = 'ft'; el.textContent = txt;
+  el.style.cssText = `left:${x}px;top:${y}px;color:${col};text-shadow:0 0 6px ${col};`;
   document.getElementById('ui').appendChild(el);
-  setTimeout(()=>el.remove(),830);
+  setTimeout(() => el.remove(), 850);
+}
+function notify(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = '✦ ' + msg; el.classList.add('show');
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-function notify(msg){
-  const el=document.getElementById('notif');
-  el.textContent='★ '+msg;el.classList.add('show');
-  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2800);
+// ═══════════════════════════════════════════════════
+//  UPGRADES
+// ═══════════════════════════════════════════════════
+const UPGRADES = [
+  // BREAKER (infinite scaling)
+  {id:'d1',cat:'breaker',icon:'✦',name:'SHARPER',   desc:'Damage +10 (stacks forever)',  base:10,  max:999,level:0,costFn:l=>Math.floor(20*Math.pow(1.25,l)),  fn:()=>{G.dmg+=10;}},
+  {id:'d2',cat:'breaker',icon:'⊛',name:'POWER×',    desc:'Damage ×1.6',                 base:1,   max:30, level:0,costFn:l=>Math.floor(180*Math.pow(1.9,l)),   fn:()=>{G.dmg*=1.6;},req:'d1'},
+  {id:'d3',cat:'breaker',icon:'◈',name:'INFERNO',   desc:'Damage ×3',                   base:1,   max:15, level:0,costFn:l=>Math.floor(1800*Math.pow(2.8,l)),  fn:()=>{G.dmg*=3;},req:'d2'},
+  {id:'d4',cat:'breaker',icon:'⊗',name:'VOID DMG',  desc:'Damage ×10',                  base:1,   max:10, level:0,costFn:l=>Math.floor(20000*Math.pow(4,l)),   fn:()=>{G.dmg*=10;},req:'d3'},
+  {id:'a1',cat:'breaker',icon:'⊕',name:'WIDER',     desc:'AoE radius +20',              base:20,  max:999,level:0,costFn:l=>Math.floor(25*Math.pow(1.3,l)),   fn:()=>{G.aoe+=20;}},
+  {id:'a2',cat:'breaker',icon:'◉',name:'VORTEX',    desc:'AoE ×2',                      base:1,   max:8,  level:0,costFn:l=>Math.floor(400*Math.pow(2.2,l)),   fn:()=>{G.aoe*=2;},req:'a1'},
+  {id:'s1',cat:'breaker',icon:'⋆',name:'FASTER',    desc:'Tick speed ×1.6',             base:1,   max:8,  level:0,costFn:l=>Math.floor(80*Math.pow(1.6,l)),    fn:()=>{G.speed*=1.6;}},
+  {id:'s2',cat:'breaker',icon:'◈',name:'RAPID',     desc:'Tick speed ×2.5',             base:1,   max:6,  level:0,costFn:l=>Math.floor(600*Math.pow(2.5,l)),   fn:()=>{G.speed*=2.5;},req:'s1'},
+  // CRIT
+  {id:'c1',cat:'crit',icon:'◎',name:'LUCKY',      desc:'Crit chance +6%',             base:6,   max:16, level:0,costFn:l=>Math.floor(60*Math.pow(1.5,l)),    fn:()=>{G.critChance=Math.min(G.critChance+6,95);}},
+  {id:'c2',cat:'crit',icon:'✧',name:'DOUBLE',     desc:'Crit damage ×1.5',            base:1,   max:10, level:0,costFn:l=>Math.floor(150*Math.pow(1.8,l)),   fn:()=>{G.critMult*=1.5;},req:'c1'},
+  // SPAWN
+  {id:'sp1',cat:'spawn',icon:'★',name:'MORE FISH',  desc:'+1 orbit ring (more creatures)',base:1, max:999,level:0,costFn:l=>Math.floor(40*Math.pow(1.5,l)),    fn:()=>{G.spawnRings++;}},
+  {id:'sp2',cat:'spawn',icon:'✦',name:'SQUID',      desc:'Unlock squids',               base:1,  max:1,  level:0,costFn:()=>120,  fn:()=>{CT.squid.enabled=true;},req:'sp1'},
+  {id:'sp3',cat:'spawn',icon:'⊙',name:'JELLYFISH',  desc:'Unlock jellyfish',             base:1, max:1,  level:0,costFn:()=>180,  fn:()=>{CT.jellyfish.enabled=true;},req:'sp1'},
+  {id:'sp4',cat:'spawn',icon:'⊛',name:'OCTOPUS',    desc:'Unlock octopus',              base:1,  max:1,  level:0,costFn:()=>350,  fn:()=>{CT.octopus.enabled=true;},req:'sp2'},
+  {id:'sp5',cat:'spawn',icon:'▲',name:'SHARK',      desc:'Unlock sharks',               base:1,  max:1,  level:0,costFn:()=>900,  fn:()=>{CT.shark.enabled=true;},req:'sp4'},
+  {id:'sp6',cat:'spawn',icon:'◆',name:'TURTLE',     desc:'Unlock turtles',              base:1,  max:1,  level:0,costFn:()=>600,  fn:()=>{CT.turtle.enabled=true;},req:'sp3'},
+  {id:'sp7',cat:'spawn',icon:'◉',name:'WHALE',      desc:'Unlock whales',               base:1,  max:1,  level:0,costFn:()=>2800, fn:()=>{CT.whale.enabled=true;},req:'sp5'},
+  {id:'sp8',cat:'spawn',icon:'⊗',name:'KRAKEN',     desc:'Unlock the Kraken',           base:1,  max:1,  level:0,costFn:()=>18000,fn:()=>{CT.kraken.enabled=true;},req:'sp7'},
+  // TIME
+  {id:'t1',cat:'time',icon:'◷',name:'MORE TIME', desc:'+4s per session',              base:4,  max:99, level:0,costFn:l=>Math.floor(60*Math.pow(1.4,l)),    fn:()=>{G.sessionBonus+=4;}},
+  {id:'t2',cat:'time',icon:'◶',name:'DEEP DIVE', desc:'+10s per session',             base:10, max:20, level:0,costFn:l=>Math.floor(400*Math.pow(1.8,l)),   fn:()=>{G.sessionBonus+=10;},req:'t1'},
+  // GRAVITY
+  {id:'g1',cat:'grav',icon:'◉',name:'PULL+',     desc:'Gravity mult ×1.6',            base:1,  max:10, level:0,costFn:l=>Math.floor(100*Math.pow(1.7,l)),   fn:()=>{G.gravMult*=1.6;}},
+  {id:'g2',cat:'grav',icon:'⊗',name:'PULL ZONE', desc:'Pull radius +50',              base:50, max:8,  level:0,costFn:l=>Math.floor(200*Math.pow(2,l)),    fn:()=>{BH.pullR+=50;},req:'g1'},
+  // MATTER
+  {id:'m1',cat:'matter',icon:'◈',name:'DENSE',   desc:'Matter ×1.4',                  base:1,  max:15, level:0,costFn:l=>Math.floor(70*Math.pow(1.5,l)),    fn:()=>{G.matterMult*=1.4;}},
+  {id:'m2',cat:'matter',icon:'⊕',name:'GOLD',    desc:'Matter ×2.5',                  base:1,  max:8,  level:0,costFn:l=>Math.floor(500*Math.pow(2.2,l)),   fn:()=>{G.matterMult*=2.5;},req:'m1'},
+  // CHAOS
+  {id:'ch1',cat:'chaos',icon:'⋆',name:'LIGHTNING',desc:'Lightning effects',            base:1,  max:1,  level:0,costFn:()=>150, fn:()=>{}},
+  {id:'ch2',cat:'chaos',icon:'✦',name:'RGB CHAOS',desc:'Full color chaos',             base:1,  max:1,  level:0,costFn:()=>600, fn:()=>{},req:'ch1'},
+  {id:'ch3',cat:'chaos',icon:'⊛',name:'SHOCKWAVE',desc:'Big shockwaves',              base:1,  max:1,  level:0,costFn:()=>1500,fn:()=>{},req:'ch2'},
+  {id:'ch4',cat:'chaos',icon:'◌',name:'STORM',   desc:'Particle storm',               base:1,  max:1,  level:0,costFn:()=>4000,fn:()=>{},req:'ch3'},
+  // AUTO CLICKERS
+  {id:'ac1',cat:'auto',icon:'⊙',name:'MINI VORTEX',desc:'Auto +2/sec',               base:1,  max:20, level:0,costFn:l=>Math.floor(90*Math.pow(1.15,l)),   fn:()=>{G.autoDPS+=2;}},
+  {id:'ac2',cat:'auto',icon:'⋆',name:'LIGHTNING', desc:'Auto +8/sec',                 base:1,  max:15, level:0,costFn:l=>Math.floor(350*Math.pow(1.2,l)),   fn:()=>{G.autoDPS+=8;},req:'ac1'},
+  {id:'ac3',cat:'auto',icon:'◈',name:'FIRE JET',  desc:'Auto +25/sec',                base:1,  max:12, level:0,costFn:l=>Math.floor(1200*Math.pow(1.3,l)),  fn:()=>{G.autoDPS+=25;},req:'ac2'},
+  {id:'ac4',cat:'auto',icon:'◇',name:'VOID SHARD',desc:'Auto +200/sec',               base:1,  max:8,  level:0,costFn:l=>Math.floor(8000*Math.pow(1.5,l)),  fn:()=>{G.autoDPS+=200;},req:'ac3'},
+];
+const UP = {}; UPGRADES.forEach(u => UP[u.id] = u);
+
+function sk(id) { return (UP[id]?.level || 0) > 0; }
+
+// Progressive reveal: show upgrade if root OR parent is bought
+function isVisible(upg) {
+  if (!upg.req) return true;            // root — always visible
+  const par = UP[upg.req];
+  if (!par) return true;
+  if (par.level > 0) return true;       // parent bought → show (even if locked)
+  if (!par.req) return true;            // parent is root → peek ahead 1 tier
+  return (UP[par.req]?.level||0) > 0;  // grandparent bought → show parent's children
 }
 
-// ══════════════════════════════════════════════════════════════
-//  SESSION SYSTEM
-// ══════════════════════════════════════════════════════════════
-window.startSession=function(){
-  document.getElementById('upgrade-overlay').classList.remove('show');
-  G.session++;
-  G.sessionTime=45+G.sessionTimeBonus+(BH.tier*5);
-  G.timeLeft=G.sessionTime;
-  G.active=true;
-  creatures=[];
-  // Apply prestige dmg bonus on top of bought upgrades
-  G.breakerDmg=Math.max(G.breakerDmg, 10*PRESTIGE.dmgMult);
-  G.matterMult=Math.max(G.matterMult, PRESTIGE.matterMult);
-  document.getElementById('h-session').textContent=G.session;
-  document.getElementById('timer-wrap').style.display='block';
-  checkAchievements();
-};
-
-function endSession(){
-  G.active=false;
-  document.getElementById('timer-wrap').style.display='none';
-  checkAchievements();
-  // Dramatic flash on session end
-  chaosFlash('rgba(0,220,255,0.12)');
-  showUpgrades();
-}
-
-function showUpgrades(){
-  const overlay=document.getElementById('upgrade-overlay');
-  overlay.classList.add('show');
-  document.getElementById('upg-currency').textContent=`💎 Matter: ${fmt(G.matter)}`;
-  buildUpgradeGrid();
-  // Prestige button
-  const pbtn=addPrestigeBtn();
-  if(pbtn||document.getElementById('prestige-trigger')){
-    const btn=document.getElementById('prestige-trigger');
-    if(canPrestige()){
-      btn.style.opacity='1';
-      btn.textContent=`🌌 PRESTIGE ×${PRESTIGE.count+1} — TRANSCEND`;
-      btn.style.borderColor='#c4b5fd';btn.style.color='#c4b5fd';
-    } else {
-      btn.style.opacity='.35';
-      btn.textContent=`🌌 PRESTIGE (need BH tier ${PRESTIGE.minTier}+ — you: ${BH.tier})`;
-    }
-  }
-}
-
-function buildUpgradeGrid(){
-  const grid=document.getElementById('upg-grid');
-  grid.innerHTML='';
-  const cats={breaker:'⚔️ BREAKER',crit:'🎯 CRITICAL',spawn:'🌊 SPAWN',time:'⏱️ TIME',grav:'🌀 GRAVITY',matter:'💎 MATTER',chaos:'⚡ CHAOS'};
-  const catOrder=['breaker','crit','spawn','time','grav','matter','chaos'];
-
-  catOrder.forEach(cat=>{
-    const catUpgs=UPGRADES.filter(u=>u.cat===cat);
-    if(!catUpgs.length)return;
-
-    // Section header
-    const header=document.createElement('div');
-    header.style.cssText='grid-column:1/-1;font-family:"Press Start 2P",monospace;font-size:8px;color:#0ff;padding:8px 0 2px;border-bottom:1px solid rgba(0,220,255,.2);margin-bottom:2px;';
-    header.textContent=cats[cat];
-    grid.appendChild(header);
-
-    catUpgs.forEach(upg=>{
-      const req=upg.req?UP[upg.req]:null;
-      const locked=req&&req.level===0;
-      const maxed=upg.level>=upg.max;
-      const cost=upg.costFn(upg.level);
-      const canAfford=G.matter>=cost;
-
-      const card=document.createElement('div');
-      card.className='upg-card'+(maxed?' maxed':locked?' locked':'');
-      card.innerHTML=`
-        <span class="uc-icon">${upg.icon}</span>
-        <span class="uc-name">${upg.name}</span>
-        <span class="uc-level">${maxed?'MAX':upg.level+'/'+upg.max}</span>
-        <span class="uc-desc">${upg.desc}${req&&req.level===0?'<br>⚠ Requires: '+req.name:''}</span>
-        <span class="uc-cost">${maxed?'✅ MAXED':locked?'🔒 LOCKED':'💎 '+fmt(cost)+(canAfford?'':' ❌')}</span>
-      `;
-      if(!maxed&&!locked){
-        card.addEventListener('click',()=>{
-          const c2=upg.costFn(upg.level);
-          if(G.matter<c2)return;
-          G.matter-=c2;
-          upg.level++;
-          upg.fn();
-          notify(upg.name+' upgraded! ('+upg.level+'/'+upg.max+')');
-          burst(W/2,H/2,'#0ff',15);
-          buildUpgradeGrid();
-          document.getElementById('upg-currency').textContent=`💎 Matter: ${fmt(G.matter)}`;
-        });
-      }
+function buildUpgradeGrid() {
+  const grid = document.getElementById('upg-grid');
+  grid.innerHTML = '';
+  const cats = { breaker:'✦ BREAKER', crit:'◎ CRITICAL', spawn:'★ SPAWN',
+    time:'◷ TIME', grav:'◉ GRAVITY', matter:'◈ MATTER', chaos:'⋆ CHAOS', auto:'⊙ AUTO' };
+  Object.keys(cats).forEach(cat => {
+    const list = UPGRADES.filter(u => u.cat === cat && isVisible(u));
+    if (!list.length) return;
+    const h = document.createElement('div'); h.className = 'ug-head'; h.textContent = cats[cat];
+    grid.appendChild(h);
+    list.forEach(upg => {
+      const req = upg.req ? UP[upg.req] : null;
+      const locked = req && req.level === 0;
+      const maxed = upg.level >= upg.max;
+      const cost = upg.costFn(upg.level);
+      const can = !locked && !maxed && G.matter >= cost;
+      const card = document.createElement('div');
+      card.className = 'ug' + (maxed ? ' maxed' : locked ? ' locked' : '');
+      card.innerHTML = `<span class="ug-ic">${upg.icon}</span>
+        <span class="ug-nm">${upg.name}</span><span class="ug-lv">${maxed ? '— MAX —' : upg.level + '/' + upg.max}</span>
+        <span class="ug-ds">${locked ? '⊗ LOCKED — need: '+req.name : upg.desc}</span>
+        <span class="ug-co">${maxed ? '' : locked ? '' : '◈ ' + fmt(cost) + (can ? '' : ' ✗')}</span>`;
+      if (!maxed && !locked) card.addEventListener('click', () => {
+        const c2 = upg.costFn(upg.level);
+        if (G.matter < c2) return;
+        G.matter -= c2; upg.level++; upg.fn();
+        notify(upg.name + ' lv' + upg.level + '!');
+        playSfxUpgrade();
+        burst(W/2, H/2, '#a78bfa', 14);
+        buildUpgradeGrid();
+        document.getElementById('upg-cash').textContent = '◈ ' + fmt(G.matter);
+      });
       grid.appendChild(card);
     });
   });
 }
 
-// ══════════════════════════════════════════════════════════════
-//  HUD UPDATE
-// ══════════════════════════════════════════════════════════════
-function fmt(n){
-  if(n>=1e9)return(n/1e9).toFixed(1)+'B';
-  if(n>=1e6)return(n/1e6).toFixed(1)+'M';
-  if(n>=1e3)return(n/1e3).toFixed(1)+'K';
-  return Math.floor(n)+'';
+// ═══════════════════════════════════════════════════
+//  PRESTIGE
+// ═══════════════════════════════════════════════════
+function openPrestige() {
+  if (BH.tier < 3) { notify('Need BH tier 3+ to prestige!'); return; }
+  const tokens = 1 + Math.floor(BH.tier / 2);
+  document.getElementById('prs-bonuses').innerHTML =
+    `<div>◇ +${tokens} Void Tokens</div><div>◈ Matter ×1.6 permanent</div>` +
+    `<div>✦ Damage ×1.4 permanent</div><div>◷ +10s/session permanent</div>` +
+    (G.pCount > 0 ? '<div style="color:#c4b5fd">⊛ All bonuses STACK!</div>' : '');
+  document.getElementById('prestige-ov').classList.add('show');
+}
+window.closePrestige = () => document.getElementById('prestige-ov').classList.remove('show');
+
+window.doPrestige = function () {
+  G.pCount++; G.pMatterMult *= 1.6; G.pDmgMult *= 1.4; G.pTimeBonus += 10;
+
+  // Reset
+  G.matter = 0; G.totalMatter = 0; G.session = 0; G.eaten = 0; G.eatenTypes = {};
+  G.combo = 1; G.comboCount = 0;
+  G.dmg = 10; G.aoe = 65; G.speed = 1; G.critChance = 0; G.critMult = 2;
+  G.spawnRings = 1; G.sessionBonus = G.pTimeBonus; G.gravMult = 1;
+  G.matterMult = 1; G.autoDPS = 0;
+  UPGRADES.forEach(u => u.level = 0);
+  Object.entries(CT).forEach(([k, v]) => { v.enabled = (k === 'fish' || k === 'crab'); });
+  BH.r = 38 * Math.pow(1.1, G.pCount); BH.pullR = 200; BH.tier = 0; BH.growth = 0; BH.angle = 0;
+  creatures = []; particles = []; lightnings = []; shockwaves = []; chaosParticles = []; pulseRings = [];
+
+  const ov = document.getElementById('prestige-ov');
+  ov.style.background = 'rgba(167,139,250,.9)';
+  setTimeout(() => {
+    ov.classList.remove('show'); ov.style.background = '';
+    updateBHBar(); buildUpgradeGrid();
+    notify('⊗ PRESTIGE ' + G.pCount + ' — Reborn stronger!');
+    playSfxPrestige();
+    for (let i = 0; i < 8; i++) setTimeout(() => burst(W/2, H/2, `hsl(${i*45},100%,65%)`, 28), i * 75);
+    showUpgrades();
+  }, 700);
+};
+
+// ═══════════════════════════════════════════════════
+//  ACHIEVEMENTS
+// ═══════════════════════════════════════════════════
+const ACHS = [
+  {id:'f1',  name:'FIRST BITE',    icon:'★', desc:'Eat your first creature',   check:()=>G.eaten>=1},
+  {id:'c5',  name:'ON FIRE',       icon:'◈', desc:'Reach ×5 combo',            check:()=>G.combo>=5},
+  {id:'c10', name:'UNSTOPPABLE',   icon:'⊛', desc:'Reach ×10 combo',           check:()=>G.combo>=10},
+  {id:'e100',name:'CENTURION',     icon:'◎', desc:'Eat 100 creatures',         check:()=>G.eaten>=100},
+  {id:'e1k', name:'GLUTTON',       icon:'⊕', desc:'Eat 1000 creatures',        check:()=>G.eaten>=1000},
+  {id:'t3',  name:'GROWING DARK',  icon:'⊗',desc:'Reach BH tier 3',          check:()=>BH.tier>=3},
+  {id:'t7',  name:'GOD OF DEEP',   icon:'✦', desc:'Reach max BH tier',        check:()=>BH.tier>=7},
+  {id:'p1',  name:'REBORN',        icon:'◇', desc:'First prestige',            check:()=>G.pCount>=1},
+  {id:'sk',  name:'SHARK SLAYER',  icon:'▲', desc:'Eat a shark',               check:()=>(G.eatenTypes.shark||0)>=1},
+  {id:'kr',  name:'KRAKEN SLAYER', icon:'⊗', desc:'Slay the Kraken',           check:()=>(G.eatenTypes.kraken||0)>=1},
+  {id:'m1m', name:'MILLIONAIRE',   icon:'◈', desc:'Collect 1M total matter',   check:()=>G.totalMatter>=1e6},
+];
+const unlockedAchs = new Set();
+function checkAchievements() {
+  ACHS.forEach(a => {
+    if (unlockedAchs.has(a.id)) return;
+    if (a.check()) {
+      unlockedAchs.add(a.id);
+      document.getElementById('at-ic').textContent = a.icon;
+      document.getElementById('at-nm').textContent = a.name;
+      document.getElementById('at-ds').textContent = a.desc;
+      const el = document.getElementById('ach-toast');
+      el.classList.add('show'); clearTimeout(el._acht);
+      el._acht = setTimeout(() => el.classList.remove('show'), 3600);
+      playSfxTierUp();
+    }
+  });
 }
 
-let hudT=0;
-function updateHUD(ts,dt){
-  if(G.active){
-    G.timeLeft=Math.max(0,G.timeLeft-dt);
-    if(G.timeLeft===0){endSession();}
-    const pct=G.timeLeft/G.sessionTime;
-    const fill=document.getElementById('tbar');
-    fill.style.width=(pct*100)+'%';
-    const r2=pct<.4?255:Math.floor((1-pct)*430);
-    const g2=pct>.4?255:Math.floor(pct*640);
-    fill.style.background=`linear-gradient(90deg,rgb(${r2},${g2},0),rgb(${Math.min(r2+30,255)},${Math.min(g2+30,255)},40))`;
-    document.getElementById('timer-label').textContent=
-      `SESSION ${G.session}  ·  ⏱ ${Math.ceil(G.timeLeft)}s`;
+// ═══════════════════════════════════════════════════
+//  SESSION
+// ═══════════════════════════════════════════════════
+function showUpgrades() {
+  document.getElementById('upg-ov').classList.add('show');
+  document.getElementById('upg-cash').textContent = '◈ ' + fmt(G.matter);
+  buildUpgradeGrid();
+  const pb = document.getElementById('prs-btn');
+  if (BH.tier >= 3) {
+    pb.style.opacity = '1'; pb.textContent = `⊗ PRESTIGE ×${G.pCount+1} — TRANSCEND`;
+  } else {
+    pb.style.opacity = '.3'; pb.textContent = `⊗ PRESTIGE (tier 3+ needed, tier: ${BH.tier})`;
+  }
+  // Show active mult cards
+  let cardsEl = document.getElementById('upg-cards');
+  if (!cardsEl) {
+    cardsEl = document.createElement('div');
+    cardsEl.id = 'upg-cards';
+    cardsEl.style.cssText = 'width:100%;max-width:960px;margin-top:4px;';
+    document.getElementById('upg-grid').after(cardsEl);
+  }
+  if (activeMultCards.length) {
+    cardsEl.innerHTML = '<div style="font-size:6px;color:rgba(167,139,250,0.6);letter-spacing:2px;margin:10px 0 6px">✦ ACTIVE MULTIPLIERS</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+      activeMultCards.map(c=>`<div style="background:rgba(167,139,250,0.1);border:1.5px solid rgba(167,139,250,0.3);border-radius:6px;padding:8px 12px;font-size:6px;color:#c4b5fd">${c.icon} ${c.name}<br><span style='color:rgba(255,255,255,0.4);font-family:sans-serif;font-size:10px'>${c.desc}</span></div>`).join('') +
+      '</div>';
+  } else {
+    cardsEl.innerHTML = '<div style="font-size:6px;color:rgba(255,255,255,0.2);margin-top:8px">✦ No multiplier cards yet — kill sessions to earn them</div>';
+  }
+}
+
+window.startSession = function () {
+  document.getElementById('upg-ov').classList.remove('show');
+  G.session++;
+  G.dmg = Math.max(G.dmg, 10 * G.pDmgMult);
+  G.matterMult = Math.max(G.matterMult, G.pMatterMult);
+  G.sessionTime = 20 + G.sessionBonus + BH.tier * 3;
+  G.timeLeft = G.sessionTime;
+  G.active = true;
+  creatures = [];
+  G.chips = 0; G.mult = 1; G.sessionKills = {};
+  document.getElementById('h-sess').textContent = G.session;
+  // PRE-FILL: spawn creatures immediately on all active rings
+  // so screen looks full from frame 1 like the screenshot
+  const rings = Math.min(G.spawnRings + 1, ORBIT_RINGS.length);
+  const perRing = 8 + G.session * 2; // lots of creatures per ring
+  for (let ring = 0; ring < rings; ring++) {
+    const count = Math.min(perRing, 18);
+    for (let i = 0; i < count; i++) {
+      // Evenly space them around the ring
+      const [type, cfg] = pickType();
+      const px = Math.round(cfg.sz * SCALE);
+      const sz = 16 * px;
+      const oR = getOrbitR(ring);
+      const oAngle = (i / count) * Math.PI * 2 + Math.random() * 0.3;
+      const baseSpd = cfg.spd * (0.013 - ring * 0.002) * (1 + G.session * 0.018);
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      const sessionScale = 1 + G.session * 0.35;
+      creatures.push({
+        type, sprite: cfg.sprite,
+        col1: cfg.col[0], col2: cfg.col[1],
+        pts: cfg.pts, pixSz: px, sz,
+        x: W/2 + Math.cos(oAngle)*oR, y: H/2 + Math.sin(oAngle)*oR,
+        orbitR: oR, orbitAngle: oAngle,
+        orbitSpeed: Math.abs(baseSpd),
+        orbitDir: dir,
+        wobble: Math.random() * Math.PI * 2,
+        hp: cfg.hp * sessionScale, maxHP: cfg.hp * sessionScale,
+        alpha: 1, dying: false, dieScale: 1, dmgFlash: 0,
+        behavior: cfg.sprite,
+        pulsePhase: Math.random() * Math.PI * 2, pulseMod: 1,
+        hasSplit: false, inked: false,
+        chargeTimer: 2 + Math.random() * 4, charging: false,
+      });
+    }
+  }
+  checkAchievements();
+};
+
+
+// ── Balatro Multiplier Cards ─────────────────────────────
+// Each card has: id, name, icon, desc, effect(G)→{chips,mult}
+// Applied at end of session on top of accumulated chips
+const MULT_CARD_DEFS = [
+  // Additive mult
+  {id:'mc_x2',    icon:'◈', name:'DOUBLE',      desc:'Mult ×2',              rarity:1, effect:g=>({chips:0,mult:2})},
+  {id:'mc_x3',    icon:'◉', name:'TRIPLE',      desc:'Mult ×3',              rarity:2, effect:g=>({chips:0,mult:3})},
+  {id:'mc_x5',    icon:'⊗', name:'QUINTUPLE',   desc:'Mult ×5',              rarity:3, effect:g=>({chips:0,mult:5})},
+  {id:'mc_x10',   icon:'✦', name:'DECUPLE',     desc:'Mult ×10',             rarity:4, effect:g=>({chips:0,mult:10})},
+  // Conditional mult
+  {id:'mc_combo', icon:'◷', name:'COMBO KING',  desc:'+1 Mult per combo lvl', rarity:1, effect:g=>({chips:0,mult:g.combo})},
+  {id:'mc_feast',  icon:'★', name:'FEAST',       desc:'+500 Chips per type killed', rarity:1, effect:g=>({chips:Object.keys(g.sessionKills).length*500,mult:1})},
+  {id:'mc_fish',  icon:'⊙', name:'FISH FRENZY', desc:'×2 if killed 20+ fish', rarity:1, effect:g=>({chips:0,mult:(g.sessionKills.fish||0)>=20?2:1})},
+  {id:'mc_whale', icon:'◆', name:'WHALE HUNTER',desc:'×8 if killed a whale',  rarity:3, effect:g=>({chips:0,mult:(g.sessionKills.whale||0)>=1?8:1})},
+  {id:'mc_krak',  icon:'⊛', name:'KRAKEN BANE', desc:'×20 if killed Kraken',  rarity:4, effect:g=>({chips:0,mult:(g.sessionKills.kraken||0)>=1?20:1})},
+  {id:'mc_chips', icon:'◇', name:'CHIP SURGE',  desc:'+50% chips',            rarity:2, effect:g=>({chips:g.chips*0.5,mult:1})},
+  {id:'mc_time',  icon:'◶', name:'OVERTIME',    desc:'+1 Mult per 5s session time', rarity:2, effect:g=>({chips:0,mult:1+Math.floor(g.sessionTime/5)})},
+  {id:'mc_tier',  icon:'▲', name:'DARK STAR',   desc:'Mult = BH tier²',       rarity:3, effect:g=>({chips:0,mult:Math.max(1,BH.tier*BH.tier)})},
+  {id:'mc_sess',  icon:'⊕', name:'VETERAN',     desc:'+2 Mult per session',   rarity:2, effect:g=>({chips:0,mult:g.session*2})},
+  {id:'mc_all',   icon:'✧', name:'VOID GLYPH',  desc:'×1 Mult per creature type ever unlocked', rarity:3, effect:g=>({chips:0,mult:Object.values(CT).filter(v=>v.enabled).length})},
+];
+// Active cards (max 5 slots, like Balatro)
+let activeMultCards = [];
+const MAX_MULT_CARDS = 5;
+
+function pickMultCard() {
+  // Weight by inverse rarity
+  const pool = MULT_CARD_DEFS.filter(c => !activeMultCards.find(a=>a.id===c.id) || c.id.startsWith('mc_x'));
+  const weights = pool.map(c => 5 - c.rarity);
+  const tot = weights.reduce((s,w)=>s+w,0);
+  let r = Math.random()*tot;
+  for (let i=0;i<pool.length;i++) { r-=weights[i]; if(r<=0) return pool[i]; }
+  return pool[pool.length-1];
+}
+
+function applyMultCards() {
+  let totalMult = G.mult;
+  let bonusChips = 0;
+  activeMultCards.forEach(card => {
+    const res = card.effect(G);
+    totalMult *= res.mult;
+    bonusChips += res.chips;
+  });
+  return { totalMult, bonusChips };
+}
+
+function endSession() {
+  G.active = false;
+  checkAchievements();
+  playSfxSessionEnd();
+
+  // ── Apply mult cards → bonus matter
+  const { totalMult, bonusChips } = applyMultCards();
+  const bonusMatter = Math.ceil(G.chips * (totalMult - 1) + bonusChips);
+  if (bonusMatter > 0) {
+    G.matter += bonusMatter; G.totalMatter += bonusMatter;
+  }
+  const finalScore = G.chips + bonusMatter;
+
+  // ── Visual bursts
+  for (let i=0;i<4;i++) setTimeout(()=>{
+    burst(W/2,H/2,`hsl(${i*90},100%,65%)`,14+i*3);
+    if(pulseRings.length<MAX_PULSE) pulseRings.push({x:W/2,y:H/2,r:BH.r,life:1,hue:i*90,thick:2});
+  }, i*85);
+  addShake(10);
+  for (let i=0;i<4;i++) setTimeout(()=>chaosFlash('rgba(0,220,255,0.1)'), i*75);
+
+  // ── Build session summary overlay (Balatro scorecard style)
+  const ov = document.createElement('div');
+  ov.id = 'session-ov';
+  ov.style.cssText = `
+    position:fixed;inset:0;z-index:55;display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,10,0.88);font-family:'Press Start 2P',monospace;pointer-events:all;`;
+
+  // Kill list
+  const killRows = Object.entries(G.sessionKills)
+    .sort(([,a],[,b])=>b-a)
+    .map(([type,count])=>{
+      const cfg = CT[type];
+      const earned = Math.ceil(cfg.pts * count * G.matterMult * G.pMatterMult);
+      return `<div style="display:flex;justify-content:space-between;align-items:center;
+        padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.07);gap:16px;">
+        <span style="color:#a5f3fc;font-size:7px;text-transform:uppercase;min-width:70px">${type}</span>
+        <span style="color:rgba(255,255,255,0.5);font-size:7px;">×${count}</span>
+        <span style="color:#fbbf24;font-size:7px;">+◈${fmt(earned)}</span>
+      </div>`;
+    }).join('');
+
+  // Mult card rows
+  const cardRows = activeMultCards.length ? activeMultCards.map(card=>{
+    const res = card.effect(G);
+    const effect = res.mult > 1 ? `×${res.mult} Mult` : res.chips > 0 ? `+◈${fmt(res.chips)} Chips` : '—';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;
+      padding:5px 0;border-bottom:1px solid rgba(167,139,250,0.1);gap:16px;">
+      <span style="font-size:14px">${card.icon}</span>
+      <span style="color:#c4b5fd;font-size:6px;flex:1">${card.name}</span>
+      <span style="color:#a78bfa;font-size:7px;font-weight:bold">${effect}</span>
+    </div>`;
+  }).join('') : '<div style="color:rgba(255,255,255,0.3);font-size:6px;padding:6px 0">No cards yet — buy upgrades!</div>';
+
+  ov.innerHTML = `
+    <div style="background:rgba(5,5,20,0.98);border:2px solid rgba(0,220,255,0.25);
+      border-radius:10px;padding:28px 32px;max-width:420px;width:90vw;
+      box-shadow:0 0 40px rgba(0,220,255,0.1);">
+
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:clamp(13px,2.5vw,20px);color:#0ff;letter-spacing:2px;
+          text-shadow:0 0 20px rgba(0,220,255,0.6);">◈ SESSION ${G.session}</div>
+        <div style="font-size:7px;color:rgba(255,255,255,0.35);margin-top:4px;letter-spacing:1px;">COMPLETE</div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:6px;color:rgba(0,220,255,0.5);letter-spacing:2px;margin-bottom:8px;">★ KILLS</div>
+        ${killRows || '<div style="color:rgba(255,255,255,0.25);font-size:6px">Nothing killed</div>'}
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:6px;color:rgba(167,139,250,0.5);letter-spacing:2px;margin-bottom:8px;">✦ MULTIPLIERS</div>
+        ${cardRows}
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:14px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:6px;color:rgba(255,255,255,0.45);">BASE CHIPS</span>
+          <span style="font-size:7px;color:#fbbf24;">◈ ${fmt(G.chips)}</span>
+        </div>
+        ${totalMult > 1 ? `<div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:6px;color:rgba(255,255,255,0.45);">MULT BONUS</span>
+          <span style="font-size:7px;color:#a78bfa;">+ ◈ ${fmt(bonusMatter)}</span>
+        </div>` : ''}
+        <div style="display:flex;justify-content:space-between;
+          padding:8px 0 0;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
+          <span style="font-size:7px;color:#0ff;">TOTAL EARNED</span>
+          <span style="font-size:9px;color:#fbbf24;text-shadow:0 0 10px rgba(251,191,36,0.5);">◈ ${fmt(finalScore)}</span>
+        </div>
+      </div>
+
+      <button onclick="dismissSession()" style="
+        width:100%;font-family:'Press Start 2P',monospace;font-size:8px;
+        padding:12px;border:2px solid rgba(0,220,255,0.4);color:#0ff;
+        background:rgba(0,220,255,0.07);border-radius:5px;cursor:pointer;
+        transition:background 0.2s;letter-spacing:1px;"
+        onmouseover="this.style.background='rgba(0,220,255,0.18)'"
+        onmouseout="this.style.background='rgba(0,220,255,0.07)'">
+        ⊕ CONTINUE
+      </button>
+    </div>`;
+
+  document.body.appendChild(ov);
+  // Animate in
+  ov.style.opacity='0'; ov.style.transition='opacity 0.25s';
+  requestAnimationFrame(()=>{ setTimeout(()=>ov.style.opacity='1', 20); });
+}
+
+window.dismissSession = function() {
+  // Pick a new mult card (1 per session, shown in upgrade screen)
+  if (activeMultCards.length < MAX_MULT_CARDS) {
+    const card = pickMultCard();
+    activeMultCards.push(card);
+    notify('✦ New card: ' + card.name + '!');
+    playSfxTierUp();
+  }
+  const ov = document.getElementById('session-ov');
+  if (ov) { ov.style.opacity='0'; setTimeout(()=>ov.remove(), 250); }
+  setTimeout(()=>showUpgrades(), 260);
+};
+
+// ═══════════════════════════════════════════════════
+//  HUD + FMT
+// ═══════════════════════════════════════════════════
+function fmt(n) {
+  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+  return Math.floor(n) + '';
+}
+
+let hudT = 0, dmgSfxT = 0;
+function updateHUD(ts, dt) {
+  // Auto DPS
+  G.matter += G.autoDPS * dt; G.totalMatter += G.autoDPS * dt;
+
+  if (G.active) {
+    G.timeLeft = Math.max(0, G.timeLeft - dt);
+    if (G.timeLeft === 0) endSession();
+    const pct = G.timeLeft / G.sessionTime;
+    const tf = document.getElementById('tbar-f');
+    tf.style.width = (pct * 100) + '%';
+    const r2 = pct < 0.4 ? 255 : Math.floor((1 - pct) * 430);
+    const g2 = pct > 0.4 ? 255 : Math.floor(pct * 640);
+    tf.style.background = `linear-gradient(90deg,rgb(${r2},${g2},0),rgb(${Math.min(r2+28,255)},${Math.min(g2+28,255)},30))`;
+    document.getElementById('tbar-l').textContent = `SESSION ${G.session}  ·  ⏱ ${Math.ceil(G.timeLeft)}s`;
   }
 
-  if(ts-hudT<200)return;
-  hudT=ts;
-  document.getElementById('h-matter').textContent=fmt(G.matter);
-  document.getElementById('h-eaten').textContent=fmt(G.eaten);
-  document.getElementById('h-dmg').textContent=fmt(G.breakerDmg);
+  // Hit SFX throttle
+  dmgSfxT += dt;
+  if (dmgSfxT > 0.12) {
+    dmgSfxT = 0;
+    // Fast squared dist check — no sqrt, just check first match
+    const aoe2 = (G.aoe + 30) * (G.aoe + 30);
+    const hit = creatures.some(c => !c.dying && (mouse.x-c.x)**2 + (mouse.y-c.y)**2 < aoe2);
+    if (hit) playSfxHit(380 + Math.random() * 300, 0.035 + chaosLevel * 0.003);
+  }
+
+  if (ts - hudT < 180) return;
+  hudT = ts;
+  document.getElementById('h-matter').textContent = fmt(G.matter);
+  document.getElementById('h-eaten').textContent = fmt(G.eaten);
+  document.getElementById('h-dmg').textContent = fmt(G.dmg * G.pDmgMult * (1 + G.session * 0.12));
 }
 
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+//  🎵 AUDIO ENGINE — Cookie Clicker / idle soft & rewarding
+//  Philosophy: every sound feels like a small gift.
+//  Sine-based tones, gentle reverb, pinball pitch-rise combo.
+// ═══════════════════════════════════════════════════
+let AC = null, musicOn = false;
+let masterG, limiter, dryBus, revWet, revNode, ambOscs = [], bgLoop = null, bgRunning = false;
+
+function initAudio() {
+  if (AC) return;
+  AC = new (window.AudioContext || window.webkitAudioContext)();
+
+  // Master chain: dry → gain → limiter → out
+  masterG = AC.createGain(); masterG.gain.value = 0.72;
+  limiter = AC.createDynamicsCompressor();
+  limiter.threshold.value = -5; limiter.knee.value = 6;
+  limiter.ratio.value = 12; limiter.attack.value = 0.003; limiter.release.value = 0.15;
+  masterG.connect(limiter); limiter.connect(AC.destination);
+
+  // Warm reverb — medium room, not too long
+  revNode = AC.createConvolver();
+  const rLen = AC.sampleRate * 1.4;
+  const rBuf = AC.createBuffer(2, rLen, AC.sampleRate);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = rBuf.getChannelData(ch);
+    for (let i = 0; i < rLen; i++) {
+      // Exponential decay + gentle randomness = warm room
+      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / rLen, 2.2) * (i < 200 ? i / 200 : 1);
+    }
+  }
+  revNode.buffer = rBuf;
+  dryBus = AC.createGain(); dryBus.gain.value = 0.76; dryBus.connect(masterG);
+  revWet = AC.createGain(); revWet.gain.value = 0.24;
+  revNode.connect(revWet); revWet.connect(masterG);
+}
+
+// ── Core primitives ──────────────────────────────────────
+
+// Soft sine tone — warm, pleasant, Cookie Clicker DNA
+function tone(freq, vol, dur, pan = 0, bend = 1.0, att = 0.01) {
+  if (!AC || !musicOn) return;
+  const now = AC.currentTime;
+  const osc = AC.createOscillator();
+  const env = AC.createGain();
+  const panner = AC.createStereoPanner();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, now);
+  if (bend !== 1.0) osc.frequency.exponentialRampToValueAtTime(freq * bend, now + dur);
+
+  env.gain.setValueAtTime(0, now);
+  env.gain.linearRampToValueAtTime(vol, now + att);
+  env.gain.exponentialRampToValueAtTime(vol * 0.4, now + dur * 0.45);
+  env.gain.exponentialRampToValueAtTime(0.00001, now + dur);
+
+  panner.pan.value = Math.max(-1, Math.min(1, pan));
+  osc.connect(env); env.connect(panner);
+  panner.connect(dryBus); panner.connect(revNode);
+  osc.start(now); osc.stop(now + dur + 0.05);
+}
+
+// Bell / marimba hit — instant attack, exponential decay (very Cookie Clicker)
+function bell(freq, vol, dur, pan = 0) {
+  if (!AC || !musicOn) return;
+  const now = AC.currentTime;
+
+  // Main partial
+  const o1 = AC.createOscillator(), g1 = AC.createGain();
+  o1.type = 'sine'; o1.frequency.value = freq;
+  g1.gain.setValueAtTime(vol, now);
+  g1.gain.exponentialRampToValueAtTime(0.00001, now + dur);
+
+  // 2nd partial (slightly sharp = bell character)
+  const o2 = AC.createOscillator(), g2 = AC.createGain();
+  o2.type = 'sine'; o2.frequency.value = freq * 2.756;
+  g2.gain.setValueAtTime(vol * 0.28, now);
+  g2.gain.exponentialRampToValueAtTime(0.00001, now + dur * 0.4);
+
+  // 3rd partial
+  const o3 = AC.createOscillator(), g3 = AC.createGain();
+  o3.type = 'sine'; o3.frequency.value = freq * 5.4;
+  g3.gain.setValueAtTime(vol * 0.1, now);
+  g3.gain.exponentialRampToValueAtTime(0.00001, now + dur * 0.15);
+
+  const pn = AC.createStereoPanner(); pn.pan.value = Math.max(-1, Math.min(1, pan));
+  const mix = AC.createGain(); mix.gain.value = 1;
+
+  [o1,o2,o3].forEach((o,i)=>{
+    const g = [g1,g2,g3][i];
+    o.connect(g); g.connect(mix);
+    o.start(now);
+    o.stop(now + dur + 0.05);
+  });
+  mix.connect(pn); pn.connect(dryBus); pn.connect(revNode);
+}
+
+// Soft pop — rounded attack, used for small rewards
+function pop(freq, vol, dur, pan = 0) {
+  if (!AC || !musicOn) return;
+  const now = AC.currentTime;
+  const osc = AC.createOscillator(), env = AC.createGain(), pn = AC.createStereoPanner();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(freq * 1.18, now);
+  osc.frequency.exponentialRampToValueAtTime(freq, now + 0.025);
+  env.gain.setValueAtTime(0, now);
+  env.gain.linearRampToValueAtTime(vol, now + 0.008);
+  env.gain.exponentialRampToValueAtTime(0.00001, now + dur);
+  pn.pan.value = Math.max(-1, Math.min(1, pan));
+  osc.connect(env); env.connect(pn); pn.connect(dryBus); pn.connect(revNode);
+  osc.start(now); osc.stop(now + dur + 0.05);
+}
+
+// Soft thud — low gentle bass hit
+function thud(freq = 80, vol = 0.18, dur = 0.22) {
+  if (!AC || !musicOn) return;
+  const now = AC.currentTime;
+  const osc = AC.createOscillator(), env = AC.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq * 1.8, now);
+  osc.frequency.exponentialRampToValueAtTime(freq, now + 0.06);
+  env.gain.setValueAtTime(0, now);
+  env.gain.linearRampToValueAtTime(vol, now + 0.008);
+  env.gain.exponentialRampToValueAtTime(0.00001, now + dur);
+  osc.connect(env); env.connect(dryBus);
+  osc.start(now); osc.stop(now + dur + 0.05);
+}
+
+// Soft shimmer — high freq sine spray
+function shimmer(baseFreq, vol, count = 4, spread = 0.4) {
+  if (!AC || !musicOn) return;
+  for (let i = 0; i < count; i++) {
+    const delay = i * 0.038;
+    const freq = baseFreq * (1 + (Math.random() - 0.5) * 0.08);
+    const pan = (Math.random() - 0.5) * spread * 2;
+    setTimeout(() => bell(freq, vol * (1 - i * 0.18), 0.5 - i * 0.06, pan), delay * 1000);
+  }
+}
+
+// ── Musical scale ─────────────────────────────────────────
+// C major — bright and happy
+const N = {
+  C3:130.8, E3:164.8, G3:196,   A3:220,
+  C4:261.6, D4:293.7, E4:329.6, F4:349.2, G4:392,   A4:440,   B4:493.9,
+  C5:523.3, D5:587.3, E5:659.3, F5:698.5, G5:784,   A5:880,
+  C6:1047,  E6:1319,  G6:1568,  A6:1760
+};
+// Pentatonic for combo notes — always harmonic, never wrong
+const PENTA = [N.C4, N.E4, N.G4, N.A4, N.C5, N.E5, N.G5, N.A5, N.C6, N.E6, N.G6];
+
+// ── PINBALL PITCH RISE combo system ──────────────────────
+// Each kill → pitch steps up, resets when combo breaks
+// Pitch rises faster as combo gets higher (pinball feel)
+let comboPitch = N.C4;       // current pitch tracker
+let comboLastKill = 0;
+const COMBO_RESET_MS = 2200; // gap to reset
+
+// Step sizes per combo level (semitone-ish ratios)
+function comboPitchStep(combo) {
+  // Faster steps at high combo = pinball frantic feel
+  if (combo >= 15) return 1.122; // major 2nd
+  if (combo >= 10) return 1.059; // semitone
+  if (combo >=  5) return 1.043; // ~quarter tone
+  return 1.032;                  // tiny step = gradual rise
+}
+
+function sfxComboNote(combo) {
+  if (!AC || !musicOn) return;
+
+  const now = Date.now();
+  if (now - comboLastKill > COMBO_RESET_MS) {
+    comboPitch = N.C4; // reset
+  }
+  comboLastKill = now;
+
+  // Advance pitch by step
+  comboPitch = Math.min(comboPitch * comboPitchStep(combo), N.G6);
+
+  const vol = Math.min(0.18, 0.09 + combo * 0.006);
+  const pan = (Math.random() - 0.5) * 0.45;
+  const dur = Math.max(0.08, 0.22 - combo * 0.005);
+
+  // Main rising tone
+  bell(comboPitch, vol, dur, pan);
+
+  // Subtle octave ghost
+  bell(comboPitch * 2, vol * 0.18, dur * 0.6, -pan);
+
+  // Every 3 kills: extra shimmer ding
+  if (G.comboCount % 3 === 0) {
+    setTimeout(() => bell(comboPitch * 1.5, vol * 0.28, 0.3, pan * 0.5), 55);
+  }
+
+  // MILESTONE flourishes
+  if (combo === 5)  sfxMilestone(5);
+  if (combo === 10) sfxMilestone(10);
+  if (combo === 15) sfxMilestone(15);
+  if (combo === 20) sfxMilestone(20);
+}
+
+function sfxMilestone(combo) {
+  if (!AC || !musicOn) return;
+  const root = comboPitch;
+
+  if (combo === 5) {
+    // Sweet 3-bell arp up
+    [root, root*1.26, root*1.5].forEach((f,i) =>
+      setTimeout(() => bell(f, 0.2, 0.4, (i-1)*0.4), i*70));
+    setTimeout(() => thud(60, 0.14, 0.28), 50);
+  } else if (combo === 10) {
+    // 4-bell arp + warm bass
+    [root, root*1.26, root*1.5, root*2].forEach((f,i) =>
+      setTimeout(() => { bell(f, 0.22, 0.5, (i-1.5)*0.38); }, i*65));
+    setTimeout(() => thud(55, 0.18, 0.35), 30);
+    setTimeout(() => shimmer(root*2, 0.1, 5, 0.7), 200);
+  } else if (combo === 15) {
+    // Full chord + shimmer cascade
+    [root, root*1.26, root*1.5, root*1.78, root*2].forEach((f,i) =>
+      setTimeout(() => { bell(f, 0.2, 0.55, (i-2)*0.35); }, i*55));
+    setTimeout(() => { thud(50, 0.22, 0.4); shimmer(root*2, 0.12, 6, 0.8); }, 20);
+    setTimeout(() => tone(root*0.5, 0.14, 0.6, 0, 1.0, 0.02), 80);
+  } else {
+    // ×20 — full reward cascade, very Cookie Clicker
+    PENTA.slice(0, 8).forEach((f, i) =>
+      setTimeout(() => bell(f, 0.2 - i*0.015, 0.6, (i-3.5)*0.3), i*48));
+    setTimeout(() => {
+      thud(45, 0.26, 0.5);
+      shimmer(N.C6, 0.14, 8, 1.0);
+      tone(N.C3, 0.15, 0.8, 0, 1.0, 0.02);
+    }, 8*48 + 20);
+  }
+}
+
+// ── EAT SFX — tiered, each creature feels different ───────
+function playSfxEat(pts = 1) {
+  if (!AC || !musicOn) return;
+  const pan = (Math.random() - 0.5) * 0.6;
+
+  if (pts <= 4) {
+    // Fish — tiny soft bell, like a coin tink
+    bell(N.E5 + Math.random() * 80, 0.13, 0.25, pan);
+
+  } else if (pts <= 12) {
+    // Crab — two quick pops, playful
+    pop(N.C5, 0.14, 0.18, pan);
+    setTimeout(() => pop(N.E5, 0.11, 0.14, -pan), 55);
+
+  } else if (pts <= 40) {
+    // Jellyfish/Squid — soft sparkle arp
+    [N.G4, N.C5, N.E5].forEach((f, i) =>
+      setTimeout(() => bell(f, 0.13, 0.3, pan + i*0.15), i * 45));
+
+  } else if (pts <= 120) {
+    // Turtle/Octopus — warm chord pop
+    [N.C5, N.E5, N.G5].forEach((f, i) =>
+      setTimeout(() => bell(f, 0.15, 0.38, (i-1)*0.35), i * 30));
+    setTimeout(() => thud(80, 0.12, 0.2), 10);
+
+  } else if (pts <= 600) {
+    // Shark — punchy reward + shimmer
+    thud(70, 0.2, 0.28);
+    setTimeout(() => {
+      bell(N.C5, 0.18, 0.4, pan);
+      bell(N.G5, 0.15, 0.35, -pan);
+      shimmer(N.C6, 0.1, 4, 0.6);
+    }, 30);
+
+  } else if (pts <= 5000) {
+    // Whale — deep satisfying boom + rising bells
+    thud(45, 0.28, 0.5);
+    tone(N.C3, 0.16, 0.5, 0, 1.0, 0.015);
+    setTimeout(() => {
+      [N.G4, N.C5, N.E5, N.G5, N.C6].forEach((f, i) =>
+        setTimeout(() => bell(f, 0.18 - i*0.02, 0.5, (i-2)*0.3), i * 50));
+    }, 60);
+
+  } else {
+    // Kraken — full Cookie Clicker "grand milestone" sound
+    sfxKraken();
+  }
+}
+
+function sfxKraken() {
+  if (!AC || !musicOn) return;
+  thud(40, 0.3, 0.65);
+  tone(N.C3, 0.2, 0.7, 0, 1.0, 0.02);
+  // Ascending bell cascade
+  PENTA.forEach((f, i) =>
+    setTimeout(() => {
+      bell(f, 0.22 - i * 0.012, 0.65, (i - 5) * 0.25);
+      bell(f * 2, 0.09, 0.4, -(i - 5) * 0.2);
+    }, i * 55 + 40)
+  );
+  setTimeout(() => {
+    thud(35, 0.22, 0.8);
+    shimmer(N.C6, 0.16, 8, 1.0);
+    tone(N.G3, 0.18, 0.9, 0, 1.0, 0.025);
+  }, PENTA.length * 55 + 60);
+}
+
+// Hover hit — tiny soft tick, not annoying
+function playSfxHit(freq = 500, vol = 0.03) {
+  if (!AC || !musicOn) return;
+  // Super short quiet pop — barely audible, just tactile
+  pop(freq * (0.9 + Math.random() * 0.2), vol, 0.04, (Math.random() - 0.5) * 0.3);
+}
+
+// Tier up — ascending warm bells, feels like leveling up
+function playSfxTierUp() {
+  if (!AC || !musicOn) return;
+  [N.C5, N.E5, N.G5, N.C6, N.E6].forEach((f, i) =>
+    setTimeout(() => {
+      bell(f, 0.2 - i * 0.018, 0.55, (i - 2) * 0.32);
+      if (i === 4) shimmer(N.C6, 0.12, 6, 0.8);
+    }, i * 72)
+  );
+  setTimeout(() => thud(55, 0.2, 0.4), 20);
+  setTimeout(() => tone(N.C3, 0.12, 0.6, 0, 1.0, 0.02), 50);
+}
+
+// Upgrade buy — short sweet 2-note confirm
+function playSfxUpgrade() {
+  if (!AC || !musicOn) return;
+  bell(N.G5, 0.16, 0.28, -0.3);
+  setTimeout(() => bell(N.C6, 0.18, 0.35, 0.3), 65);
+}
+
+// Prestige — grand warm fanfare
+function playSfxPrestige() {
+  if (!AC || !musicOn) return;
+  thud(40, 0.3, 0.7);
+  tone(N.C3, 0.18, 0.9, 0, 1.0, 0.02);
+  [N.C4, N.E4, N.G4, N.C5, N.E5, N.G5, N.C6, N.E6].forEach((f, i) =>
+    setTimeout(() => {
+      bell(f, 0.22 - i * 0.015, 0.65, (i - 3.5) * 0.28);
+      bell(f * 2, 0.08, 0.4, -(i - 3.5) * 0.22);
+    }, i * 60 + 30)
+  );
+  setTimeout(() => {
+    shimmer(N.C6, 0.16, 10, 1.0);
+    thud(35, 0.24, 0.9);
+  }, 8 * 60 + 60);
+}
+
+// Session end — satisfying "you did it" 4-note jingle
+function playSfxSessionEnd() {
+  if (!AC || !musicOn) return;
+  [N.G4, N.C5, N.E5, N.G5].forEach((f, i) =>
+    setTimeout(() => bell(f, 0.2, 0.5, (i - 1.5) * 0.35), i * 85)
+  );
+  setTimeout(() => thud(65, 0.16, 0.35), 10);
+  setTimeout(() => shimmer(N.C6, 0.1, 4, 0.6), 3 * 85);
+}
+
+// ── BGM — gentle ambient arp loop, Cookie Clicker style ───
+// Soft background hum that doesn't compete with SFX
+const BGM_NOTES = [N.C4, N.G4, N.E4, N.A4, N.C5, N.E5]; // C major arp
+let bgArpIdx = 0, bgNextT = 0;
+
+function scheduleBGM() {
+  if (!AC || !musicOn || !bgRunning) return;
+  const now = AC.currentTime;
+  // Gentle 16th note pulse — tempo based on combo (80→120 BPM range)
+  const bpm = 80 + Math.min(G.combo * 2, 40) + BH.tier * 3;
+  const note16 = (60 / bpm) * 0.5;
+
+  while (bgNextT < now + 0.3) {
+    const f = BGM_NOTES[bgArpIdx % BGM_NOTES.length];
+    const octMod = bgArpIdx >= BGM_NOTES.length ? 2 : 1;
+    const isBeat = bgArpIdx % 8 === 0;
+    const vol = isBeat ? 0.055 : 0.028;
+
+    // Soft triangle tone — barely audible, just texture
+    const o = AC.createOscillator(), env = AC.createGain(), pn = AC.createStereoPanner();
+    o.type = 'triangle'; o.frequency.value = f * octMod;
+    env.gain.setValueAtTime(0, bgNextT);
+    env.gain.linearRampToValueAtTime(vol, bgNextT + 0.008);
+    env.gain.exponentialRampToValueAtTime(0.00001, bgNextT + note16 * 0.85);
+    pn.pan.value = ((bgArpIdx % 4) - 1.5) * 0.25;
+    o.connect(env); env.connect(pn); pn.connect(revNode);
+    o.start(bgNextT); o.stop(bgNextT + note16 + 0.02);
+
+    // Soft bass on beat
+    if (isBeat) {
+      const bass = AC.createOscillator(), benv = AC.createGain();
+      bass.type = 'sine'; bass.frequency.value = N.C3;
+      benv.gain.setValueAtTime(0.06, bgNextT);
+      benv.gain.exponentialRampToValueAtTime(0.00001, bgNextT + note16 * 3);
+      bass.connect(benv); benv.connect(dryBus);
+      bass.start(bgNextT); bass.stop(bgNextT + note16 * 3 + 0.02);
+    }
+
+    bgArpIdx = (bgArpIdx + 1) % (BGM_NOTES.length * 2);
+    bgNextT += note16;
+  }
+  bgLoop = setTimeout(scheduleBGM, 120);
+}
+
+function startAmbient() {
+  if (bgRunning) return;
+  bgRunning = true;
+  bgNextT = AC.currentTime + 0.15;
+  bgArpIdx = 0;
+  scheduleBGM();
+}
+
+function stopAmbient() {
+  bgRunning = false;
+  if (bgLoop) clearTimeout(bgLoop);
+  bgLoop = null;
+  ambOscs.forEach(n => { try { n.stop(); } catch(e){} });
+  ambOscs = [];
+}
+
+function startMusic() {
+  if (!AC) initAudio();
+  musicOn = true;
+  document.getElementById('h-mus').textContent = '♪ ON';
+  startAmbient();
+}
+function stopMusic() {
+  musicOn = false; stopAmbient();
+  document.getElementById('h-mus').textContent = '♪ OFF';
+}
+window.toggleMusic = function () {
+  if (!AC) initAudio();
+  if (musicOn) stopMusic(); else startMusic();
+};
+
+// ═══════════════════════════════════════════════════
+//  CHAOS UPDATE
+// ═══════════════════════════════════════════════════
+function updateChaos() {
+  const target = BH.tier * 1.5 + Math.min(G.combo, 10) * 0.28;
+  chaosLevel += (target - chaosLevel) * 0.018;
+}
+
+// ═══════════════════════════════════════════════════
 //  MAIN LOOP
-// ══════════════════════════════════════════════════════════════
-let lastT=0;
-function loop(ts){
-  const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;
+// ═══════════════════════════════════════════════════
+let lastT = 0;
+function loop(ts) {
+  const dt = Math.min((ts - lastT) / 1000, 0.033); lastT = ts; // cap at 30fps equivalent
+  if (document.hidden) { requestAnimationFrame(loop); return; } // skip if tab hidden
+  updateChaos(); applyShake();
 
-  updateChaosLevel();
-  applyShake();
-  cx.save();cx.translate(shake.x,shake.y);
-  cx.clearRect(-20,-20,W+40,H+40);
-
+  cx.save(); cx.translate(shake.x, shake.y);
+  cx.clearRect(-20, -20, W+40, H+40);
   drawOcean();
 
-  // Spawn — faster as session progresses
-  spawnTimer+=dt*1000;
-  const spawnInterval=Math.max(150, 900-G.session*30-chaosLevel*20);
-  if(spawnTimer>spawnInterval&&G.active){spawnCreature();spawnTimer=0;}
+  // Spawn — faster per session, but always on orbit rings
+  spawnTimer += dt * 1000;
+  const spawnMs = Math.max(80, 500 - G.session * 20 - chaosLevel * 10);
+  if (spawnTimer > spawnMs && G.active) { spawnCreature(); spawnTimer = 0; }
 
   tickChaosParticles();
   tickInkClouds();
   tickShockwaves();
   tickParticles();
-  if(G.active||creatures.length>0)tickCreatures(dt);
+  if (G.active || creatures.length) tickCreatures(dt);
   tickLightnings();
-  if(G.active) tickBHPassive(dt);
-  drawBlackHole();
-  if(G.active)drawBreaker();
+  drawBH();
+  drawSuctionTrails();
+  if (G.active) drawBreaker();
+  if (G.active) tickPassive(dt);
   drawVignette();
-  drawChromAberr();
+  drawChromAbr();
+  drawScanlines();
+  drawRGBBorder();
   tickCombo();
-  triggerBeatPulse();
   cx.restore();
-  updateHUD(ts,dt);
+  updateHUD(ts, dt);
   requestAnimationFrame(loop);
 }
 
-
-// ══════════════════════════════════════════════════════════════
-//  🌌 PRESTIGE / REBIRTH SYSTEM
-// ══════════════════════════════════════════════════════════════
-const PRESTIGE={
-  count:0,
-  // Permanent multipliers that survive reset
-  matterMult:1,    // ×1.5 per prestige
-  dmgMult:1,       // ×1.3 per prestige
-  passiveMult:1,   // ×1.4 per prestige
-  timeBonus:0,     // +8s per prestige
-  startSize:1,     // BH starts bigger each time
-
-  // Unlock thresholds — must reach BH tier X to prestige
-  minTier:3,       // need at least tier 3 to prestige
-
-  tokens:0,        // "void tokens" — prestige currency
-};
-
-// Prestige upgrades that cost void tokens
-const PRESTIGE_UPGRADES=[
-  {id:'pm1',name:'VOID HUNGER',   desc:'Matter ×2 permanent',   cost:1,owned:0,max:5, fn:()=>{PRESTIGE.matterMult*=2;}},
-  {id:'pm2',name:'DARK BREAKER',  desc:'Damage ×2 permanent',   cost:1,owned:0,max:5, fn:()=>{PRESTIGE.dmgMult*=2;}},
-  {id:'pm3',name:'ETERNAL PULL',  desc:'BH passive ×3 permanent',cost:2,owned:0,max:4, fn:()=>{PRESTIGE.passiveMult*=3;}},
-  {id:'pm4',name:'TIME RIFT',     desc:'+15s session permanent', cost:2,owned:0,max:6, fn:()=>{PRESTIGE.timeBonus+=15;}},
-  {id:'pm5',name:'BORN BIG',      desc:'Start with bigger BH',  cost:3,owned:0,max:3, fn:()=>{PRESTIGE.startSize*=1.5;}},
-  {id:'pm6',name:'VOID ECHO',     desc:'Combo never resets',    cost:4,owned:0,max:1, fn:()=>{}},
-  {id:'pm7',name:'CHAOS SEED',    desc:'Start at chaos level 3',cost:5,owned:0,max:1, fn:()=>{}},
-];
-const PU={};PRESTIGE_UPGRADES.forEach(u=>PU[u.id]=u);
-
-function canPrestige(){return BH.tier>=PRESTIGE.minTier;}
-
-function openPrestige(){
-  if(!canPrestige())return;
-  const overlay=document.getElementById('prestige-overlay');
-  overlay.classList.add('show');
-  document.getElementById('prestige-count').textContent=`✨ PRESTIGE × ${PRESTIGE.count}`;
-
-  // Calculate what you get
-  const newTokens=1+Math.floor(BH.tier/2);
-  let bonusHTML=`<div>🔮 +${newTokens} Void Tokens</div>`;
-  bonusHTML+=`<div>💎 Matter ×${(1.5).toFixed(1)} forever</div>`;
-  bonusHTML+=`<div>⚔️ Damage ×${(1.3).toFixed(1)} forever</div>`;
-  bonusHTML+=`<div>⏱️ +8s per session forever</div>`;
-  if(PRESTIGE.count>0) bonusHTML+=`<div style="color:#f472b6">🌈 Previous bonuses STACK!</div>`;
-  document.getElementById('prestige-bonuses').innerHTML=bonusHTML;
-
-  // Build prestige upgrade shop if tokens available
-  buildPrestigeShop(newTokens);
-}
-
-function buildPrestigeShop(pendingTokens){
-  // Add prestige shop section inside prestige box if not exists
-  let shopEl=document.getElementById('prestige-shop');
-  if(!shopEl){
-    shopEl=document.createElement('div');
-    shopEl.id='prestige-shop';
-    shopEl.style.cssText='width:100%;margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px;';
-    document.getElementById('prestige-box').insertBefore(shopEl,document.getElementById('prestige-btn'));
-  }
-  shopEl.innerHTML='';
-  if(PRESTIGE.tokens+pendingTokens>0){
-    const header=document.createElement('div');
-    header.style.cssText='grid-column:1/-1;font-size:7px;color:#a78bfa;padding:6px 0;border-top:1px solid rgba(167,139,250,.2);margin-top:4px;';
-    header.textContent=`🔮 VOID TOKENS: ${PRESTIGE.tokens} (will get +${pendingTokens})`;
-    shopEl.appendChild(header);
-
-    PRESTIGE_UPGRADES.forEach(u=>{
-      const can=PRESTIGE.tokens>=u.cost&&u.owned<u.max;
-      const btn=document.createElement('button');
-      btn.style.cssText=`font-family:'Press Start 2P',monospace;font-size:5px;padding:7px;border-radius:4px;cursor:${can&&u.owned<u.max?'pointer':'not-allowed'};text-align:left;background:rgba(167,139,250,${can?'.1':'.03'});border:1px solid rgba(167,139,250,${can?'.4':'.1'});color:${can?'#c4b5fd':'rgba(167,139,250,.3)'};transition:all .15s;`;
-      btn.innerHTML=`<span style="display:block;margin-bottom:2px">${u.name} (${u.owned}/${u.max})</span><span style="font-size:9px;font-family:'Nunito',sans-serif;opacity:.6">${u.desc}</span><span style="display:block;color:#fbbf24;margin-top:2px">🔮 ${u.cost} tokens</span>`;
-      if(can&&u.owned<u.max){
-        btn.addEventListener('click',()=>{
-          if(PRESTIGE.tokens<u.cost)return;
-          PRESTIGE.tokens-=u.cost;
-          u.owned++;
-          u.fn();
-          buildPrestigeShop(pendingTokens);
-        });
-      }
-      shopEl.appendChild(btn);
-    });
-  }
-}
-
-window.closePrestige=function(){
-  document.getElementById('prestige-overlay').classList.remove('show');
-};
-
-window.doPrestige=function(){
-  const newTokens=1+Math.floor(BH.tier/2);
-  PRESTIGE.count++;
-  PRESTIGE.tokens+=newTokens;
-  PRESTIGE.matterMult*=1.5;
-  PRESTIGE.dmgMult*=1.3;
-  PRESTIGE.timeBonus+=8;
-
-  // Reset game state
-  G.matter=0;G.totalMatter=0;G.session=1;G.eaten=0;
-  G.combo=1;G.comboCount=0;
-  G.breakerDmg=10*PRESTIGE.dmgMult;
-  G.breakerAoE=60;G.breakerSpeed=1;
-  G.critChance=0;G.critMult=2;G.spawnCount=1;
-  G.sessionTimeBonus=PRESTIGE.timeBonus;
-  G.gravityMult=1;G.matterMult=PRESTIGE.matterMult;
-  G.autoDPS=0;G.active=false;
-
-  // Reset upgrades
-  UPGRADES.forEach(u=>{u.level=0;});
-  Object.values(CTYPES).forEach(c=>{if(c!==CTYPES.fish&&c!==CTYPES.crab)c.enabled=false;});
-
-  // Reset BH but slightly bigger based on prestige
-  BH.r=38*PRESTIGE.startSize;
-  BH.pullR=180;BH.tier=0;BH.growth=0;BH.angle=0;
-  // Chaos seed perk
-  if(PU.pm7.owned>0) chaosLevel=3;
-
-  // Reset clickers
-  Object.keys(G.clickers).forEach(k=>delete G.clickers[k]);
-
-  // Prestige transition flash
-  const overlay=document.getElementById('prestige-overlay');
-  overlay.style.background='rgba(167,139,250,0.95)';
-  setTimeout(()=>{
-    overlay.classList.remove('show');
-    overlay.style.background='';
-    creatures=[];particles=[];lightnings=[];shockwaves=[];chaosParticles=[];pulseRings=[];
-    updateBHBar();
-    buildShop();
-    showUpgrades();
-    notify('✨ PRESTIGE '+PRESTIGE.count+' — You are reborn stronger!');
-    playSfxTierUp();
-    // Big bang burst from center
-    for(let i=0;i<8;i++) setTimeout(()=>burst(W/2,H/2,`hsl(${i*45},100%,65%)`,30),i*80);
-  },800);
-};
-
-// Add prestige button to upgrade screen
-function addPrestigeBtn(){
-  const ov=document.getElementById('upgrade-overlay');
-  if(document.getElementById('prestige-trigger'))return;
-  const btn=document.createElement('button');
-  btn.id='prestige-trigger';
-  btn.style.cssText="font-family:'Press Start 2P',monospace;font-size:8px;padding:10px 24px;border:2px solid #a78bfa;color:#a78bfa;background:rgba(167,139,250,.08);border-radius:4px;cursor:pointer;opacity:.4;transition:all .2s;margin-top:4px;";
-  btn.textContent='🌌 PRESTIGE (need BH tier 3+)';
-  btn.onclick=openPrestige;
-  ov.appendChild(btn);
-  return btn;
-}
-
-// ══════════════════════════════════════════════════════════════
-//  🕳️ BH PASSIVE INCOME  (auto-sucks matter proportional to BH size)
-// ══════════════════════════════════════════════════════════════
-function getBHPassive(){
-  // Passive per second = tier * multiplier * prestige bonus
-  const base=BH.tier*BH.tier*2; // 0, 2, 8, 18, 32...
-  return base*PRESTIGE.passiveMult*(1+G.session*.05);
-}
-
-function tickBHPassive(dt){
-  const passive=getBHPassive();
-  if(passive<=0)return;
-  const earned=passive*dt;
-  G.matter+=earned;
-  G.totalMatter+=earned;
-  feedBlackHole(earned*.1);
-  document.getElementById('passive-display').textContent=
-    `🕳️ PASSIVE: +${fmt(passive)}/sec`;
-}
-
-// ══════════════════════════════════════════════════════════════
-//  🦀 UNIQUE CREATURE BEHAVIORS
-// ══════════════════════════════════════════════════════════════
-
-// Override CTYPES to add behavior flags
-CTYPES.fish.behavior='school';       // fish clump together
-CTYPES.crab.behavior='sideways';     // crab moves sideways, hard to catch
-CTYPES.squid.behavior='inkburst';    // squid inks on low HP, blinding nearby
-CTYPES.octopus.behavior='camouflage';// octopus fades in/out making it hard to hover
-CTYPES.shark.behavior='charge';      // shark charges at BH periodically
-CTYPES.whale.behavior='slowpull';    // whale resists pull, needs more damage
-CTYPES.jellyfish.behavior='pulse';   // jellyfish pulses, damage only on contact
-CTYPES.kraken.behavior='splitspawn'; // kraken splits into mini-krakens when at 30% HP
-
-let inkClouds=[]; // squid ink clouds
-
-function updateCreatureBehavior(c, dt, distBH, distM){
-  if(!c.behavior) return;
-
-  switch(c.behavior){
-
-    case 'school':
-      // Fish: drift toward nearest other fish for schooling
-      const nearFish=creatures.filter(o=>o.type==='fish'&&o!==c&&!o.dying);
-      if(nearFish.length>0){
-        const nf=nearFish.reduce((a,b)=>{
-          const da=Math.hypot(a.x-c.x,a.y-c.y);
-          const db=Math.hypot(b.x-c.x,b.y-c.y);
-          return da<db?a:b;
-        });
-        const fd=Math.hypot(nf.x-c.x,nf.y-c.y)||1;
-        if(fd>40&&fd<200){
-          c.vx+=(nf.x-c.x)/fd*.06;
-          c.vy+=(nf.y-c.y)/fd*.06;
-        }
-      }
-      break;
-
-    case 'sideways':
-      // Crab: strafes perpendicular to BH direction
-      c.wobble+=.04;
-      c.vx+=Math.cos(c.wobble+Math.PI*.5)*.12;
-      c.vy+=Math.sin(c.wobble+Math.PI*.5)*.12;
-      break;
-
-    case 'inkburst':
-      // Squid: shoot ink cloud when HP < 40%
-      if(c.hp/c.maxHP<0.4&&!c.inked&&Math.random()<.008){
-        c.inked=true;
-        setTimeout(()=>{c.inked=false;},3000);
-        inkClouds.push({x:c.x,y:c.y,r:0,maxR:60+G.breakerAoE*.3,life:1,alpha:.5});
-        floatText(c.x,c.y-30,'💨 INK!','#818cf8');
-        playSfxHit(200,0.1);
-      }
-      // In ink: reduce breaker effectiveness nearby
-      break;
-
-    case 'camouflage':
-      // Octopus: pulse visibility
-      c.camoPhase=(c.camoPhase||0)+dt*1.5;
-      c.alpha=0.3+Math.abs(Math.sin(c.camoPhase))*.7;
-      break;
-
-    case 'charge':
-      // Shark: charge toward BH every 4s dealing "push" on BH  
-      if(!c.chargeTimer) c.chargeTimer=2+Math.random()*3;
-      c.chargeTimer-=dt;
-      if(c.chargeTimer<=0&&distBH>BH.r*2){
-        c.chargeTimer=3+Math.random()*3;
-        c.charging=true;
-        setTimeout(()=>{c.charging=false;},600);
-      }
-      if(c.charging){
-        const dx=BH.x-c.x,dy=BH.y-c.y,d=Math.hypot(dx,dy)||1;
-        c.vx+=dx/d*4;c.vy+=dy/d*4;
-        if(!c.chargeFx){c.chargeFx=true;
-          spawnLightning(c.x,c.y,1);
-          setTimeout(()=>{c.chargeFx=false;},200);
-        }
-      }
-      break;
-
-    case 'slowpull':
-      // Whale: actively resists gravity pull
-      if(distBH<BH.pullR){
-        const dx=BH.x-c.x,dy=BH.y-c.y,d=Math.hypot(dx,dy)||1;
-        c.vx-=dx/d*.6;c.vy-=dy/d*.6;
-      }
-      break;
-
-    case 'pulse':
-      // Jellyfish: pulses size, only takes damage during "open" phase
-      c.pulsePhase=(c.pulsePhase||0)+dt*2;
-      c.pulseMod=0.6+Math.abs(Math.sin(c.pulsePhase))*.5;
-      // Only damageable when pulseMod > 0.9 (open phase)
-      if(c.pulseMod<0.9&&distM<G.breakerAoE+c.sz*.5){
-        c.dmgFlash=0; // no flash during closed phase
-      }
-      break;
-
-    case 'splitspawn':
-      // Kraken: split into 3 mini-krakens at 30% HP
-      if(!c.hasSplit&&c.hp/c.maxHP<0.3&&c.hp>0){
-        c.hasSplit=true;
-        for(let i=0;i<3;i++){
-          const angle=(i/3)*Math.PI*2+Math.random();
-          creatures.push({
-            type:'squid',sprite:'squid',pts:Math.floor(CTYPES.squid.pts*2),
-            col1:'#f472b6',col2:'#831843',
-            pixSz:2,sz:16*2,behavior:'inkburst',
-            spd:1.8,x:c.x+Math.cos(angle)*40,y:c.y+Math.sin(angle)*40,
-            vx:Math.cos(angle)*2,vy:Math.sin(angle)*2,
-            wobble:Math.random()*Math.PI*2,
-            hp:300,maxHP:300,alpha:1,dying:false,dieScale:1,
-            hue:300,dmgFlash:0,sucking:false,
-          });
-        }
-        floatText(c.x,c.y-40,'💥 SPLIT!','#f472b6');
-        burst(c.x,c.y,'#f472b6',20);
-        playSfxEat(50);
-      }
-      break;
-  }
-}
-
-// Tick ink clouds
-function tickInkClouds(){
-  cx.save();
-  inkClouds.forEach(ink=>{
-    ink.r=Math.min(ink.r+80*0.016,ink.maxR);
-    ink.life-=0.008;
-    cx.globalAlpha=ink.alpha*ink.life*.6;
-    cx.beginPath();cx.arc(ink.x,ink.y,ink.r,0,Math.PI*2);
-    cx.fillStyle='rgba(50,20,100,0.5)';cx.fill();
-    // Ink border
-    cx.globalAlpha=ink.alpha*ink.life*.4;
-    cx.strokeStyle='#818cf8';cx.lineWidth=2;cx.stroke();
-  });
-  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
-  inkClouds=inkClouds.filter(i=>i.life>0);
-}
-
-// Check if mouse is in ink cloud (blocks hover damage)
-function mouseInInk(){
-  return inkClouds.some(ink=>{
-    const d=Math.hypot(mouse.x-ink.x,mouse.y-ink.y);
-    return d<ink.r&&ink.life>0.3;
-  });
-}
-
-// ══════════════════════════════════════════════════════════════
-//  💥 CRACK SYSTEM — visual damage cracks on creatures
-// ══════════════════════════════════════════════════════════════
-// Draw pixel-art style cracks on top of creature based on HP %
-function drawCracks(c, csz){
-  const pct=c.hp/c.maxHP;
-  if(pct>0.85||c.dying)return;
-
-  const crackLevels=Math.floor((1-pct)*5); // 0-5 levels of cracks
-  cx.save();
-  cx.strokeStyle=`rgba(0,0,0,${0.5+crackLevels*.1})`;
-  cx.lineWidth=1.5;
-
-  // Generate deterministic cracks from creature position seed
-  const seed=(c.x*1000+c.y)|0;
-  const r=csz*.4;
-
-  for(let i=0;i<crackLevels*2;i++){
-    // Pseudo-random seeded angles
-    const ang=(seed*i*2654435761)%1000/1000*Math.PI*2;
-    const len=r*(.3+((seed*i*1234567)%100)/100*.5);
-    const sx=Math.cos(ang)*r*.2;
-    const sy=Math.sin(ang)*r*.2;
-
-    cx.beginPath();cx.moveTo(sx,sy);
-    // Jagged crack line
-    let lx=sx,ly=sy;
-    for(let s=0;s<3+crackLevels;s++){
-      const segAng=ang+((seed*s*9876543)%1000/1000-.5)*1.2;
-      const segLen=len/(3+crackLevels);
-      lx+=Math.cos(segAng)*segLen;ly+=Math.sin(segAng)*segLen;
-      cx.lineTo(lx,ly);
-    }
-    cx.stroke();
-
-    // White highlight on crack edge
-    cx.strokeStyle=`rgba(255,255,255,${0.2+crackLevels*.05})`;
-    cx.lineWidth=.5;
-    cx.stroke();
-    cx.strokeStyle=`rgba(0,0,0,${0.5+crackLevels*.1})`;
-    cx.lineWidth=1.5;
-  }
-
-  // Red glow at very low HP
-  if(pct<0.25){
-    cx.beginPath();cx.arc(0,0,csz*.4,0,Math.PI*2);
-    cx.strokeStyle=`rgba(255,50,50,${(0.25-pct)*2})`;
-    cx.lineWidth=2;
-    cx.shadowColor='rgba(255,0,0,0.8)';cx.shadowBlur=10;
-    cx.stroke();cx.shadowBlur=0;
-  }
-  cx.restore();
-}
-
-// ══════════════════════════════════════════════════════════════
-//  🏆 ACHIEVEMENT SYSTEM
-// ══════════════════════════════════════════════════════════════
-const ACHIEVEMENTS=[
-  {id:'first_eat',   name:'FIRST BITE',     icon:'🐟', desc:'Eat your first creature',   check:()=>G.totalEaten>=1},
-  {id:'combo5',      name:'ON FIRE',         icon:'🔥', desc:'Reach ×5 combo',            check:()=>G.combo>=5},
-  {id:'combo10',     name:'UNSTOPPABLE',     icon:'💥', desc:'Reach ×10 combo',           check:()=>G.combo>=10},
-  {id:'eat100',      name:'CENTURION',       icon:'💯', desc:'Eat 100 creatures',         check:()=>G.totalEaten>=100},
-  {id:'eat1000',     name:'GLUTTON',         icon:'🌊', desc:'Eat 1000 creatures',        check:()=>G.totalEaten>=1000},
-  {id:'bh_tier3',    name:'GROWING DARK',    icon:'🕳️', desc:'Reach BH tier 3',          check:()=>BH.tier>=3},
-  {id:'bh_max',      name:'GOD OF THE DEEP', icon:'👑', desc:'Reach max BH tier',        check:()=>BH.tier>=7},
-  {id:'prestige1',   name:'REBORN',          icon:'✨', desc:'Prestige for the first time',check:()=>PRESTIGE.count>=1},
-  {id:'prestige5',   name:'VOID WALKER',     icon:'🌌', desc:'Prestige 5 times',          check:()=>PRESTIGE.count>=5},
-  {id:'matter1m',    name:'MILLIONAIRE',     icon:'💎', desc:'Collect 1M total matter',   check:()=>G.totalMatter>=1e6},
-  {id:'shark_kill',  name:'APEX PREDATOR',   icon:'🦈', desc:'Eat a shark',               check:()=>(G.eaten_types?.shark||0)>=1},
-  {id:'kraken_kill', name:'KRAKEN SLAYER',   icon:'🐉', desc:'Eat the Kraken',            check:()=>(G.eaten_types?.kraken||0)>=1},
-];
-G.eaten_types={};
-const unlockedAchs=new Set();
-
-function checkAchievements(){
-  ACHIEVEMENTS.forEach(a=>{
-    if(unlockedAchs.has(a.id))return;
-    if(a.check()){
-      unlockedAchs.add(a.id);
-      showAchievement(a);
-    }
-  });
-}
-
-function showAchievement(a){
-  document.getElementById('ach-icon').textContent=a.icon;
-  document.getElementById('ach-name').textContent=a.name;
-  document.getElementById('ach-desc').textContent=a.desc;
-  const el=document.getElementById('ach-toast');
-  el.classList.add('show');
-  playSfxTierUp(); // achievement sound
-  clearTimeout(el._t);
-  el._t=setTimeout(()=>el.classList.remove('show'),3500);
-}
-
-
-// ══════════════════════════════════════════════════════════════
-//  🎵 BALATRO-STYLE AUDIO ENGINE
-//  Every combo note = satisfying card-click energy
-//  Layered juicy SFX — earworm build-up as combo rises
-// ══════════════════════════════════════════════════════════════
-
-let audioCtx = null, musicOn = false;
-let masterGain, limiter, reverbNode, dryBus, wetBus;
-
-// ── One-time init
-function initAudio() {
-  if (audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  // Limiter keeps everything clean
-  limiter = audioCtx.createDynamicsCompressor();
-  limiter.threshold.value = -3;
-  limiter.knee.value = 0;
-  limiter.ratio.value = 20;
-  limiter.attack.value = 0.001;
-  limiter.release.value = 0.1;
-
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = 0.72;
-
-  // Short plate reverb (Balatro has a warm short reverb)
-  reverbNode = audioCtx.createConvolver();
-  const sr = audioCtx.sampleRate;
-  const rl = sr * 1.2;
-  const rb = audioCtx.createBuffer(2, rl, sr);
-  for (let c = 0; c < 2; c++) {
-    const d = rb.getChannelData(c);
-    for (let i = 0; i < rl; i++)
-      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / rl, 3.5);
-  }
-  reverbNode.buffer = rb;
-
-  dryBus = audioCtx.createGain(); dryBus.gain.value = 0.78;
-  wetBus = audioCtx.createGain(); wetBus.gain.value = 0.22;
-
-  dryBus.connect(masterGain);
-  reverbNode.connect(wetBus);
-  wetBus.connect(masterGain);
-  masterGain.connect(limiter);
-  limiter.connect(audioCtx.destination);
-}
-
-// ── Core sound primitive: crisp sine with fast click transient (Balatro DNA)
-function chirp(freq, vol, dur, pan = 0, type = 'sine', attack = 0.006, pitchBend = 0) {
-  if (!audioCtx || !musicOn) return;
-  const now = audioCtx.currentTime;
-
-  const osc = audioCtx.createOscillator();
-  const env = audioCtx.createGain();
-  const pan2 = audioCtx.createStereoPanner();
-
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, now);
-  if (pitchBend) osc.frequency.exponentialRampToValueAtTime(freq * pitchBend, now + dur);
-
-  env.gain.setValueAtTime(0, now);
-  env.gain.linearRampToValueAtTime(vol, now + attack);           // sharp click attack
-  env.gain.exponentialRampToValueAtTime(vol * 0.55, now + dur * 0.3);
-  env.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-  pan2.pan.value = Math.max(-1, Math.min(1, pan));
-
-  osc.connect(env); env.connect(pan2);
-  pan2.connect(dryBus); pan2.connect(reverbNode);
-  osc.start(now); osc.stop(now + dur + 0.02);
-}
-
-// ── Click transient (the satisfying "tick" in Balatro)
-function tick(vol = 0.18, pitchMult = 1) {
-  if (!audioCtx || !musicOn) return;
-  const now = audioCtx.currentTime;
-  // Noise burst — very short, filtered
-  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.04, audioCtx.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2);
-  const src = audioCtx.createBufferSource(); src.buffer = buf;
-  const filt = audioCtx.createBiquadFilter(); filt.type = 'bandpass';
-  filt.frequency.value = 2800 * pitchMult; filt.Q.value = 1.5;
-  const env = audioCtx.createGain();
-  env.gain.setValueAtTime(vol, now);
-  env.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
-  src.connect(filt); filt.connect(env); env.connect(dryBus);
-  src.start(now);
-}
-
-// ── Scales (Balatro uses major/pentatonic for satisfying, minor for tension)
-// All in A for warm brightness
-const NOTE = {
-  A3:220, B3:246.94, C4:261.63, D4:293.66, E4:329.63, F4:349.23,
-  G4:392, A4:440, B4:493.88, C5:523.25, D5:587.33, E5:659.25,
-  F5:698.46, G5:783.99, A5:880, B5:987.77, C6:1046.5, D6:1174.66,
-  E6:1318.51, F6:1396.91, G6:1567.98, A6:1760,
-};
-
-// Pentatonic scale — always sounds good, very Balatro
-const PENTA  = [NOTE.A3, NOTE.C4, NOTE.D4, NOTE.E4, NOTE.G4, NOTE.A4, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.G5, NOTE.A5, NOTE.C6, NOTE.E6];
-const MAJOR  = [NOTE.A3, NOTE.B3, NOTE.C4, NOTE.D4, NOTE.E4, NOTE.F4, NOTE.G4, NOTE.A4, NOTE.B4, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.F5, NOTE.G5, NOTE.A5];
-const MINOR  = [NOTE.A3, NOTE.C4, NOTE.D4, NOTE.E4, NOTE.G4, NOTE.A4, NOTE.C5, NOTE.D5, NOTE.E5, NOTE.G5, NOTE.A5];
-// Chaos: whole tone scale (dreamy/unstable, like Balatro Joker chaos)
-const WHOLE  = [NOTE.A3, NOTE.B3, NOTE.D4, NOTE.E4, NOTE.F4+10, NOTE.G4+10, NOTE.A4, NOTE.B4, NOTE.D5, NOTE.E5];
-
-function getScale() {
-  if (BH.tier >= 6) return WHOLE;
-  if (BH.tier >= 4 || G.combo >= 10) return MINOR;
-  if (G.combo >= 5) return MAJOR;
-  return PENTA;
-}
-
 // ═══════════════════════════════════════════════════
-//  COMBO SOUND SYSTEM — the heart of earworm design
-//  Each combo level plays a rising note from the scale
-//  Like Balatro's chip-counting "dink dink dink dink DUNK"
+//  INIT
 // ═══════════════════════════════════════════════════
-
-// Track which note in the combo sequence we're on
-// Combo 1 = note 0, combo 2 = note 1... wraps after 16
-let comboNoteIdx = 0;
-let lastComboTime = 0;
-
-function sfxComboNote(comboLevel) {
-  if (!audioCtx || !musicOn) return;
-  const scale = getScale();
-  const now = audioCtx.currentTime;
-
-  // Reset note index if combo was broken
-  const timeSinceLast = Date.now() - lastComboTime;
-  if (timeSinceLast > 2400) comboNoteIdx = 0;
-  lastComboTime = Date.now();
-
-  // Rising note index — goes up as combo grows
-  const noteIdx = comboNoteIdx % scale.length;
-  const freq = scale[noteIdx];
-  comboNoteIdx++;
-
-  // Base click + note (Balatro card-click DNA)
-  tick(0.12 + comboLevel * 0.008, 0.8 + comboLevel * 0.06);
-  chirp(freq, 0.14 + Math.min(comboLevel * 0.012, 0.18), 0.18, (Math.random() - 0.5) * 0.5, 'sine', 0.005);
-
-  // Harmonic shimmer on top (Balatro has a faint overtone layer)
-  chirp(freq * 2, 0.04, 0.12, (Math.random() - 0.5) * 0.4, 'sine', 0.006);
-
-  // Every 3 combos: an extra "bling" — feels like a Balatro flush
-  if (comboNoteIdx % 3 === 0) {
-    const blingFreq = scale[(noteIdx + 4) % scale.length];
-    setTimeout(() => {
-      if (!audioCtx || !musicOn) return;
-      chirp(blingFreq, 0.09, 0.22, (Math.random()-0.5)*.6, 'sine', 0.004);
-      chirp(blingFreq * 1.5, 0.04, 0.15, -(Math.random()*.5), 'sine', 0.004);
-    }, 55);
-  }
-
-  // Milestone flare — combos 5, 10, 15 feel BIG like a Balatro hand score
-  if (comboLevel === 5 || comboLevel === 10 || comboLevel === 15) {
-    sfxComboMilestone(comboLevel, freq);
-  }
-}
-
-// Balatro "big hand scored" — rising chord arpeggio, then a fat bass thud
-function sfxComboMilestone(comboLevel, rootFreq) {
-  if (!audioCtx || !musicOn) return;
-  const scale = getScale();
-  const now = audioCtx.currentTime;
-
-  // Rising 4-note arp fast (like scoring a Royal Flush)
-  const chord = [0, 2, 4, 7].map(i => scale[(scale.indexOf(rootFreq) + i) % scale.length] || rootFreq * (1 + i * 0.15));
-  chord.forEach((f, i) => {
-    const t = i * 0.055;
-    setTimeout(() => {
-      chirp(f, 0.18, 0.28, (i - 1.5) * 0.35, 'sine', 0.004);
-      chirp(f * 2, 0.06, 0.18, -(i - 1.5) * 0.35, 'sine', 0.003);
-      tick(0.08, 1.2 + i * 0.1);
-    }, t * 1000);
-  });
-
-  // Fat bass thud at the end (Balatro's chip total "THUNK")
-  setTimeout(() => {
-    chirp(rootFreq * 0.5, 0.35, 0.5, 0, 'sine', 0.02, 0.5);     // sub
-    chirp(rootFreq * 0.5, 0.18, 0.3, 0, 'sawtooth', 0.01, 0.6);  // mid
-    tick(0.22, 0.4);
-  }, chord.length * 55 + 20);
-}
-
-// ═══════════════════════════════════════════════
-//  EAT SFX — juicy pop scaled by creature worth
-//  Small fish = tiny click, whale = deep THOOM
-// ═══════════════════════════════════════════════
-function playSfxEat(pts = 1) {
-  if (!audioCtx || !musicOn) return;
-  const scale = getScale();
-  const now = audioCtx.currentTime;
-
-  if (pts <= 5) {
-    // Fish: tiny bright click
-    tick(0.1, 1.4);
-    chirp(NOTE.E5 + Math.random() * 80, 0.07, 0.1, (Math.random()-0.5)*.6, 'sine', 0.004);
-  } else if (pts <= 25) {
-    // Crab/jellyfish: satisfying "plop"
-    tick(0.13, 1.1);
-    chirp(NOTE.C5, 0.1, 0.14, (Math.random()-0.5)*.5, 'sine', 0.006, 0.85);
-  } else if (pts <= 100) {
-    // Squid/octopus: Balatro chip sound — "dink"
-    tick(0.15, 0.9);
-    chirp(NOTE.A4, 0.12, 0.18, (Math.random()-0.5)*.4, 'sine', 0.005);
-    chirp(NOTE.E5, 0.06, 0.12, -(Math.random()*.4), 'sine', 0.004);
-  } else if (pts <= 400) {
-    // Shark: punchy "CRACK"
-    tick(0.2, 0.7);
-    chirp(NOTE.E4, 0.18, 0.25, (Math.random()-0.5)*.3, 'triangle', 0.006, 0.7);
-    chirp(NOTE.A4, 0.1, 0.2, (Math.random()-0.5)*.5, 'sine', 0.005);
-    setTimeout(() => chirp(NOTE.C5, 0.08, 0.15, 0, 'sine', 0.004), 40);
-  } else if (pts <= 2000) {
-    // Whale: deep satisfying BOOM + shimmer
-    chirp(NOTE.A3 * 0.5, 0.3, 0.5, 0, 'sine', 0.008, 0.55);   // sub boom
-    chirp(NOTE.A3, 0.18, 0.35, 0, 'sine', 0.006);
-    tick(0.25, 0.35);
-    setTimeout(() => {
-      [NOTE.A4, NOTE.C5, NOTE.E5].forEach((f, i) =>
-        setTimeout(() => chirp(f, 0.1, 0.22, (i-1)*.4, 'sine', 0.004), i * 50)
-      );
-    }, 80);
-  } else {
-    // Kraken: LEGENDARY sound — huge orchestral hit
-    sfxLegendaryKill();
-  }
-}
-
-function sfxLegendaryKill() {
-  if (!audioCtx || !musicOn) return;
-  // Sub rumble
-  chirp(NOTE.A3 * 0.25, 0.4, 0.8, 0, 'sine', 0.01, 0.4);
-  chirp(NOTE.A3 * 0.5, 0.25, 0.6, 0, 'sine', 0.008);
-  tick(0.3, 0.25);
-  // Rising arp 0ms, 60ms, 120ms, 180ms, 240ms — fast and epic
-  [NOTE.A4, NOTE.C5, NOTE.E5, NOTE.G5, NOTE.A5, NOTE.C6].forEach((f, i) => {
-    setTimeout(() => {
-      chirp(f, 0.16 - i * 0.015, 0.3, (i % 2 === 0 ? 1 : -1) * 0.4, 'sine', 0.003);
-      chirp(f * 2, 0.05, 0.2, -(i % 2 === 0 ? 1 : -1) * 0.3, 'sine', 0.003);
-      tick(0.06, 0.8 + i * 0.08);
-    }, i * 60);
-  });
-  // Final THUNK
-  setTimeout(() => {
-    chirp(NOTE.A3 * 0.5, 0.45, 0.7, 0, 'sine', 0.002, 0.5);
-    chirp(NOTE.A3, 0.2, 0.4, 0, 'sawtooth', 0.005);
-    tick(0.3, 0.3);
-  }, 420);
-}
-
-// ═══════════════════════════════════
-//  HIT SFX — hover damage ticking
-//  Rapid tiny clicks (like card dealing)
-// ═══════════════════════════════════
-function playSfxHit(freq = 440, vol = 0.06) {
-  if (!audioCtx || !musicOn) return;
-  tick(vol * 0.7, freq / 440);
-  chirp(freq, vol * 0.5, 0.06, (Math.random()-0.5)*.5, 'sine', 0.003, 0.9);
-}
-
-// ═══════════════════════════════
-//  TIER-UP FANFARE
-//  Balatro "new hand unlocked" energy
-// ═══════════════════════════════
-function playSfxTierUp() {
-  if (!audioCtx || !musicOn) return;
-  // Sweeping arp + reverb tail
-  const notes = [NOTE.A4, NOTE.C5, NOTE.E5, NOTE.A5, NOTE.C6, NOTE.E6];
-  notes.forEach((f, i) => {
-    setTimeout(() => {
-      chirp(f, 0.2 - i * 0.02, 0.45, (i - 2.5) * 0.3, 'sine', 0.004);
-      chirp(f * 0.5, 0.08, 0.3, -(i - 2.5) * 0.25, 'sine', 0.008);
-      if (i === notes.length - 1) {
-        // Final sparkle
-        [1, 1.5, 2, 3].forEach((m, j) =>
-          setTimeout(() => chirp(NOTE.A5 * m, 0.08, 0.3, (Math.random()-0.5)*.8, 'sine', 0.003), j * 35)
-        );
-      }
-    }, i * 70);
-  });
-}
-
-// ═══════════════════════════════
-//  PRESTIGE FANFARE
-// ═══════════════════════════════
-function playSfxPrestige() {
-  if (!audioCtx || !musicOn) return;
-  // Descend + massive bass + shimmer cloud
-  const notes = [NOTE.C6, NOTE.A5, NOTE.G5, NOTE.E5, NOTE.C5, NOTE.A4, NOTE.G4, NOTE.E4];
-  notes.forEach((f, i) => {
-    setTimeout(() => {
-      chirp(f, 0.15, 0.5, (i % 2 === 0 ? 1 : -1) * 0.45, 'sine', 0.004);
-      tick(0.08, f / NOTE.A4);
-    }, i * 80);
-  });
-  setTimeout(() => {
-    chirp(NOTE.A3 * 0.5, 0.5, 1.2, 0, 'sine', 0.015, 0.35);
-    chirp(NOTE.A3, 0.22, 0.8, 0, 'triangle', 0.01);
-    // Sparkle cloud
-    for (let i = 0; i < 8; i++) {
-      setTimeout(() => {
-        const sf = PENTA[Math.floor(Math.random() * PENTA.length)] * 2;
-        chirp(sf, 0.06, 0.25, (Math.random()-0.5)*.8, 'sine', 0.003);
-      }, i * 55 + 100);
-    }
-  }, notes.length * 80);
-}
-
-// ═══════════════════════════════════════
-//  AMBIENT MUSIC — minimal, not distracting
-//  Balatro's music is subtle — the SFX are the star
-//  Just a gentle breathing chord pad + soft pulse
-// ═══════════════════════════════════════
-let ambientNodes = [];
-let ambientOn = false;
-
-function startAmbient() {
-  if (!audioCtx || ambientOn) return;
-  ambientOn = true;
-
-  // Create a slow, breathing chord pad
-  // Two detuned oscillators per note for warmth
-  const chordNotes = [NOTE.A3, NOTE.E4, NOTE.A4];
-  chordNotes.forEach((freq, i) => {
-    [0, 7].forEach(detuneCents => {
-      const osc = audioCtx.createOscillator();
-      const env = audioCtx.createGain();
-      const pan2 = audioCtx.createStereoPanner();
-
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      osc.detune.value = detuneCents + (i - 1) * 4;
-
-      // Slow breathe: 8 second cycle
-      env.gain.value = 0;
-      const lfo = audioCtx.createOscillator();
-      const lfoGain = audioCtx.createGain();
-      lfo.frequency.value = 0.12 + i * 0.01; // slightly different per voice
-      lfoGain.gain.value = 0.022;
-      lfo.connect(lfoGain); lfoGain.connect(env.gain);
-      env.gain.setValueAtTime(0.018, audioCtx.currentTime);
-
-      pan2.pan.value = (i - 1) * 0.55;
-      osc.connect(env); env.connect(pan2); pan2.connect(reverbNode);
-
-      lfo.start(); osc.start();
-      ambientNodes.push(osc, lfo);
-    });
-  });
-
-  // Subtle low sub pulse — heartbeat of the black hole
-  const subOsc = audioCtx.createOscillator();
-  const subEnv = audioCtx.createGain();
-  subOsc.type = 'sine';
-  subOsc.frequency.value = NOTE.A3 * 0.25; // very low
-  subEnv.gain.value = 0.04;
-  subOsc.connect(subEnv); subEnv.connect(dryBus);
-  subOsc.start();
-  ambientNodes.push(subOsc);
-}
-
-function stopAmbient() {
-  ambientOn = false;
-  ambientNodes.forEach(n => { try { n.stop(); } catch(e){} });
-  ambientNodes = [];
-}
-
-// ═══════════════════════════════
-//  MUSIC TOGGLE
-// ═══════════════════════════════
-function startMusic() {
-  if (!audioCtx) initAudio();
-  musicOn = true;
-  document.getElementById('h-music').textContent = '🔊';
-  startAmbient();
-}
-
-function stopMusic() {
-  musicOn = false;
-  stopAmbient();
-  document.getElementById('h-music').textContent = '🔇';
-}
-
-window.toggleMusic = function () {
-  if (!audioCtx) initAudio();
-  if (musicOn) stopMusic();
-  else startMusic();
-};
-
-// Legacy stubs so nothing breaks
-function getBeatDur() { return 0.5; }
-function launchMusicLoops() {}
-function triggerBeatPulse() {}
-
-
-// ══════════════════════════════════════════════════════════════
-//  🌈 CHAOS SYSTEM — visual mayhem that reacts to gameplay
-// ══════════════════════════════════════════════════════════════
-let chaosLevel=0; // 0–10, rises with BH tier + combo
-let chromAberr=0; // chromatic aberration
-let scanlines=false;
-let vignette=0;
-let bgDistort=0;
-let chaosParticles=[]; // extra ambient chaos particles
-let pulseRings=[]; // expanding rings from BH
-
-function updateChaosLevel(){
-  const target=BH.tier*1.5+Math.min(G.combo,10)*.3;
-  chaosLevel+=(target-chaosLevel)*.02;
-  chromAberr=chaosLevel*.8;
-  vignette=chaosLevel*.04;
-  bgDistort=chaosLevel*2;
-}
-
-function chaosFlash(col='rgba(255,255,255,.06)'){
-  const el=document.getElementById('chaos-flash');
-  el.style.background=col;el.style.opacity='1';
-  setTimeout(()=>el.style.opacity='0',60);
-}
-
-function spawnChaosParticle(){
-  if(chaosLevel<2)return;
-  const angle=Math.random()*Math.PI*2;
-  const dist=BH.r*1.5+Math.random()*BH.pullR*.8;
-  chaosParticles.push({
-    x:BH.x+Math.cos(angle)*dist,
-    y:BH.y+Math.sin(angle)*dist,
-    vx:(Math.random()-.5)*chaosLevel*.5,
-    vy:(Math.random()-.5)*chaosLevel*.5,
-    r:1+Math.random()*chaosLevel*.5,
-    alpha:0.6+Math.random()*.4,
-    hue:Math.random()*360,
-    life:1,
-    orbit:angle,
-    orbitDist:dist,
-    orbitSpeed:.01+Math.random()*.03,
-  });
-}
-
-function spawnPulseRing(){
-  if(chaosLevel<1)return;
-  pulseRings.push({
-    x:BH.x,y:BH.y,
-    r:BH.r,
-    maxR:BH.r+80+chaosLevel*30,
-    life:1,
-    hue:(BH.angle*30)%360,
-    thick:1.5+chaosLevel*.5,
-  });
-}
-
-function tickChaosParticles(){
-  // Spawn
-  const spawnRate=chaosLevel*.12+BH.tier*.04;
-  if(Math.random()<spawnRate)spawnChaosParticle();
-  if(Math.random()<spawnRate*.5)spawnPulseRing();
-  // Extra burst spawns at high chaos
-  if(chaosLevel>5&&Math.random()<.02) burst(BH.x+(Math.random()-.5)*BH.pullR,BH.y+(Math.random()-.5)*BH.pullR,`hsl(${Math.random()*360},100%,60%)`,Math.floor(chaosLevel*2));
-
-  // Pulse rings
-  cx.save();
-  pulseRings.forEach(r=>{
-    r.r+=3+chaosLevel*.8;r.life-=.04;
-    cx.globalAlpha=r.life*.4;
-    cx.beginPath();cx.arc(r.x,r.y,r.r,0,Math.PI*2);
-    cx.strokeStyle=`hsl(${r.hue},90%,65%)`;
-    cx.lineWidth=r.thick*(1+r.life);
-    cx.shadowColor=cx.strokeStyle;cx.shadowBlur=chaosLevel*3;
-    cx.stroke();
-  });
-  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
-  pulseRings=pulseRings.filter(r=>r.life>0);
-
-  // Chaos ambient particles
-  cx.save();
-  chaosParticles.forEach(p=>{
-    // Orbit BH + drift
-    p.orbit+=p.orbitSpeed;
-    p.x=BH.x+Math.cos(p.orbit)*p.orbitDist+p.vx;
-    p.y=BH.y+Math.sin(p.orbit)*p.orbitDist+p.vy;
-    p.orbitDist=Math.max(BH.r,p.orbitDist-.3); // spiral in
-    p.life-=.005;
-    p.hue=(p.hue+chaosLevel*.5)%360;
-
-    cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    cx.fillStyle=`hsl(${p.hue},100%,65%)`;
-    cx.globalAlpha=p.alpha*p.life;
-    cx.shadowColor=cx.fillStyle;cx.shadowBlur=6;
-    cx.fill();
-  });
-  cx.shadowBlur=0;cx.globalAlpha=1;cx.restore();
-  chaosParticles=chaosParticles.filter(p=>p.life>0&&p.orbitDist>BH.r+2);
-}
-
-// Chromatic aberration post-process (RGB split)
-function drawChromAberr(){
-  if(chromAberr<0.5)return;
-  const amt=chromAberr*.8;
-  cx.save();
-  // Red channel shift
-  cx.globalCompositeOperation='screen';
-  cx.globalAlpha=0.06;
-  cx.drawImage(cv,-amt,0,W,H);
-  // Blue channel shift
-  cx.drawImage(cv,amt,0,W,H);
-  cx.globalCompositeOperation='source-over';
-  cx.globalAlpha=1;
-  cx.restore();
-}
-
-// Vignette overlay
-function drawVignette(){
-  if(vignette<0.01)return;
-  const g=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.min(W,H)*.8);
-  g.addColorStop(0,'rgba(0,0,0,0)');
-  const col=chaosLevel>5
-    ?`hsla(${(BH.angle*30)%360},80%,15%,${vignette*1.5})`
-    :`rgba(0,0,0,${vignette})`;
-  g.addColorStop(1,col);
-  cx.fillStyle=g;cx.fillRect(0,0,W,H);
-}
-
-// Beat-reactive BH pulse
-let lastBeatTime=0;
-function triggerBeatPulse(){
-  const now=Date.now();
-  if(now-lastBeatTime<getBeatDur()*900)return;
-  lastBeatTime=now;
-  // Quick glow on BH
-  burst(BH.x,BH.y,`hsl(${(BH.angle*30)%360},90%,60%)`,
-    Math.floor(chaosLevel*2));
-}
-
-// ══════════════════════════════════════════════════════════════
-//  PATCH existing functions to add sound + more chaos
-// ══════════════════════════════════════════════════════════════
-
-// Patch feedBlackHole to add tier fanfare + chaos flash
-const _feedBH=feedBlackHole;
-const _prevTier={v:0};
-feedBlackHole=function(pts){
-  _feedBH(pts);
-  if(BH.tier>_prevTier.v){
-    _prevTier.v=BH.tier;
-    playSfxPrestige();
-    chaosFlash('rgba(200,150,255,0.18)');
-    for(let i=0;i<6;i++) setTimeout(()=>spawnPulseRing(),i*80);
-    // Restart music loops at new BPM
-    if(musicOn) launchMusicLoops();
-  }
-};
-
-// Override burst to respect chaos level
-const _burst=burst;
-
-// Patch tickCreatures damage to play hit sounds
-// (inject sfx into damage loop via override)
-const _origTickCreatures=tickCreatures;
-let dmgSfxTimer=0;
-tickCreatures=function(dt){
-  _origTickCreatures(dt);
-  // Play hit sfx at interval
-  dmgSfxTimer+=dt;
-  if(dmgSfxTimer>.12){
-    dmgSfxTimer=0;
-    const inRange=creatures.filter(c=>{
-      const mdx=mouse.x-c.x,mdy=mouse.y-c.y;
-      return Math.sqrt(mdx*mdx+mdy*mdy)<G.breakerAoE+c.sz*.5;
-    });
-    if (inRange.length > 0) {
-      // Rapid tick-tick-tick as you hover (Balatro card-dealing energy)
-      const pitchMult = 0.7 + Math.random() * 0.6;
-      playSfxHit(440 * pitchMult, 0.04 + chaosLevel * 0.005);
-    }
-  }
-};
-
-// Patch addCombo — Balatro-style rising note per combo hit
-const _addCombo = addCombo;
-addCombo = function () {
-  _addCombo();
-  sfxComboNote(G.combo);  // THE main earworm — rising scale note every hit
-};
-
-// ══════════════════════════════════════════════════════════════
-//  INIT — start with upgrade screen (session 0 → pick upgrades)
-// ══════════════════════════════════════════════════════════════
-// Auto-start music on first interaction
-let _musicStarted=false;
-function tryStartMusic(){
-  if(_musicStarted)return;
-  _musicStarted=true;
+let _started = false;
+function tryStart() {
+  if (_started) return; _started = true;
   startMusic();
 }
-window.addEventListener('mousemove',tryStartMusic,{once:true});
-window.addEventListener('touchstart',tryStartMusic,{once:true});
-window.addEventListener('click',tryStartMusic,{once:true});
+['mousemove','click','touchstart'].forEach(ev => window.addEventListener(ev, tryStart, {once:true}));
 
-// Draw scanlines at high chaos
-function drawScanlines(){
-  if(chaosLevel<4)return;
-  cx.save();
-  cx.globalAlpha=Math.min(.08,chaosLevel*.012);
-  for(let y=0;y<H;y+=3){
-    cx.fillStyle='rgba(0,0,0,1)';
-    cx.fillRect(0,y,W,1);
-  }
-  cx.restore();
-}
-
-// RGB border flash at tier 5+
-function drawRGBBorder(){
-  if(BH.tier<4)return;
-  const t=Date.now()*.003;
-  const hue=(t*60)%360;
-  cx.save();
-  cx.strokeStyle=`hsl(${hue},100%,60%)`;
-  cx.lineWidth=3+Math.sin(t)*2;
-  cx.globalAlpha=0.4+Math.sin(t*1.7)*.3;
-  cx.shadowColor=cx.strokeStyle;
-  cx.shadowBlur=20;
-  cx.strokeRect(2,2,W-4,H-4);
-  cx.restore();
-}
-
-// Warp/distortion noise at extreme chaos
-function drawWarp(){
-  if(chaosLevel<6)return;
-  cx.save();
-  cx.globalAlpha=Math.min(.04,(chaosLevel-6)*.015);
-  const warpSlices=Math.floor(chaosLevel*2);
-  for(let i=0;i<warpSlices;i++){
-    const sy=Math.random()*H;
-    const sh=2+Math.random()*4;
-    const sx=(Math.random()-.5)*chaosLevel*3;
-    cx.drawImage(cv,0,sy,W,sh,sx,sy,W,sh);
-  }
-  cx.restore();
-}
-
-// Patch drawVignette to also draw scanlines + border
-const _drawVignette=drawVignette;
-drawVignette=function(){
-  _drawVignette();
-  drawScanlines();
-  drawWarp();
-  drawRGBBorder();
-};
-
-// Session 1 starts directly
-G.session=0;
-G.active=false;
-document.getElementById('timer-wrap').style.display='block';
-// Kick off first session immediately
-G.session=1;
-G.sessionTime=45+G.sessionTimeBonus;
-G.timeLeft=G.sessionTime;
-G.active=true;
-document.getElementById('h-session').textContent=1;
 updateBHBar();
+// Show upgrade screen first so player picks upgrades before session 1
+showUpgrades();
 requestAnimationFrame(loop);
 </script>
 </body>
